@@ -3,19 +3,17 @@
 // Reemplaza con tu token en: https://account.mapbox.com
 // ─────────────────────────────────────────────
 // const MAPBOX_TOKEN = 'YOUR_MAPBOX_ACCESS_TOKEN';
-const MAPBOX_TOKEN = '';
 
 const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
-const MAP_ZOOM = 16;
-// const MAP_STYLE = 'mapbox://styles/mapbox/dark-v11';
-const MAP_STYLE = 'mapbox://styles/juan-fuentes/cmpbrv3ue001k01rv1vsi4heo';
+const MAP_ZOOM = 10;
+const MAP_STYLE = 'mapbox://styles/valentina-nacif/cmpdcwwba00fc01scddw0cd2w';
 
 // ─────────────────────────────────────────────
 // INICIALIZACIÓN
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    mapboxgl.accessToken = MAPBOX_TOKEN;
+    mapboxgl.accessToken = window.MAPBOX_TOKEN;
 
     const map = new mapboxgl.Map({
         container: 'mapa',
@@ -23,6 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
         center: MAP_CENTER,
         zoom: MAP_ZOOM,
         antialias: true
+    });
+
+    map.on('load', () => {
+        console.log('[reconocer] Map loaded con estilo:', MAP_STYLE);
+        const style = map.getStyle();
+        console.log('[reconocer] Style name:', style.name);
+        console.log('[reconocer] Style version:', style.version);
+        console.log('[reconocer] Style sprite:', style.sprite);
+        console.log('[reconocer] Style glyphs:', style.glyphs);
+    });
+
+    map.on('error', (event) => {
+        console.error('[reconocer] Mapbox error:', event.error || event);
+        if (event && event.error && event.error.message) {
+            console.error('[reconocer] Detalle:', event.error.message);
+        }
+    });
+
+    map.on('styledata', () => {
+        console.log('[reconocer] Style data cargada');
     });
 
     // Controles de navegación (zoom + rotación)
@@ -48,23 +66,35 @@ function agregarMarcador(map, row) {
     const columnas = row.split(',');
     if (columnas.length < 3) return;
 
-    const nombre = columnas[0].trim();
-    const lat    = parseFloat(columnas[1]);
-    const lng    = parseFloat(columnas[2]);
+    const archivo = columnas[0].trim();
+    const lat     = parseFloat(columnas[1]);
+    const lng     = parseFloat(columnas[2]);
 
     if (isNaN(lat) || isNaN(lng)) return;
 
+    const imageUrl = `./img/${encodeURIComponent(archivo)}`;
+    const extension = archivo.split('.').pop().toLowerCase();
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'];
+    const isImage = imageExtensions.includes(extension);
+    const previewUrl = isImage ? imageUrl : 'https://placehold.co/120x120?text=NO+IMG';
+
     // Elemento HTML personalizado para el marcador (imagen 64×64px)
     const el = document.createElement('img');
-    el.src = 'https://placehold.co/64x64';
+    el.src = previewUrl;
+    el.alt = archivo;
     el.width = 64;
     el.height = 64;
     el.className = 'marker';
-    el.title = nombre;
+    el.title = archivo;
     el.style.cursor = 'pointer';
+    el.onerror = () => el.src = 'https://placehold.co/64x64?text=no+img';
+
+    const popupImage = isImage
+        ? `<img src="${imageUrl}" alt="${archivo}" style="max-width:280px;width:100%;height:auto;border-radius:12px;display:block;">`
+        : `<img src="https://placehold.co/280x200?text=NO+IMG" alt="Archivo no disponible" style="max-width:280px;width:100%;height:auto;border-radius:12px;display:block;">`;
 
     const popup = new mapboxgl.Popup({ offset: 10, closeButton: true })
-        .setHTML(`<p>${nombre}</p><p style="opacity:0.5;font-size:0.7rem">${lat.toFixed(6)}, ${lng.toFixed(6)}</p>`);
+        .setHTML(popupImage);
 
     new mapboxgl.Marker(el)
         .setLngLat([lng, lat])
