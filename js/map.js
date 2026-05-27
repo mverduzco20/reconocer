@@ -2,7 +2,6 @@
 // CONFIGURACIÓN DE MAPBOX
 // Reemplaza con tu token en: https://account.mapbox.com
 // ─────────────────────────────────────────────
-// const MAPBOX_TOKEN = 'YOUR_MAPBOX_ACCESS_TOKEN';
 
 const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
