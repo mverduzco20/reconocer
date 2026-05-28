@@ -13,3 +13,64 @@ html, body {
     height: 100%;
     background: #f0f0f0;
 }
+
+#map-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#map-container footer {
+    position: absolute;
+    bottom: 0px;
+    left: 0%;
+    background: rgba(255, 255, 255, 0.8);
+    color: #333;
+    height: 85px;
+    width: 100%
+}
+
+#map-container nav {
+    position: absolute;
+    top: 10px;
+    right: 0px;
+    background: rgba(255, 255, 255, 0.8);
+    height: 100vh;
+}
+
+.category-button,
+#categories-button {
+    font-family: inherit;
+}
+
+#encuentro-button {
+    background-color: #ec00ea;
+    opacity: 43%;
+    color: #000000;
+    height: 278px;
+    width: 110px;
+}
+
+#refugio-button {
+    background-color: #92f47b;
+    opacity: 80%;
+    color: #000000;
+    height: 278px;
+    width: 110px;
+}   
+
+#memoria-button {
+    background-color: #e9c47e;
+    opacity: 80%;
+    color: #000000;
+    height: 278px;
+    width: 110px;
+}
+
+#oficio-button {
+    background-color: #5959d2;
+    opacity: 55%;
+    color: #000000;
+    height: 278px;
+    width: 110px;
+}

@@ -8,7 +8,21 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <div id="mapa"></div>
+    <div id="map-container">
+        <div id="map"></div>
+        <nav id="categories-nav">
+                <button class="category-button" id="encuentro-button" data-category="e">ENCUENTRO</button>
+                <button class="category-button" id="refugio-button" data-category="r">REFUGIO</button>
+                <button class="category-button" id="memoria-button" data-category="m">MEMORIA</button>
+                <button class="category-button" id="oficio-button" data-category="o">OFICIO</button>
+        </nav>
+        <footer>
+            <a href="./docs">
+                (SOBRE EL PROYECTO)
+            </a>
+            <button id="categories-button">CATEGORÍAS</button>
+        </footer>
+    </div>
     <!-- 
     <prompt>
      - Crea con mapbox un mapa en 'reconocer.html'
