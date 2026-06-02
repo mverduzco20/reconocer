@@ -1,11 +1,15 @@
+/* Reset y tipografía general */
 html, body {
     height: 100%;
     padding: 0;
     margin: 0;
-    overflow: hidden;
+    overflow-y: auto;
+    font-family: "Courier New", Courier, monospace;
+    -webkit-font-smoothing: antialiased;
 }
 
-#mapa {
+/* Map containers (acepta ambos ids por compatibilidad) */
+#map, #mapa {
     position: absolute;
     left: 0;
     top: 0;
@@ -20,57 +24,159 @@ html, body {
     height: 100%;
 }
 
-#map-container footer {
-    position: absolute;
-    bottom: 0px;
-    left: 0%;
-    background: rgba(255, 255, 255, 0.8);
-    color: #333;
-    height: 85px;
-    width: 100%
+/* Footer fijo y consistente en todas las páginas */
+.site-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 85px; /* respetar la altura existente */
+    background: rgba(179, 249, 0, 0.791); /* respetar color previamente asignado */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 999;
 }
 
-#map-container nav {
+.site-footer .footer-left,
+.site-footer .footer-center,
+.site-footer .footer-right {
+    display:flex;
+    align-items:center;
+}
+
+/* mantener espacio entre centro y botón de sonido */
+.footer-center {
+    margin-right: 120px;
+}
+
+/* botón de sonido — reducir tamaño y eliminar decoraciones */
+.sound-btn {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sound-btn img {
+    height: 48px; /* tamaño más pequeño para que entre en el footer */
+    width: auto;
+    display: block;
+}
+
+.footer-link {
+    background: transparent;
+    border: 0;
+    color: #000;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: inherit;
+    letter-spacing: 1px;
+    font-size: 14px;
+}
+
+/* Categories nav (map page) */
+#categories-nav {
     position: absolute;
     top: 10px;
-    right: 0px;
-    background: rgba(255, 255, 255, 0.8);
-    height: 100vh;
+    right: 0;
+    bottom: 85px; /* leave space for footer (footer height = 85px) */
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    background: transparent;
+    padding: 0;
+    box-sizing: border-box;
+    z-index: 900;
 }
 
-.category-button,
-#categories-button {
+.categories-wrapper {
+    display: flex;
+    flex-direction: row-reverse; /* botones a la derecha, rectángulos a la izquierda */
+    justify-content: flex-end;
+    align-items: stretch;
+    height: 100%;
+}
+
+.cat-rects {
+    width: 25vw; /* aproximadamente 1/4 del ancho */
+    max-width: 380px;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transform-origin: right top;
+}
+
+.cat-rects .cat-rect {
+    flex: 1 1 0;
+    border-radius: 2px;
+    opacity: 0; /* ocultas por defecto, se muestran al activar */
+    transition: opacity 220ms ease;
+}
+
+.cat-rects.visible .cat-rect { opacity: 0.65; }
+
+.cat-buttons {
+    width: 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    box-sizing: border-box;
+    margin-left: auto;
+}
+
+.category-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    flex: 1 1 0;
+    margin: 0;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000;
+    text-transform: uppercase;
     font-family: inherit;
+    box-sizing: border-box;
+    position: relative;
 }
 
-#encuentro-button {
-    background-color: #ec00ea;
-    opacity: 43%;
-    color: #000000;
-    height: 278px;
-    width: 110px;
+/* Rotate label vertically so text reads along the button (adjust as needed) */
+.category-button .label {
+    display: inline-block;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    white-space: nowrap;
 }
 
-#refugio-button {
-    background-color: #92f47b;
-    opacity: 80%;
-    color: #000000;
-    height: 278px;
-    width: 110px;
-}   
+.category-button .swatch { display:none; }
 
-#memoria-button {
-    background-color: #e9c47e;
-    opacity: 80%;
-    color: #000000;
-    height: 278px;
-    width: 110px;
-}
+/* Specific colors (respect existing palette) */
+#encuentro-button { background-color: #ec00ea; }
+.cat-rects .encuentro { background: rgba(236,0,234,0.25); }
 
-#oficio-button {
-    background-color: #5959d2;
-    opacity: 55%;
-    color: #000000;
-    height: 278px;
-    width: 110px;
+#refugio-button { background-color: #92f47b; }
+.cat-rects .refugio { background: rgba(146,244,123,0.25); }
+
+#memoria-button { background-color: #e9c47e; }
+.cat-rects .memoria { background: rgba(233,196,126,0.25); }
+
+#oficio-button { background-color: #5959d2; }
+.cat-rects .oficio { background: rgba(89,89,210,0.25); }
+
+/* Active state visual cue */
+.category-button.active { filter: brightness(1.15); }
+
+/* Ensure content doesn't hide behind fixed footer on Home/docs */
+main, section, #hero {
+    box-sizing: border-box;
 }

@@ -8,21 +8,28 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <div id="map-container">
-        <div id="map"></div>
-        <nav id="categories-nav">
-                <button class="category-button" id="encuentro-button" data-category="e">ENCUENTRO</button>
-                <button class="category-button" id="refugio-button" data-category="r">REFUGIO</button>
-                <button class="category-button" id="memoria-button" data-category="m">MEMORIA</button>
-                <button class="category-button" id="oficio-button" data-category="o">OFICIO</button>
-        </nav>
-        <footer>
-            <a href="./docs">
-                (SOBRE EL PROYECTO)
-            </a>
-            <button id="categories-button">CATEGORÍAS</button>
-        </footer>
-    </div>
+    <main id="home">
+        <section id="hero" style="height:calc(100vh - 85px); display:flex; align-items:center; justify-content:center;">
+            <div>
+                <h1>RECONOCER</h1>
+                <p>Bienvenido — desplázate hacia abajo para más contenido.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-left">
+            <a href="./docs/index.html" class="footer-link">SOBRE EL PROYECTO</a>
+        </div>
+        <div class="footer-center">
+            <a href="./map.html" class="footer-link" id="categories-button">CARTOGRAFÍA</a>
+        </div>
+        <div class="footer-right">
+            <button class="sound-btn" aria-label="sonido">
+                <img src="./img/sonido.png" alt="sonido">
+            </button>
+        </div>
+    </footer>
     <!-- 
     <prompt>
      - Crea con mapbox un mapa en 'reconocer.html'
@@ -31,8 +38,6 @@
     - Los marcadores serán imágenes de 64x64px, define un placeholder, será reemplazado posteriormente por thumbs
     </prompt>
     -->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
-    <script src="./js/secrets.js"></script>
-    <script src="./js/map.js"></script>
+    <!-- Map scripts only load on map.html to avoid initializing map on Home -->
 </body>
 </html>

@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
         antialias: true
     });
 
+    // Marcadores creados a partir del CSV
+    const markers = [];
+    // Categorías activas
+    const activeCategories = new Set();
+
     map.on('load', () => {
         console.log('[reconocer] Map loaded con estilo:', MAP_STYLE);
         const style = map.getStyle();
@@ -53,7 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(text => {
             const rows = text.trim().split('\n').slice(1); // omitir encabezado
-            rows.forEach(row => agregarMarcador(map, row));
+            rows.forEach(row => agregarMarcador(map, row, markers));
+            // después de cargar marcadores, inicializar la UI si existe
+            initCategoryUI(map, markers);
         })
         .catch(err => console.error('[reconocer]', err));
 });
@@ -61,13 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // ─────────────────────────────────────────────
 // MARCADORES
 // ─────────────────────────────────────────────
-function agregarMarcador(map, row) {
+function agregarMarcador(map, row, markers) {
     const columnas = row.split(',');
     if (columnas.length < 3) return;
 
     const archivo = columnas[0].trim();
     const lat     = parseFloat(columnas[1]);
     const lng     = parseFloat(columnas[2]);
+    // la categoría suele ser la última columna (CSV con comas internas)
+    const categoriaRaw = columnas[columnas.length - 1] ? columnas[columnas.length - 1].trim() : '';
+    const categoria = categoriaRaw.toLowerCase().replace(/[^a-z]/g, '').charAt(0); // m, e, r, o
 
     if (isNaN(lat) || isNaN(lng)) return;
 
@@ -77,7 +87,6 @@ function agregarMarcador(map, row) {
     const isImage = imageExtensions.includes(extension);
     const previewUrl = isImage ? imageUrl : 'https://placehold.co/120x120?text=NO+IMG';
 
-    // Elemento HTML personalizado para el marcador (imagen 64×64px)
     const el = document.createElement('img');
     el.src = previewUrl;
     el.alt = archivo;
@@ -95,8 +104,59 @@ function agregarMarcador(map, row) {
     const popup = new mapboxgl.Popup({ offset: 10, closeButton: true })
         .setHTML(popupImage);
 
-    new mapboxgl.Marker(el)
+    const marker = new mapboxgl.Marker(el)
         .setLngLat([lng, lat])
-        .setPopup(popup)
-        .addTo(map);
+        .setPopup(popup);
+
+    // almacenar meta (categoría) y la instancia del marcador
+    marker._categoria = categoria || '';
+    marker.addTo(map);
+    markers.push(marker);
+}
+
+/* UI helpers: mostrar/ocultar marcadores según categorías activas */
+function updateMarkersFilter(map, markers, activeSet) {
+    markers.forEach(m => {
+        const cat = (m._categoria || '').toLowerCase();
+        if (activeSet.size === 0) {
+            // mostrar todo
+            m.addTo(map);
+        } else if (activeSet.has(cat)) {
+            m.addTo(map);
+        } else {
+            try { m.remove(); } catch (e) { /* no importa */ }
+        }
+    });
+}
+
+function initCategoryUI(map, markers) {
+    const categoriesButton = document.getElementById('categories-button');
+    const categoriesNav = document.getElementById('categories-nav');
+    if (!categoriesNav) return;
+
+    // Mostrar botones de categorías por defecto en la página de mapa (ya están visibles por CSS)
+    const catButtons = categoriesNav.querySelectorAll('.category-button');
+
+    // Evento para el footer 'CATEGORÍAS' -> ahora alterna las rectángulos de apoyo visual
+    if (categoriesButton) {
+        categoriesButton.addEventListener('click', (e) => {
+            // si es enlace (home) no hacemos toggle aquí
+            if (categoriesButton.tagName.toLowerCase() === 'a') return;
+            const rects = categoriesNav.querySelector('.cat-rects');
+            if (rects) rects.classList.toggle('visible');
+        });
+    }
+
+    // Click en botones de categoría controla el filtrado (multi-select)
+    catButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            const act = new Set();
+            catButtons.forEach(b => { if (b.classList.contains('active')) act.add((b.dataset.category||'').toLowerCase()); });
+            updateMarkersFilter(map, markers, act);
+        });
+    });
+
+    // Inicial: asegurar que todos los marcadores se muestren
+    updateMarkersFilter(map, markers, new Set());
 }
