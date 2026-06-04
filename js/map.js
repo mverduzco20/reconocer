@@ -215,11 +215,11 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
-        ? `<img src="${imageUrl}" alt="${archivo}" style="width:50%;height:auto;border-radius:0;display:block;background:transparent;margin:0 auto;">`
-        : `<img src="https://placehold.co/320x200?text=NO+IMG" alt="Archivo no disponible" style="width:50%;height:auto;border-radius:0;display:block;background:transparent;margin:0 auto;">`;
+        ? `<img src="${imageUrl}" alt="${archivo}" style="width:180px;height:180px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`
+        : `<img src="https://placehold.co/320x200?text=NO+IMG" alt="Archivo no disponible" style="width:180px;height:180px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`;
 
     const popupText = relato
-        ? `<p style="margin:0;line-height:1.4;color:#000;font-family:'Courier New',Courier,monospace;font-size:11px;background:transparent;padding:8px;width:50%;box-sizing:border-box;">${relato}</p>`
+        ? `<p style="margin:0;line-height:1.4;color:#000;font-family:'Courier New',Courier,monospace;font-size:11px;background:transparent;padding:8px;width:160px;min-width:160px;max-width:160px;box-sizing:border-box;align-self:stretch;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
@@ -230,7 +230,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
         offset: 10, 
         closeButton: true, 
         className: 'category-popup',
-        maxWidth: '320px',
+        maxWidth: '340px',
         anchor: 'bottom'
     })
         .setHTML(popupContent);
