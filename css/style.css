@@ -266,3 +266,34 @@ a.footer-link {
 #cat-arrow.vertical {
     transform: rotate(90deg);
 }
+
+/* Popup category: eliminar fondo blanco por defecto y permitir que el color de la "popup-inner" rellene todo */
+.category-popup .mapboxgl-popup-content {
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Ocultar la punta del popup (se puede mostrar coloreada más tarde) */
+.category-popup .mapboxgl-popup-tip {
+    display: none !important;
+}
+
+/* Contenedor interno del popup (creado en JS) — su background será inline rgba para cada categoría */
+.category-popup .popup-inner {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+/* Asegurar que el texto dentro del popup sea totalmente opaco y con pequeño padding */
+.category-popup .popup-inner p {
+    margin: 0;
+    padding: 8px;
+    color: #111;
+    opacity: 1;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+}

@@ -5,34 +5,8 @@
 
 const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
-const MAP_ZOOM = 15.4;
+const MAP_ZOOM = 10;
 const MAP_STYLE = 'mapbox://styles/valentina-nacif/cmpdcwwba00fc01scddw0cd2w';
-
-// Lista global de popups abiertos (si se usa la lógica de límite a 3)
-const openPopups = [];
-
-// Mapeo de colores por categoría (usa la misma paleta que la UI)
-function getCategoryColor(categoria) {
-    const colorMap = {
-        'm': '#e9c47e', // memoria
-        'o': '#5959d2', // oficio
-        'r': '#92f47b', // refugio
-        'e': '#ec00ea'  // encuentro
-    };
-    return colorMap[String(categoria || '').toLowerCase()] || '#f0f0f0';
-}
-
-// Convertir un hex short/long a rgba
-function hexToRgba(hex, alpha = 1) {
-    const h = String(hex || '').replace('#', '').trim();
-    if (!h) return `rgba(0,0,0,${alpha})`;
-    const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
-    const bigint = parseInt(full, 16);
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
 
 // ─────────────────────────────────────────────
 // INICIALIZACIÓN
@@ -160,15 +134,49 @@ function parseCsvRows(text) {
     return rows;
 }
 
+function normalizeCategoryValue(value) {
+    const cleaned = String(value || '').trim().toLowerCase().replace(/[^a-z]/g, '');
+    return cleaned.length === 1 ? cleaned : '';
+}
+
+function findRowCategory(row, indices = {}) {
+    const categoryKeys = new Set(['m', 'o', 'r', 'e']);
+
+    if (indices.categoria >= 0 && row[indices.categoria] != null) {
+        const candidate = normalizeCategoryValue(row[indices.categoria]);
+        if (categoryKeys.has(candidate)) return candidate;
+    }
+
+    const startIndex = Math.max(3, indices.categoria >= 0 ? indices.categoria : 3);
+    for (let i = startIndex; i < row.length; i++) {
+        const candidate = normalizeCategoryValue(row[i]);
+        if (categoryKeys.has(candidate)) return candidate;
+    }
+
+    return '';
+}
+
 // ─────────────────────────────────────────────
 // MARCADORES
 // ─────────────────────────────────────────────
+
+// Mapeo de colores por categoría
+function getCategoryColor(categoria) {
+    const colorMap = {
+        'm': '#e9c47e', // memoria
+        'o': '#5959d2', // oficio
+        'r': '#92f47b', // refugio
+        'e': '#ec00ea'  // encuentro
+    };
+    return colorMap[String(categoria || '').toLowerCase()] || '#f0f0f0';
+}
+
 function agregarMarcador(map, row, markers, indices = {}) {
     const archivo = String(indices.archivo >= 0 ? row[indices.archivo] : row[0] || '').trim();
     const lat = parseFloat(indices.lat >= 0 ? row[indices.lat] : row[1]);
     const lng = parseFloat(indices.lng >= 0 ? row[indices.lng] : row[2]);
-    const categoriaRaw = indices.categoria >= 0 ? row[indices.categoria] : row[row.length - 1];
-    const relatoRaw = indices.relato >= 0 ? row[indices.relato] : '';
+    const categoriaRaw = findRowCategory(row, indices);
+    const relatoRaw = indices.relato >= 0 ? row[indices.relato] : row[row.length - 1];
 
     if (!archivo || isNaN(lat) || isNaN(lng)) return;
 
@@ -187,43 +195,26 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const el = document.createElement('img');
     el.src = previewUrl;
     el.alt = archivo;
-    el.width = 64;
-    el.height = 64;
+    el.width = 66;
+    el.height = 66;
     el.className = 'marker';
     el.title = archivo;
     el.style.cursor = 'pointer';
-    el.onerror = () => el.src = 'https://placehold.co/64x64?text=no+img';
+    el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
-        ? `<img src="${imageUrl}" alt="${archivo}" style="max-width:280px;width:100%;height:auto;border-radius:12px;display:block;">`
-        : `<img src="https://placehold.co/280x200?text=NO+IMG" alt="Archivo no disponible" style="max-width:280px;width:100%;height:auto;border-radius:12px;display:block;">`;
+        ? `<img src="${imageUrl}" alt="${archivo}" style="width:100%;height:auto;border-radius:0;display:block;">`
+        : `<img src="https://placehold.co/320x200?text=NO+IMG" alt="Archivo no disponible" style="width:100%;height:auto;border-radius:0;display:block;">`;
 
     const popupText = relato
-        ? `<p style="margin:0.75rem 0 0;line-height:1.4;color:#111;font-family:'Courier New',Courier,monospace;font-size:11px;">${relato}</p>`
+        ? `<p style="margin:0;line-height:1.4;color:#111;font-family:'Courier New',Courier,monospace;font-size:13px;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
-    const bgRgba = hexToRgba(categoryColor, 0.6);
-    const popupContent = `<div class="popup-inner" style="background-color:${bgRgba};padding:0;border-radius:0;overflow:hidden;">${popupImage}${popupText}</div>`;
+    const popupContent = `<div style="background-color:${categoryColor};padding:0;border-radius:0;opacity:0.6;">${popupImage}${popupText}</div>`;
 
-    const popup = new mapboxgl.Popup({ offset: 10, closeButton: true, className: 'category-popup' })
+    const popup = new mapboxgl.Popup({ offset: 10, closeButton: true })
         .setHTML(popupContent);
-
-    // Controlar apertura/cierre para mantener como máximo 3 popups abiertos
-    popup.on('open', () => {
-        if (!openPopups.includes(popup)) {
-            openPopups.push(popup);
-        }
-        if (openPopups.length > 3) {
-            const oldest = openPopups.shift();
-            try { if (oldest && typeof oldest.remove === 'function') oldest.remove(); } catch (e) { /* ignore */ }
-        }
-    });
-
-    popup.on('close', () => {
-        const i = openPopups.indexOf(popup);
-        if (i !== -1) openPopups.splice(i, 1);
-    });
 
     const marker = new mapboxgl.Marker(el)
         .setLngLat([lng, lat])
