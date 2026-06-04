@@ -219,12 +219,12 @@ function agregarMarcador(map, row, markers, indices = {}) {
         : `<img src="https://placehold.co/320x200?text=NO+IMG" alt="Archivo no disponible" style="width:50%;height:auto;border-radius:0;display:block;background:transparent;margin:0 auto;">`;
 
     const popupText = relato
-        ? `<p style="margin:0;line-height:1.4;color:#000;font-family:'Courier New',Courier,monospace;font-size:15px;background:transparent;padding:12px;">${relato}</p>`
+        ? `<p style="margin:0;line-height:1.4;color:#000;font-family:'Courier New',Courier,monospace;font-size:11px;background:transparent;padding:8px;width:50%;box-sizing:border-box;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
-    const categoryBackground = hexToRgba(categoryColor, 0.3);
-    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};padding:0;border-radius:0;overflow:hidden;display:block;width:100%;">${popupImage}${popupText}</div>`;
+    const categoryBackground = hexToRgba(categoryColor, 0.5);
+    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};padding:0;border-radius:0;overflow:hidden;display:flex;flex-direction:row;align-items:flex-start;width:100%;">${popupImage}${popupText}</div>`;
 
     const popup = new mapboxgl.Popup({ 
         offset: 10, 
