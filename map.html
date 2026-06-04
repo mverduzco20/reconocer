@@ -29,16 +29,27 @@
         </nav>
 
         <footer class="site-footer">
+            <button class="sound-btn" id="sound-btn" aria-label="sonido">
+                <span class="sound-icon"></span>
+                <input type="range" class="volume-slider" id="volume-slider" 
+                       min="0" max="1" step="0.05" value="1" 
+                       onclick="event.stopPropagation()">
+            </button>
             <div class="footer-left">
-                <a href="./docs/index.html" class="footer-link">SOBRE EL PROYECTO</a>
-            </div>
-            <div class="footer-center">
-                <button class="footer-link" id="categories-button">CATEGORÍAS</button>
+                <a href="./docs/index.html" class="footer-link">(SOBRE EL PROYECTO)</a>
             </div>
             <div class="footer-right">
-                <button class="sound-btn" aria-label="sonido">
-                    <img src="./img/sonido.png" alt="sonido">
-                </button>
+                <a href="./index.html" class="footer-link">INICIO</a>
+                <button class="footer-link" id="categories-button">CATEGORÍAS</button>
+                <div id="category-rects-footer">
+                    <div class="footer-rect" style="background:rgba(233,196,126,0.6)"></div>
+                    <div class="footer-rect" style="background:rgba(89,89,210,0.6)"></div>
+                    <div class="footer-rect" style="background:rgba(146,244,123,0.6)"></div>
+                    <div class="footer-rect" style="background:rgba(236,0,234,0.6)"></div>
+                </div>
+                <div class="footer-cat-block">
+                    <span id="cat-arrow">→</span>
+                </div>
             </div>
         </footer>
     </div>
@@ -46,5 +57,30 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <script src="./js/secrets.js"></script>
     <script src="./js/map.js"></script>
+    <script>
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
+            e.preventDefault();
+            document.body.style.transition = 'opacity 350ms ease';
+            document.body.style.opacity = '0';
+            setTimeout(() => { window.location.href = href; }, 360);
+        });
+    });
+    </script>
+    <script>
+    const soundBtn = document.getElementById('sound-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+
+    if (soundBtn) {
+        soundBtn.addEventListener('click', function() {
+            this.classList.toggle('muted');
+            if (volumeSlider) {
+                volumeSlider.value = this.classList.contains('muted') ? 0 : 1;
+            }
+        });
+    }
+    </script>
 </body>
 </html>

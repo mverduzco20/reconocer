@@ -57,30 +57,101 @@ document.addEventListener('DOMContentLoaded', () => {
             return res.text();
         })
         .then(text => {
-            const rows = text.trim().split('\n').slice(1); // omitir encabezado
-            rows.forEach(row => agregarMarcador(map, row, markers));
+            const rows = parseCsvRows(text.trim());
+            if (rows.length < 2) return;
+
+            const header = rows[0].map(col => String(col || '').trim().toLowerCase());
+            const indices = {
+                archivo: header.findIndex(h => h.includes('archivo') || h.includes('nombre')),
+                lat: header.findIndex(h => h.includes('lat')),
+                lng: header.findIndex(h => h.includes('long')),
+                categoria: header.findIndex(h => h.includes('categoria')),
+                relato: header.findIndex(h => h.includes('relato'))
+            };
+
+            rows.slice(1).forEach(row => agregarMarcador(map, row, markers, indices));
             // después de cargar marcadores, inicializar la UI si existe
             initCategoryUI(map, markers);
         })
         .catch(err => console.error('[reconocer]', err));
 });
 
+// Parse CSV rows with support for double-quoted and single-quoted fields
+function parseCsvRows(text) {
+    const rows = [];
+    let row = [];
+    let field = '';
+    let inDouble = false;
+    let inSingle = false;
+
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"' && !inSingle) {
+            if (inDouble && next === '"') {
+                field += '"';
+                i += 1;
+                continue;
+            }
+            inDouble = !inDouble;
+            continue;
+        }
+
+        if (char === "'" && !inDouble) {
+            if (inSingle && next === "'") {
+                field += "'";
+                i += 1;
+                continue;
+            }
+            inSingle = !inSingle;
+            continue;
+        }
+
+        if (char === ',' && !inDouble && !inSingle) {
+            row.push(field);
+            field = '';
+            continue;
+        }
+
+        if ((char === '\n' || char === '\r') && !inDouble && !inSingle) {
+            if (char === '\r' && next === '\n') continue;
+            row.push(field);
+            if (row.length > 0) rows.push(row);
+            row = [];
+            field = '';
+            continue;
+        }
+
+        field += char;
+    }
+
+    if (field !== '' || row.length > 0) {
+        row.push(field);
+        rows.push(row);
+    }
+
+    return rows;
+}
+
 // ─────────────────────────────────────────────
 // MARCADORES
 // ─────────────────────────────────────────────
-function agregarMarcador(map, row, markers) {
-    const columnas = row.split(',');
-    if (columnas.length < 3) return;
+function agregarMarcador(map, row, markers, indices = {}) {
+    const archivo = String(indices.archivo >= 0 ? row[indices.archivo] : row[0] || '').trim();
+    const lat = parseFloat(indices.lat >= 0 ? row[indices.lat] : row[1]);
+    const lng = parseFloat(indices.lng >= 0 ? row[indices.lng] : row[2]);
+    const categoriaRaw = indices.categoria >= 0 ? row[indices.categoria] : row[row.length - 1];
+    const relatoRaw = indices.relato >= 0 ? row[indices.relato] : '';
 
-    const archivo = columnas[0].trim();
-    const lat     = parseFloat(columnas[1]);
-    const lng     = parseFloat(columnas[2]);
-    // la categoría suele ser la última columna (CSV con comas internas)
-    const categoriaRaw = columnas[columnas.length - 1] ? columnas[columnas.length - 1].trim() : '';
-    const categoria = categoriaRaw.toLowerCase().replace(/[^a-z]/g, '').charAt(0); // m, e, r, o
+    if (!archivo || isNaN(lat) || isNaN(lng)) return;
 
-    if (isNaN(lat) || isNaN(lng)) return;
+    const categoria = String(categoriaRaw || '')
+        .toLowerCase()
+        .replace(/[^a-z]/g, '')
+        .charAt(0); // m, e, r, o
 
+    const relato = String(relatoRaw || '').trim().replace(/^['"]|['"]$/g, '');
     const imageUrl = `./img/${encodeURIComponent(archivo)}`;
     const extension = archivo.split('.').pop().toLowerCase();
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'];
@@ -101,8 +172,12 @@ function agregarMarcador(map, row, markers) {
         ? `<img src="${imageUrl}" alt="${archivo}" style="max-width:280px;width:100%;height:auto;border-radius:12px;display:block;">`
         : `<img src="https://placehold.co/280x200?text=NO+IMG" alt="Archivo no disponible" style="max-width:280px;width:100%;height:auto;border-radius:12px;display:block;">`;
 
+    const popupText = relato
+        ? `<p style="margin:0.75rem 0 0;line-height:1.4;color:#111;">${relato}</p>`
+        : '';
+
     const popup = new mapboxgl.Popup({ offset: 10, closeButton: true })
-        .setHTML(popupImage);
+        .setHTML(popupImage + popupText);
 
     const marker = new mapboxgl.Marker(el)
         .setLngLat([lng, lat])
@@ -140,10 +215,10 @@ function initCategoryUI(map, markers) {
     // Evento para el footer 'CATEGORÍAS' -> ahora alterna las rectángulos de apoyo visual
     if (categoriesButton) {
         categoriesButton.addEventListener('click', (e) => {
-            // si es enlace (home) no hacemos toggle aquí
-            if (categoriesButton.tagName.toLowerCase() === 'a') return;
-            const rects = categoriesNav.querySelector('.cat-rects');
-            if (rects) rects.classList.toggle('visible');
+            const rectsFooter = document.getElementById('category-rects-footer');
+            if (rectsFooter) rectsFooter.classList.toggle('open');
+            const arrow = document.getElementById('cat-arrow');
+            if (arrow) arrow.classList.toggle('vertical');
         });
     }
 

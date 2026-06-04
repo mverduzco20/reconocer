@@ -4,6 +4,7 @@ html, body {
     padding: 0;
     margin: 0;
     overflow-y: auto;
+    scroll-behavior: smooth;
     font-family: "Courier New", Courier, monospace;
     -webkit-font-smoothing: antialiased;
 }
@@ -17,11 +18,16 @@ html, body {
     height: 100%;
     background: #f0f0f0;
 }
-
+#home {
+    background-image: url('../img/home.png');
+    background-size: cover;
+    background-position: center;
+}
 #map-container {
     position: relative;
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
+    height: 100vh;
 }
 
 /* Footer fijo y consistente en todas las páginas */
@@ -30,148 +36,157 @@ html, body {
     left: 0;
     right: 0;
     bottom: 0;
-    height: 85px; /* respetar la altura existente */
-    background: rgba(179, 249, 0, 0.791); /* respetar color previamente asignado */
+    height: 85px;
+    background: #5959d2;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 0 0 0 20px;
     box-sizing: border-box;
     z-index: 999;
 }
 
-.site-footer .footer-left,
-.site-footer .footer-center,
-.site-footer .footer-right {
-    display:flex;
-    align-items:center;
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-/* mantener espacio entre centro y botón de sonido */
-.footer-center {
-    margin-right: 120px;
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-right: 20px;
 }
 
-/* botón de sonido — reducir tamaño y eliminar decoraciones */
-.sound-btn {
-    background: transparent;
-    border: 0;
-    padding: 0;
-    display: inline-flex;
+.footer-cat-block {
+    width: 110px;
+    height: 85px;
+    background: #ec00ea;
+    display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: -20px;
 }
 
-.sound-btn img {
-    height: 48px; /* tamaño más pequeño para que entre en el footer */
-    width: auto;
-    display: block;
+.sound-btn {
+    width: 110px;
+    height: 85px;
+    background: #ec00ea;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 10px;
+    flex-shrink: 0;
+    margin-left: -20px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.volume-slider {
+    width: 70px;
+    accent-color: #fff;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
 }
 
 .footer-link {
     background: transparent;
     border: 0;
-    color: #000;
+    color: #fff;
     text-decoration: none;
     text-transform: uppercase;
     font-family: inherit;
     letter-spacing: 1px;
-    font-size: 14px;
+    font-size: 18px;
+}
+
+#categories-button {
+    text-decoration: underline;
+    text-underline-offset: 4px;
 }
 
 /* Categories nav (map page) */
 #categories-nav {
-    position: absolute;
-    top: 10px;
+    position: fixed;
+    top: 0;
     right: 0;
-    bottom: 85px; /* leave space for footer (footer height = 85px) */
+    bottom: 85px;
+    width: 110px;
     display: flex;
-    align-items: stretch;
-    justify-content: flex-end;
-    background: transparent;
-    padding: 0;
-    box-sizing: border-box;
-    z-index: 900;
+    flex-direction: column;
+    z-index: 1000;
 }
 
 .categories-wrapper {
     display: flex;
-    flex-direction: row-reverse; /* botones a la derecha, rectángulos a la izquierda */
-    justify-content: flex-end;
-    align-items: stretch;
-    height: 100%;
-}
-
-.cat-rects {
-    width: 25vw; /* aproximadamente 1/4 del ancho */
-    max-width: 380px;
-    min-width: 140px;
-    display: flex;
     flex-direction: column;
-    gap: 0;
-    padding: 0;
-    box-sizing: border-box;
-    transform-origin: right top;
+    height: 100%;
+    width: 100%;
 }
-
-.cat-rects .cat-rect {
-    flex: 1 1 0;
-    border-radius: 2px;
-    opacity: 0; /* ocultas por defecto, se muestran al activar */
-    transition: opacity 220ms ease;
-}
-
-.cat-rects.visible .cat-rect { opacity: 0.65; }
 
 .cat-buttons {
-    width: 110px;
     display: flex;
     flex-direction: column;
-    gap: 0;
-    padding: 0;
-    box-sizing: border-box;
-    margin-left: auto;
+    height: 100%;
+    width: 100%;
 }
 
 .category-button {
+    flex: 1;
+    width: 100%;
+    border: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 110px;
-    flex: 1 1 0;
-    margin: 0;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    color: #000;
-    text-transform: uppercase;
-    font-family: inherit;
-    box-sizing: border-box;
     position: relative;
+    color: #000;
+    font-family: inherit;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin: 0;
+    padding: 0;
 }
 
-/* Rotate label vertically so text reads along the button (adjust as needed) */
 .category-button .label {
-    display: inline-block;
-    transform: rotate(-90deg);
-    transform-origin: center;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
     white-space: nowrap;
 }
 
-.category-button .swatch { display:none; }
+.category-button::before {
+    content: "×";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+}
 
-/* Specific colors (respect existing palette) */
-#encuentro-button { background-color: #ec00ea; }
-.cat-rects .encuentro { background: rgba(236,0,234,0.25); }
-
-#refugio-button { background-color: #92f47b; }
-.cat-rects .refugio { background: rgba(146,244,123,0.25); }
-
-#memoria-button { background-color: #e9c47e; }
-.cat-rects .memoria { background: rgba(233,196,126,0.25); }
-
-#oficio-button { background-color: #5959d2; }
-.cat-rects .oficio { background: rgba(89,89,210,0.25); }
+#memoria-button  { background-color: #e9c47e; }
+#oficio-button   { background-color: #5959d2; }
+#refugio-button  { background-color: #92f47b; }
+#encuentro-button{ background-color: #ec00ea; }
 
 /* Active state visual cue */
 .category-button.active { filter: brightness(1.15); }
@@ -179,4 +194,59 @@ html, body {
 /* Ensure content doesn't hide behind fixed footer on Home/docs */
 main, section, #hero {
     box-sizing: border-box;
+}
+
+#category-rects-footer {
+    position: fixed;
+    top: 0;
+    right: 110px;
+    bottom: 85px;
+    width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 400ms ease;
+    z-index: 998;
+}
+
+#category-rects-footer.open {
+    width: 240px;
+}
+
+.footer-rect {
+    flex: 1;
+    width: 100%;
+}
+.footer-cat-block {
+    width: 110px;
+    height: 85px;
+    background: #92f47b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+#cat-arrow {
+    font-size: 22px;
+    color: #000;
+    display: inline-block;
+    transition: transform 400ms ease;
+}
+
+body {
+    animation: fadeIn 400ms ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+a.footer-link {
+    transition: opacity 300ms ease;
+}
+
+#cat-arrow.vertical {
+    transform: rotate(90deg);
 }
