@@ -156,6 +156,18 @@ function findRowCategory(row, indices = {}) {
     return '';
 }
 
+function hexToRgba(hex, alpha = 0.6) {
+    const cleaned = String(hex || '').trim().replace('#', '');
+    if (!/^[0-9a-fA-F]{3,6}$/.test(cleaned)) return `rgba(0,0,0,${alpha})`;
+    const full = cleaned.length === 3
+        ? cleaned.split('').map(ch => ch + ch).join('')
+        : cleaned;
+    const r = parseInt(full.slice(0, 2), 16);
+    const g = parseInt(full.slice(2, 4), 16);
+    const b = parseInt(full.slice(4, 6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+}
+
 // ─────────────────────────────────────────────
 // MARCADORES
 // ─────────────────────────────────────────────
@@ -203,17 +215,18 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
-        ? `<img src="${imageUrl}" alt="${archivo}" style="width:100%;height:auto;border-radius:0;display:block;">`
-        : `<img src="https://placehold.co/320x200?text=NO+IMG" alt="Archivo no disponible" style="width:100%;height:auto;border-radius:0;display:block;">`;
+        ? `<img src="${imageUrl}" alt="${archivo}" style="width:100%;height:auto;border-radius:0;display:block;background:transparent;">`
+        : `<img src="https://placehold.co/320x200?text=NO+IMG" alt="Archivo no disponible" style="width:100%;height:auto;border-radius:0;display:block;background:transparent;">`;
 
     const popupText = relato
-        ? `<p style="margin:0;line-height:1.4;color:#111;font-family:'Courier New',Courier,monospace;font-size:13px;">${relato}</p>`
+        ? `<p style="margin:0;line-height:1.4;color:#000;font-family:'Courier New',Courier,monospace;font-size:15px;background:transparent;padding:12px;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
-    const popupContent = `<div style="background-color:${categoryColor};padding:0;border-radius:0;opacity:0.6;">${popupImage}${popupText}</div>`;
+    const categoryBackground = hexToRgba(categoryColor, 0.3);
+    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};padding:0;border-radius:0;overflow:hidden;display:block;width:100%;">${popupImage}${popupText}</div>`;
 
-    const popup = new mapboxgl.Popup({ offset: 10, closeButton: true })
+    const popup = new mapboxgl.Popup({ offset: 10, closeButton: true, className: 'category-popup' })
         .setHTML(popupContent);
 
     const marker = new mapboxgl.Marker(el)

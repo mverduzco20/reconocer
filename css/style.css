@@ -291,9 +291,9 @@ a.footer-link {
 /* Asegurar que el texto dentro del popup sea totalmente opaco y con pequeño padding */
 .category-popup .popup-inner p {
     margin: 0;
-    padding: 8px;
-    color: #111;
+    padding: 12px;
+    color: #000;
     opacity: 1;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 11px;
+    font-size: 15px;
 }
