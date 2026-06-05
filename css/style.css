@@ -516,3 +516,18 @@ a.footer-link {
    overflow: hidden;
    box-sizing: border-box;
 }
+
+.category-popup .mapboxgl-popup-content {
+    animation: popupFadeIn 500ms ease forwards;
+}
+
+@keyframes popupFadeIn {
+    from { 
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
