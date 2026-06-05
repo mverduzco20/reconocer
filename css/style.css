@@ -52,7 +52,7 @@ html, body {
    display: block;
    width: 100%;
    height: 100%;
-   filter: grayscale(1) sepia(0.45) hue-rotate(186deg) saturate(3.2) brightness(1.1) contrast(1.05);
+   filter: grayscale(1) brightness(1.1) contrast(1.05) sepia(0.4) hue-rotate(195deg) saturate(3);
 }
 
 .hero-collage--fallback {
