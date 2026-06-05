@@ -16,6 +16,7 @@ html, body {
     scroll-behavior: smooth;
     font-family: "Courier New", Courier, monospace;
     -webkit-font-smoothing: antialiased;
+    background-color: #f1f1f1;
 }
 
 /* Map containers (acepta ambos ids por compatibilidad) */
@@ -28,11 +29,26 @@ html, body {
     background: #f0f0f0;
 }
 #home {
-   background-image: url('./img/home.png');
-   background-size: cover;
+   background-color: #f1f1f1;
+}
+
+#hero {
+   height: calc(100vh - 55px);
+   min-height: calc(100vh - 55px);
+   box-sizing: border-box;
+   background-color: #f1f1f1;
+   background-image: url('../img/home.png');
+   background-size: 100% calc(100vh - 55px);
    background-position: center top;
    background-repeat: no-repeat;
    background-attachment: fixed;
+}
+
+.page-docs,
+.page-docs main {
+   background-color: #f1f1f1;
+   min-height: 100vh;
+   box-sizing: border-box;
 }
 #map-container {
     position: relative;
