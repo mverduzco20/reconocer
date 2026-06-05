@@ -135,14 +135,14 @@ html, body {
 
 /* Categories nav (map page) */
 #categories-nav {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 85px;
-    width: 110px;
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
+   position: fixed;
+   top: 0;
+   right: 0;
+   bottom: 85px;
+   width: 55px;
+   display: flex;
+   flex-direction: column;
+   z-index: 1000;
 }
 
 .categories-wrapper {
@@ -184,12 +184,8 @@ html, body {
 }
 
 .category-button::before {
-    content: "×";
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 18px;
+   content: "";
+   display: none;
 }
 
 #memoria-button  { background-color: #e9c47e; }
@@ -206,16 +202,16 @@ main, section, #hero {
 }
 
 #category-rects-footer {
-    position: fixed;
-    top: 0;
-    right: 110px;
-    bottom: 85px;
-    width: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: width 400ms ease;
-    z-index: 998;
+   position: fixed;
+   top: 0;
+   right: 55px;
+   bottom: 85px;
+   width: 0;
+   display: flex;
+   flex-direction: column;
+   overflow: hidden;
+   transition: width 400ms ease;
+   z-index: 998;
 }
 
 #category-rects-footer.open {
