@@ -15,11 +15,13 @@
 </audio>
     <main id="home">
         <section id="hero" style="display:flex; align-items:center; justify-content:center; position:relative;">
-            <div>
+            <div id="hero-collage" class="hero-collage" aria-hidden="true"></div>
+            <div class="hero-content">
                 <h1><span class="reconocer-title">{0e}</span>conocer</h1>
                 <p>Bienvenido — Desplázate hacia abajo para más contenido.</p>
             </div>
-            <div style="position:absolute; top:25px; left:50%; transform:translateX(-50%); text-align:center; font-family:'Courier New', Courier, monospace; font-size:12px; font-weight:bold; color:#0000ff; letter-spacing:1px; width:auto;">
+            <img src="./img/logocentroazul.png" alt="logo" style="position:absolute; top:12px; left:18px; height:20px; width:auto;">
+            <div style="position:absolute; top:12px; left:50%; transform:translateX(-50%); text-align:center; font-family:'Courier New', Courier, monospace; font-size:12px; font-weight:bold; color:#0000ff; letter-spacing:1px; width:auto;">
                 <p style="margin:0 0 8px 0;">Scroll para<br>seguir explorando</p>
                 <div style="width:1px; height:28px; background:#0000ff; margin:0 auto;"></div>
             </div>
@@ -132,6 +134,63 @@ document.querySelector('a[href="./index.html"]')?.classList.add('active-page');
 <script>
 window.addEventListener('load', () => {
    window.scrollTo({ top: 0, behavior: 'instant' });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+   const host = document.getElementById('hero-collage');
+   if (!host) return;
+
+   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+   const tileDelay = 0.05;
+   const startDelay = 0.45;
+   const tileDuration = 0.6;
+
+   function useSvgFallback() {
+      host.classList.add('hero-collage--fallback');
+      host.style.opacity = reducedMotion ? '1' : '';
+   }
+
+   fetch('./img/home-collage.svg')
+      .then(function (res) {
+         if (!res.ok) throw new Error('svg fetch failed');
+         return res.text();
+      })
+      .then(function (svgText) {
+         svgText = svgText.replace(/xlink:href="([^"]+)"/g, function (_, path) {
+            if (path.charAt(0) === '#' || path.indexOf('./img/') === 0 || path.indexOf('http') === 0 || path.indexOf('data:') === 0) {
+               return 'xlink:href="' + path + '"';
+            }
+            return 'xlink:href="./img/' + path + '"';
+         });
+         host.innerHTML = svgText;
+         const svg = host.querySelector('svg');
+         if (svg) {
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+         }
+
+         const tiles = host.querySelectorAll('image, use');
+         if (!tiles.length) {
+            useSvgFallback();
+            return;
+         }
+
+         host.classList.add('is-ready');
+
+         if (reducedMotion) {
+            tiles.forEach(function (tile) { tile.style.opacity = '1'; });
+            return;
+         }
+
+         tiles.forEach(function (tile, i) {
+            tile.style.opacity = '0';
+            tile.style.animation = 'homeTileIn ' + tileDuration + 's ease forwards';
+            tile.style.animationDelay = (startDelay + i * tileDelay) + 's';
+         });
+      })
+      .catch(useSvgFallback);
 });
 </script>
 </body>

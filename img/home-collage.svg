@@ -1,0 +1,160 @@
+<svg id="home-collage-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 1931.27 998.4" preserveAspectRatio="xMidYMid slice">
+            <defs>
+                <image id="image" width="591" height="591" xlink:href="./img/230.jpg" />
+                <image id="image1" width="591" height="591" xlink:href="./img/e1.jpg" />
+                <image id="image2" width="591" height="591" xlink:href="./img/e11.jpg" />
+                <image id="image3" width="591" height="591" xlink:href="./img/e12.jpg" />
+                <image id="image4" width="591" height="591" xlink:href="./img/e13.jpg" />
+                <image id="image5" width="591" height="591" xlink:href="./img/e14.jpg" />
+                <image id="image6" width="591" height="591" xlink:href="./img/e15.jpg" />
+                <image id="image7" width="591" height="591" xlink:href="./img/e16.jpg" />
+                <image id="image8" width="591" height="591" xlink:href="./img/e17.jpg" />
+                <image id="image9" width="591" height="591" xlink:href="./img/e18.jpg" />
+                <image id="image10" width="591" height="591" xlink:href="./img/e19.jpg" />
+                <image id="image11" width="591" height="591" xlink:href="./img/e2.jpg" />
+                <image id="image12" width="591" height="591" xlink:href="./img/e20.jpg" />
+                <image id="image13" width="591" height="591" xlink:href="./img/e21.jpg" />
+                <image id="image14" width="591" height="591" xlink:href="./img/e22.jpg" />
+                <image id="image15" width="591" height="591" xlink:href="./img/e23.jpg" />
+                <image id="image16" width="591" height="591" xlink:href="./img/e24.jpg" />
+                <image id="image17" width="591" height="591" xlink:href="./img/e25.jpg" />
+                <image id="image18" width="591" height="591" xlink:href="./img/e3.jpg" />
+            </defs>
+            <use transform="translate(866.87 229.96) scale(.12)" xlink:href="#image13" />
+            <use transform="translate(1074.6278 445.487) scale(.1207)" xlink:href="#image6" />
+            <image width="787" height="787" transform="translate(1429.3561 696.9513) scale(.1326)"
+                xlink:href="./img/e4.jpg" />
+            <image width="591" height="591" transform="translate(536.25 855.45) scale(.24)" xlink:href="./img/e5.jpg" />
+            <use transform="translate(503.28 830.97) scale(.24)" xlink:href="#image6" />
+            <use transform="translate(465.33 798.93) scale(.24)" xlink:href="#image1" />
+            <image width="591" height="591" transform="translate(1240.6281) scale(.24)" xlink:href="./img/e6.jpg" />
+            <image width="591" height="591" transform="translate(1290.5282 53.5977) scale(.24)" xlink:href="./img/e7.jpg" />
+            <image width="591" height="591" transform="translate(1320.7744 88.7948) scale(.223)"
+                xlink:href="./img/e8.jpg" />
+            <image width="591" height="591" transform="translate(1346.3975 128.5005) scale(.2317)"
+                xlink:href="./img/e9.jpg" />
+            <image width="591" height="591" transform="translate(1377.05 161.0614) scale(.2207)"
+                xlink:href="./img/m1.jpg" />
+            <image width="591" height="591" transform="translate(2.59 798.96) scale(.24)" xlink:href="./img/m10.jpg" />
+            <image width="591" height="591" transform="translate(1480.7475 472.3318) scale(.24)"
+                xlink:href="./img/m11.jpg" />
+            <use transform="translate(308.06 547.99) scale(.22)" xlink:href="#image5" />
+            <use transform="translate(31.83 708.2) scale(.32)" xlink:href="#image" />
+            <image width="591" height="591" transform="translate(70.69 661.22) scale(.32)" xlink:href="./img/m12.jpg" />
+            <image width="591" height="591" transform="translate(125.46 612.24) scale(.29)" xlink:href="./img/m13.jpg" />
+            <use transform="translate(201.23 566.94) scale(.24)" xlink:href="#image18" />
+            <use transform="translate(1497.4542 412.7493) scale(.24)" xlink:href="#image14" />
+            <use transform="translate(226.47 513.48) scale(.24)" xlink:href="#image17" />
+            <use transform="translate(1523.504 362.1663) scale(.24)" xlink:href="#image15" />
+            <use transform="translate(1594.424 321.6921) scale(.24)" xlink:href="#image8" />
+            <use transform="translate(1640.2431 291.2463) scale(.24)" xlink:href="#image10" />
+            <use transform="translate(1679.6763 250.7721) scale(.24)" xlink:href="#image13" />
+            <image width="591" height="591" transform="translate(1711.1631 179.8521) scale(.24)"
+                xlink:href="./img/m14.jpg" />
+            <image width="591" height="591" transform="translate(1750.5963 136.0686) scale(.24)"
+                xlink:href="./img/m15.jpg" />
+            <image width="591" height="591" transform="translate(1767.9742 88.7948) scale(.24)"
+                xlink:href="./img/m16.jpg" />
+            <image width="591" height="591" transform="translate(1789.4266) scale(.24)" xlink:href="./img/m17.jpg" />
+            <use transform="translate(1444.7716 683.1878) scale(.1623)" xlink:href="#image3" />
+            <image width="591" height="591" transform="translate(1472.5786 614.1718) scale(.1979)"
+                xlink:href="./img/m18.jpg" />
+            <use transform="translate(432.36 754.53) scale(.24)" xlink:href="#image16" />
+            <image width="591" height="591" transform="translate(405.81 713.24) scale(.24)" xlink:href="./img/m2.jpg" />
+            <use transform="translate(390.49 678.44) scale(.22)" xlink:href="#image11" />
+            <use transform="translate(372.31 637.86) scale(.18)" xlink:href="#image4" />
+            <image width="591" height="591" transform="translate(1406.3001 183.6286) scale(.2217)"
+                xlink:href="./img/m20.jpg" />
+            <image width="591" height="591" transform="translate(1441.2995 210.5265) scale(.1941)"
+                xlink:href="./img/m22.jpg" />
+            <image width="591" height="591" transform="translate(1467.7204 240.7417) scale(.2144)"
+                xlink:href="./img/m23.jpg" />
+            <use transform="translate(230.47 485.02) scale(.24)" xlink:href="#image9" />
+            <image width="591" height="591" transform="translate(267.22 455.63) scale(.24)" xlink:href="./img/m24.jpg" />
+            <image width="591" height="591" transform="translate(293.16 412.75) scale(.24)" xlink:href="./img/m25.jpg" />
+            <image width="787" height="787" transform="translate(1609.2091 905.9822) scale(.1174)"
+                xlink:href="./img/m26.jpg" />
+            <image width="591" height="591" transform="translate(222.24 196.96) scale(.13)" xlink:href="./img/m27.jpg" />
+            <image width="591" height="591" transform="translate(226.66 306.29) scale(.13)" xlink:href="./img/m28.jpg" />
+            <image width="591" height="591" transform="translate(264.64 344.28) scale(.15)" xlink:href="./img/m29.jpg" />
+            <image width="787" height="787" transform="translate(1567.0678 893.4759) scale(.1123)"
+                xlink:href="./img/m3.jpg" />
+            <image width="787" height="787" transform="translate(1520.4504 882.8867) scale(.1185)"
+                xlink:href="./img/m30.jpg" />
+            <image width="787" height="787" transform="translate(1498.6342 864.8526) scale(.1168)"
+                xlink:href="./img/m31.jpg" />
+            <image width="787" height="787" transform="translate(1464.7584 849.0164) scale(.1126)"
+                xlink:href="./img/m32.jpg" />
+            <image width="787" height="787" transform="translate(1441.2995 831.2559) scale(.1141)"
+                xlink:href="./img/m33.jpg" />
+            <image width="591" height="591" transform="translate(246.04 148.32) scale(.16)" xlink:href="./img/m34.jpg" />
+            <image width="591" height="591" transform="translate(261.08 104.03) scale(.18)" xlink:href="./img/m35.jpg" />
+            <image width="591" height="591" transform="translate(1614.1406 555.0793) scale(.1733)"
+                xlink:href="./img/m36.jpg" />
+            <image width="591" height="591" transform="translate(690.37) scale(.14)" xlink:href="./img/m37.jpg" />
+            <image width="591" height="591" transform="translate(669.82 35.97) scale(.14)" xlink:href="./img/m38.jpg" />
+            <image width="591" height="591" transform="translate(654.91 66.98) scale(.12)" xlink:href="./img/m39.jpg" />
+            <image width="591" height="591" transform="translate(627.74 102.44) scale(.14)" xlink:href="./img/m4.jpg" />
+            <image width="591" height="591" transform="translate(273.84 84.79) scale(.12)" xlink:href="./img/m40.jpg" />
+            <image width="591" height="591" transform="translate(1640.2431 582.5776) scale(.1713)"
+                xlink:href="./img/m41.jpg" />
+            <image width="591" height="591" transform="translate(211.4 38.59) scale(.13)" xlink:href="./img/m43.jpg" />
+            <image width="591" height="591" transform="translate(262.15 7.58) scale(.1)" xlink:href="./img/m44.jpg" />
+            <image width="591" height="591" transform="translate(203.89 87.29) scale(.1)" xlink:href="./img/m45.jpg" />
+            <image width="591" height="591" transform="translate(1270.1449 265.1874) scale(.1809)"
+                xlink:href="./img/m48.jpg" />
+            <image width="591" height="591" transform="translate(1835.8486 535.6442) scale(.1615)"
+                xlink:href="./img/m5.jpg" />
+            <image width="591" height="591" transform="translate(1655.4171 601.7455) scale(.1905)"
+                xlink:href="./img/m6.jpg" />
+            <image width="591" height="591" transform="translate(1676.8743 623.8342) scale(.2185)"
+                xlink:href="./img/m7.jpg" />
+            <image width="591" height="591" transform="translate(1733.7411 622.9716) scale(.1884)"
+                xlink:href="./img/m8.jpg" />
+            <image width="591" height="591" transform="translate(1805.0812 576.9119) scale(.1588)"
+                xlink:href="./img/o1.jpg" />
+            <image width="591" height="591" transform="translate(1261.167 291.2463) scale(.1642)"
+                xlink:href="./img/o10.jpg" />
+            <image width="591" height="591" transform="translate(1237.9911 307.7322) scale(.1819)"
+                xlink:href="./img/o11.jpg" />
+            <image width="787" height="787" transform="translate(1201.9453 327.0167) scale(.1505)"
+                xlink:href="./img/o12.jpg" />
+            <image width="787" height="787" transform="translate(1186.5031 306.4122) scale(.116)"
+                xlink:href="./img/o13.jpg" />
+            <use transform="translate(980.27 619.15) scale(.16)" xlink:href="#image11" />
+            <image width="591" height="591" transform="translate(945.12 643.29) scale(.18)" xlink:href="./img/o14.jpg" />
+            <image width="591" height="591" transform="translate(891.66 683.19) scale(.21)" xlink:href="./img/o15.jpg" />
+            <use transform="translate(867.73 719.51) scale(.21)" xlink:href="#image3" />
+            <image width="591" height="591" transform="translate(1147.9332 270.3919) scale(.1736)"
+                xlink:href="./img/o16.jpg" />
+            <image width="591" height="591" transform="translate(854.52 746.98) scale(.2)" xlink:href="./img/o17.jpg" />
+            <use transform="translate(812.14 778.1) scale(.22)" xlink:href="#image2" />
+            <use transform="translate(777.47 805.65) scale(.24)" xlink:href="#image6" />
+            <use transform="translate(741.22 855.45) scale(.24)" xlink:href="#image12" />
+            <use transform="translate(1121.6276 249.743) scale(.1405)" xlink:href="#image4" />
+            <use transform="translate(670.32 872.69) scale(.21)" xlink:href="#image5" />
+            <use transform="translate(814.01 202.87) scale(.13)" xlink:href="#image15" />
+            <image width="591" height="591" transform="translate(1077.5481 195.0181) scale(.1885)"
+                xlink:href="./img/o18.jpg" />
+            <use transform="translate(1053.7965 160.0538) rotate(2.0201) scale(.1651)" xlink:href="#image10" />
+            <use transform="translate(934.67 190.97) scale(.12)" xlink:href="#image17" />
+            <use transform="translate(906.29 250.72) scale(.12)" xlink:href="#image9" />
+            <use transform="translate(783.24 184.59) scale(.12)" xlink:href="#image12" />
+            <use transform="translate(754.05 157.52) scale(.11)" xlink:href="#image8" />
+            <use transform="translate(732.1 140.11) scale(.1)" xlink:href="#image14" />
+            <use transform="translate(709.63 117.8) scale(.11)" xlink:href="#image18" />
+            <use transform="translate(182.76 109.27) scale(.1)" xlink:href="#image7" />
+            <use transform="translate(136 129.96) scale(.1)" xlink:href="#image13" />
+            <use transform="translate(85.03 148.46) scale(.13)" xlink:href="#image" />
+            <use transform="translate(39.1 173.67) scale(.14)" xlink:href="#image2" />
+            <use transform="translate(0 190.04) scale(.15)" xlink:href="#image11" />
+            <image width="591" height="591" transform="translate(1043.972 161.6696) scale(-.1299 .1299)"
+                xlink:href="./img/o19.jpg" />
+            <use transform="translate(999.34 133) scale(.14)" xlink:href="#image7" />
+            <use transform="translate(1118.2127 414.1462) scale(.1207)" xlink:href="#image1" />
+            <use transform="translate(1168.8334 385.4742) scale(.097)" xlink:href="#image16" />
+            <image width="591" height="591" transform="translate(285.36 .42) scale(.08)" xlink:href="./img/o2.jpg" />
+            <image width="591" height="591" transform="translate(255.23 58.21) scale(.06)" xlink:href="./img/o20.jpg" />
+            <image width="591" height="591" transform="translate(279.9 122.62) scale(.11)" xlink:href="./img/o21.jpg" />
+</svg>
+
