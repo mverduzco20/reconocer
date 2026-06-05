@@ -46,7 +46,7 @@ html, body {
     right: 0;
     bottom: 0;
     height: 85px;
-    background: #5959d2;
+    background: #0000ff;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -189,7 +189,7 @@ html, body {
 }
 
 #memoria-button  { background-color: #e9c47e; }
-#oficio-button   { background-color: #5959d2; }
+#oficio-button   { background-color: #0000ff; }
 #refugio-button  { background-color: #92f47b; }
 #encuentro-button{ background-color: #ec00ea; }
 
@@ -223,7 +223,7 @@ main, section, #hero {
     width: 100%;
 }
 .footer-cat-block {
-    width: 110px;
+    width: 55px;
     height: 85px;
     background: #92f47b;
     display: flex;
@@ -260,7 +260,7 @@ a.footer-link {
 }
 
 #cat-arrow.vertical {
-    transform: rotate(90deg);
+   transform: rotate(-90deg);
 }
 
 /* Popup category: eliminar fondo blanco por defecto y permitir que el color de la "popup-inner" rellene todo */
