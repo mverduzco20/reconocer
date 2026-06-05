@@ -57,6 +57,13 @@
                </div>
            </div>
         </footer>
+        <div id="map-splash">
+            <div id="splash-overlay"></div>
+            <div id="splash-modal">
+                <p>Estos hitos fueron rescatados a partir de lo que la gente reconoce a la hora de intentar orientarse dentro de San Ángel, ciudad de México. La esperanza es que esto llegue a más personas, más lugares, y el mapa siga creciendo.</p>
+                <button id="splash-btn">ACEPTAR</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
@@ -68,7 +75,7 @@
             const href = this.getAttribute('href');
             if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
             e.preventDefault();
-            document.body.style.transition = 'opacity 350ms ease';
+            document.body.style.transition = 'opacity 600ms ease';
             document.body.style.opacity = '0';
             setTimeout(() => { window.location.href = href; }, 360);
         });
@@ -130,6 +137,17 @@ document.querySelectorAll('.footer-link').forEach(link => {
        link.classList.add('active-page');
    }
 });
+</script>
+<script>
+const splash = document.getElementById('map-splash');
+const splashBtn = document.getElementById('splash-btn');
+
+if (splashBtn) {
+   splashBtn.addEventListener('click', () => {
+       splash.classList.add('hidden');
+       setTimeout(() => { splash.style.display = 'none'; }, 600);
+   });
+}
 </script>
 </body>
 </html>

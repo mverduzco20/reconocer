@@ -54,7 +54,7 @@
                 const href = this.getAttribute('href');
                 if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
                 e.preventDefault();
-                document.body.style.transition = 'opacity 350ms ease';
+                document.body.style.transition = 'opacity 600ms ease';
                 document.body.style.opacity = '0';
                 setTimeout(() => { window.location.href = href; }, 360);
             });
@@ -114,6 +114,11 @@ document.querySelectorAll('.footer-link').forEach(link => {
    link.classList.remove('active-page');
 });
 document.querySelector('a[href="./index.html"]')?.classList.add('active-page');
+</script>
+<script>
+window.addEventListener('load', () => {
+   window.scrollTo({ top: 0, behavior: 'instant' });
+});
 </script>
 </body>
 
