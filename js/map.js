@@ -219,12 +219,12 @@ function agregarMarcador(map, row, markers, indices = {}) {
         : `<img src="https://placehold.co/320x200?text=NO+IMG" alt="Archivo no disponible" style="width:180px;height:180px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`;
 
     const popupText = relato
-        ? `<p style="margin:0;line-height:1.4;color:#000;font-family:'Courier New',Courier,monospace;font-size:11px;background:transparent;padding:8px;width:160px;min-width:160px;max-width:160px;box-sizing:border-box;align-self:stretch;">${relato}</p>`
+        ? `<p style="margin:0;line-height:1.4;color:#000;font-family:'Courier New',Courier,monospace;font-size:11px;background:transparent;padding:8px;width:180px;height:180px;box-sizing:border-box;overflow-y:auto;word-break:break-word;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
-    const categoryBackground = hexToRgba(categoryColor, 0.5);
-    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};padding:0;border-radius:0;overflow:hidden;display:flex;flex-direction:row;align-items:flex-start;width:100%;">${popupImage}${popupText}</div>`;
+    const categoryBackground = hexToRgba(categoryColor, 0.7);
+    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};padding:0;border-radius:0;overflow:hidden;display:flex;flex-direction:row;align-items:flex-start;width:360px;height:180px;">${popupImage}${popupText}</div>`;
 
     const popup = new mapboxgl.Popup({ 
         offset: 10, 
