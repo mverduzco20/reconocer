@@ -294,6 +294,7 @@ function initCategoryUI(map, markers) {
             if (rectsFooter) rectsFooter.classList.toggle('open');
             const arrow = document.getElementById('cat-arrow');
             if (arrow) arrow.classList.toggle('vertical');
+            categoriesButton.classList.toggle('underlined');
         });
     }
 

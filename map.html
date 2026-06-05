@@ -123,5 +123,13 @@ window.addEventListener('beforeunload', () => {
    localStorage.setItem('audioVolume', audio.volume);
 });
 </script>
+<script>
+document.querySelectorAll('.footer-link').forEach(link => {
+   const href = link.getAttribute('href');
+   if (href && href.includes('map.html')) {
+       link.classList.add('active-page');
+   }
+});
+</script>
 </body>
 </html>
