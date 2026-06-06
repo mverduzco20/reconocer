@@ -17,8 +17,9 @@
         <section id="hero" style="display:flex; align-items:center; justify-content:center; position:relative;">
             <div id="hero-collage" class="hero-collage" aria-hidden="true"></div>
             <div class="hero-content">
-                <h1><span class="reconocer-title">{0e}</span>conocer</h1>
-                <p>Bienvenido — Desplázate hacia abajo para más contenido.</p>
+                <p style="position:absolute; top:-50px; left:0; font-family:'Courier New',Courier,monospace; font-size:13px; color:#0000ff; letter-spacing:2px; margin:0; text-transform:uppercase; white-space:nowrap;">ORIENTACIÓN URBANA DESDE</p>
+                <h1 class="hero-reconocer-title">(<span class="reconocer-alt-r">R</span>e)conocer</h1>
+                <p style="position:absolute; bottom:-50px; right:-200px; font-family:'Courier New',Courier,monospace; font-size:13px; color:#0000ff; letter-spacing:2px; margin:0; text-transform:uppercase; white-space:nowrap;">EL RECORRIDO COTIDIANO</p>
             </div>
             <img src="./img/logocentroazul.png" alt="logo" style="position:absolute; top:12px; left:18px; height:20px; width:auto;">
             <div style="position:absolute; top:12px; left:50%; transform:translateX(-50%); text-align:center; font-family:'Courier New', Courier, monospace; font-size:12px; font-weight:bold; color:#0000ff; letter-spacing:1px; width:auto;">
@@ -27,8 +28,7 @@
             </div>
         </section>
 
-        <section id="map-preview" style="height:4188px; position:relative;">
-            <img src="./img/Contexto.svg" alt="contexto" style="position:absolute; right:0; top:100px; max-width:400px; height:auto; display:block; z-index:10;">
+        <section id="map-preview" style="height:4188px; position:relative; background-color:#f1f1f1;">
             <div style="position:sticky; top:0; height:100vh; overflow:hidden; margin-top:3188px;">
                 <iframe 
                     src="./map.html" 
@@ -56,6 +56,7 @@
            <a href="./map.html" class="footer-link footer-link-lg">(CARTOGRAFÍA)</a>
        </div>
     </footer>
+    <img src="./img/contexto.png" alt="contexto" class="contexto-img">
     <!-- 
     <prompt>
      - Crea con mapbox un mapa en 'reconocer.html'
@@ -192,6 +193,23 @@ document.addEventListener('DOMContentLoaded', function () {
          });
       })
       .catch(useSvgFallback);
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+   const contexto = document.querySelector('.contexto-img');
+   const mapPreview = document.getElementById('map-preview');
+   if (!contexto || !mapPreview) return;
+
+   function updateContexto() {
+      const heroBottom = mapPreview.getBoundingClientRect().top;
+      const show = heroBottom < window.innerHeight - 80;
+      contexto.classList.toggle('is-visible', show);
+   }
+
+   window.addEventListener('scroll', updateContexto, { passive: true });
+   window.addEventListener('resize', updateContexto);
+   updateContexto();
 });
 </script>
 </body>

@@ -1,10 +1,18 @@
 /* Fuentes personalizadas */
 @font-face {
-    font-family: 'Reconocer';
-    src: url('./Reconocert-Regular.woff') format('woff'),
-         url('./Reconocert-Regular.ttf') format('truetype');
+    font-family: 'REconocer';
+    src: url('./REconocer-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'REconocer Alt R';
+    src: url('./REconocer-AltR.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
 /* Reset y tipografía general */
@@ -85,7 +93,18 @@ html, body {
 }
 
 #hero .hero-content {
-   position: relative;
+   position: absolute;
+   left: 22%;
+   bottom: 40%;
+   text-align: left;
+}
+
+#hero .hero-content p {
+   margin: 0;
+}
+
+#hero .hero-content p + p {
+   margin-top: 0.35em;
 }
 
 #hero .hero-content {
@@ -334,11 +353,30 @@ body {
     animation: fadeIn 400ms ease forwards;
 }
 
-/* Estilos para tipografía Reconocer */
+/* Estilos para tipografía REconocer */
 .reconocer-title {
-    font-family: 'Reconocer', serif;
-    text-transform: uppercase;
+  font-family: 'REconocer', serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-feature-settings: "ss01" 1, "ss02" 1;
+}
+
+#hero .reconocer-title {
+    color: rgb(0, 0, 255);
+}
+
+.reconocer-alt-r {
+    font-family: 'REconocer Alt R', 'REconocer', serif;
+}
+
+#hero .hero-reconocer-title {
+    font-family: 'REconocer', serif;
+    color: rgb(0, 0, 255);
+    margin: 0;
+    font-size: 4.75em;
     letter-spacing: 2px;
+    font-weight: normal;
+    line-height: 1.1;
 }
 
 @keyframes fadeIn {
@@ -382,11 +420,11 @@ a.footer-link {
 /* Asegurar que el texto dentro del popup sea totalmente opaco y con pequeño padding */
 .category-popup .popup-inner p {
     margin: 0;
-    padding: 12px;
+    padding: 17px;
     color: #000;
     opacity: 1;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 15px;
+    font-size: 21px;
 }
 
 .footer-link-lg {
@@ -441,23 +479,24 @@ a.footer-link {
 #splash-modal {
    position: relative;
    background: #fff;
-   padding: 40px;
-   max-width: 480px;
-   width: 90%;
+   padding: 28px;
+   max-width: 400px;
+   width: 82%;
    z-index: 1;
    display: flex;
    flex-direction: column;
    align-items: center;
-   gap: 30px;
+   gap: 20px;
    font-family: "Courier New", Courier, monospace;
    font-size: 13px;
    line-height: 1.6;
-   color: #000;
+   color: #0000ff;
 }
 
 #splash-modal p {
    margin: 0;
    text-align: left;
+   color: #0000ff;
 }
 
 #splash-btn {
@@ -507,7 +546,7 @@ a.footer-link {
 
 .rect-text {
    font-family: "Courier New", Courier, monospace;
-   font-size: 11px;
+   font-size: 13px;
    line-height: 1.4;
    color: #000;
    margin: 0;
@@ -515,6 +554,9 @@ a.footer-link {
    flex: 1;
    overflow: hidden;
    box-sizing: border-box;
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-end;
 }
 
 .category-popup .mapboxgl-popup-content {
@@ -530,4 +572,26 @@ a.footer-link {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.contexto-img {
+   position: fixed;
+   right: 0;
+   bottom: calc(55px + 16px);
+   width: 11.13cm;
+   height: 14.90cm;
+   max-width: 42vw;
+   max-height: 55vh;
+   object-fit: contain;
+   display: block;
+   z-index: 1001;
+   pointer-events: none;
+   opacity: 0;
+   transition: opacity 500ms ease;
+   visibility: hidden;
+}
+
+.contexto-img.is-visible {
+   opacity: 1;
+   visibility: visible;
 }
