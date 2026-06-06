@@ -373,11 +373,35 @@ body {
     font-family: 'REconocer', serif;
     color: rgb(0, 0, 255);
     margin: 0;
-    font-size: calc(4.75em + 1pt);
-    letter-spacing: 2px;
+    font-size: calc(4.75em + 2pt);
     font-weight: normal;
     line-height: 1.1;
-    transform: translate(145px, 11px);
+    transform: translate(145px, 18px);
+}
+
+#hero .hero-subtitle-top {
+    position: fixed;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
+    color: #0000ff;
+    margin: 0;
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 10;
+    transform: translate(5vw, 28vh);
+}
+
+#hero .hero-subtitle-bottom {
+    position: fixed;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
+    color: #0000ff;
+    margin: 0;
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 10;
+    bottom: 38%;
+    right: 17%;
 }
 
 @keyframes fadeIn {
