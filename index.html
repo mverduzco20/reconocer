@@ -17,9 +17,9 @@
         <section id="hero" style="display:flex; align-items:center; justify-content:center; position:relative;">
             <div id="hero-collage" class="hero-collage" aria-hidden="true"></div>
             <div class="hero-content">
-                <p style="position:absolute; top:-50px; left:0; font-family:'Courier New',Courier,monospace; font-size:13px; color:#0000ff; letter-spacing:2px; margin:0; text-transform:uppercase; white-space:nowrap;">ORIENTACIÓN URBANA DESDE</p>
+                <p style="position:fixed; top:28%; left:5%; font-family:'Courier New',Courier,monospace; font-size:20px; color:#0000ff; letter-spacing:2px; margin:0; text-transform:uppercase; white-space:nowrap; z-index:10;">ORIENTACIÓN URBANA DESDE</p>
                 <h1 class="hero-reconocer-title">(<span class="reconocer-alt-r">R</span>e)conocer</h1>
-                <p style="position:absolute; bottom:-50px; right:-200px; font-family:'Courier New',Courier,monospace; font-size:13px; color:#0000ff; letter-spacing:2px; margin:0; text-transform:uppercase; white-space:nowrap;">EL RECORRIDO COTIDIANO</p>
+                <p style="position:fixed; bottom:38%; right:17%; font-family:'Courier New',Courier,monospace; font-size:20px; color:#0000ff; letter-spacing:2px; margin:0; text-transform:uppercase; white-space:nowrap; z-index:10;">EL RECORRIDO COTIDIANO</p>
             </div>
             <img src="./img/logocentroazul.png" alt="logo" style="position:absolute; top:12px; left:18px; height:20px; width:auto;">
             <div style="position:absolute; top:12px; left:50%; transform:translateX(-50%); text-align:center; font-family:'Courier New', Courier, monospace; font-size:12px; font-weight:bold; color:#0000ff; letter-spacing:1px; width:auto;">
@@ -27,6 +27,8 @@
                 <div style="width:1px; height:28px; background:#0000ff; margin:0 auto;"></div>
             </div>
         </section>
+
+        <img src="./img/city.png" alt="city" style="right:0; margin:0; padding:0; height:calc(100vh - 55px); width:auto; max-width:100vw; object-fit:contain; object-position:right bottom; display:block; z-index:1001; pointer-events:none; mix-blend-mode:multiply;">
 
         <section id="map-preview" style="height:4188px; position:relative; background-color:#f1f1f1;">
             <div style="position:sticky; top:0; height:100vh; overflow:hidden; margin-top:3188px;">
@@ -56,7 +58,6 @@
            <a href="./map.html" class="footer-link footer-link-lg">(CARTOGRAFÍA)</a>
        </div>
     </footer>
-    <img src="./img/contexto.png" alt="contexto" class="contexto-img">
     <!-- 
     <prompt>
      - Crea con mapbox un mapa en 'reconocer.html'
@@ -183,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
          if (reducedMotion) {
             tiles.forEach(function (tile) { tile.style.opacity = '1'; });
+            positionCityImage();
             return;
          }
 
@@ -191,9 +193,40 @@ document.addEventListener('DOMContentLoaded', function () {
             tile.style.animation = 'homeTileIn ' + tileDuration + 's ease forwards';
             tile.style.animationDelay = (startDelay + i * tileDelay) + 's';
          });
+
+         positionCityImage();
       })
       .catch(useSvgFallback);
 });
+
+function positionCityImage() {
+   const home = document.getElementById('home');
+   const city = document.querySelector('img[alt="city"]');
+   const hero = document.getElementById('hero');
+   const svg = document.querySelector('#hero-collage svg');
+   if (!home || !city || !hero || !svg) return;
+
+   home.style.position = 'relative';
+
+   let maxBottom = 0;
+   svg.querySelectorAll('image, use').forEach(function (el) {
+      try {
+         const box = el.getBBox();
+         maxBottom = Math.max(maxBottom, box.y + box.height);
+      } catch (e) {}
+   });
+
+   const vb = svg.viewBox.baseVal;
+   if (!vb || !vb.height) return;
+
+   const scale = hero.offsetHeight / vb.height;
+   city.style.position = 'absolute';
+   city.style.top = (hero.offsetTop + maxBottom * scale + 140) + 'px';
+   city.style.right = '0';
+   city.style.bottom = 'auto';
+}
+
+window.addEventListener('resize', positionCityImage);
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -211,6 +244,24 @@ document.addEventListener('DOMContentLoaded', function () {
    window.addEventListener('resize', updateContexto);
    updateContexto();
 });
+</script>
+<script>
+(function () {
+   if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
+   var files = ['./index.html', './css/style.css'];
+   var stamps = {};
+   function check() {
+      files.forEach(function (url) {
+         fetch(url, { cache: 'no-store', method: 'HEAD' }).then(function (res) {
+            var lm = res.headers.get('Last-Modified') || res.headers.get('ETag') || '';
+            if (stamps[url] && stamps[url] !== lm) location.reload();
+            stamps[url] = lm;
+         }).catch(function () {});
+      });
+   }
+   check();
+   setInterval(check, 1000);
+})();
 </script>
 </body>
 
