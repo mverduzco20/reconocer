@@ -39,22 +39,22 @@ html, body {
     background: #f1f1f1;
 }
 
-/* Mapa de fondo casi blanco (#f1f1f1); el filtro solo afecta el canvas, no los marcadores */
+/* Filtro del canvas del mapa; no afecta marcadores */
 #map-container #mapa {
-    background: #f1f1f1;
+    background: #ffffff;
 }
 
 #map-container .mapboxgl-canvas {
-    filter: brightness(1.16) saturate(0.02) contrast(0.84);
+    filter: brightness(1.22) saturate(0) contrast(0.8);
     transition: filter 300ms ease;
 }
 
 #map-container.map-bg-dark .mapboxgl-canvas {
-    filter: brightness(0.42) saturate(0.06) contrast(1.15);
+    filter: brightness(0.28) saturate(0) contrast(1.2);
 }
 
-#map-container.map-bg-colorful .mapboxgl-canvas {
-    filter: brightness(1.1) saturate(1) contrast(0.9);
+#map-container.map-bg-category .mapboxgl-canvas {
+    filter: brightness(1.12) saturate(1.15) contrast(0.88);
 }
 #home {
    background-color: #f1f1f1;

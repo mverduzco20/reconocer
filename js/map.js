@@ -21,22 +21,24 @@ const MAX_OPEN_POPUPS = 3;
 const MARKER_OPACITY = 0.7;
 const openPopupEntries = [];
 
-const MAP_NEAR_WHITE = '#f1f1f1';
-const MAP_STREET_LINE = '#f0f0f0';
-const MAP_STREET_FILL = '#f2f2f2';
-const MAP_LABEL_LIGHT = '#e8e8e8';
+const MAP_PURE_WHITE = '#ffffff';
+const MAP_STREET_LINE = '#f5f5f5';
+const MAP_STREET_FILL = '#fafafa';
+const MAP_LABEL_LIGHT = '#ececec';
 
 const MAP_DARK_BG = '#000000';
-const MAP_DARK_STREET_FILL = '#141414';
-const MAP_DARK_STREET_LINE = '#3a3a3a';
-const MAP_DARK_LABEL = '#5a5a5a';
+const MAP_DARK_STREET_FILL = '#030303';
+const MAP_DARK_STREET_LINE = '#181818';
+const MAP_DARK_LABEL = '#2a2a2a';
 
-const PROJECT_COLORS = ['#0000ff', '#e9c47e', '#92f47b', '#ec00ea'];
+const MAP_CATEGORY_DEFAULT = '#0000ff';
 
-const MAP_BG_MODES = ['white', 'dark', 'colorful'];
-const MAP_BG_LABELS = ['Mapa blanco', 'Mapa negro', 'Mapa colorido'];
+const MAP_BG_MODES = ['white', 'dark', 'category'];
+const MAP_BG_LABELS = ['Mapa blanco', 'Mapa negro', 'Mapa por categoría'];
 
 let mapBgModeIndex = 0;
+let categoryButtonsRef = null;
+let currentCategoryMapAccent = MAP_CATEGORY_DEFAULT;
 
 function isRoadLayer(id) {
     return /road|street|highway|bridge|tunnel|path|motorway|trunk|primary|secondary|tertiary|residential|service|transport|rail|avenue|calle/i.test(id);
@@ -47,9 +49,9 @@ function setMapContainerMode(color, mode) {
     const mapa = document.getElementById('mapa');
     if (container) {
         container.style.backgroundColor = color;
-        container.classList.remove('map-bg-dark', 'map-bg-colorful');
+        container.classList.remove('map-bg-dark', 'map-bg-category');
         if (mode === 'dark') container.classList.add('map-bg-dark');
-        if (mode === 'colorful') container.classList.add('map-bg-colorful');
+        if (mode === 'category') container.classList.add('map-bg-category');
     }
     if (mapa) mapa.style.backgroundColor = color;
 }
@@ -58,23 +60,23 @@ function applyMapWhiteningEffect(map) {
     const style = map.getStyle();
     if (!style || !Array.isArray(style.layers)) return;
 
-    setMapContainerMode(MAP_NEAR_WHITE, 'white');
+    setMapContainerMode(MAP_PURE_WHITE, 'white');
 
     for (const layer of style.layers) {
         const { id, type } = layer;
         const road = isRoadLayer(id);
         try {
             if (type === 'background') {
-                map.setPaintProperty(id, 'background-color', MAP_NEAR_WHITE);
+                map.setPaintProperty(id, 'background-color', MAP_PURE_WHITE);
             } else if (type === 'fill') {
-                map.setPaintProperty(id, 'fill-color', road ? MAP_STREET_FILL : MAP_NEAR_WHITE);
-                map.setPaintProperty(id, 'fill-opacity', road ? 0.55 : 0.98);
+                map.setPaintProperty(id, 'fill-color', road ? MAP_STREET_FILL : MAP_PURE_WHITE);
+                map.setPaintProperty(id, 'fill-opacity', road ? 0.45 : 1);
             } else if (type === 'fill-extrusion') {
-                map.setPaintProperty(id, 'fill-extrusion-color', MAP_NEAR_WHITE);
-                map.setPaintProperty(id, 'fill-extrusion-opacity', 0.12);
+                map.setPaintProperty(id, 'fill-extrusion-color', MAP_PURE_WHITE);
+                map.setPaintProperty(id, 'fill-extrusion-opacity', 0.08);
             } else if (type === 'line') {
                 map.setPaintProperty(id, 'line-color', MAP_STREET_LINE);
-                map.setPaintProperty(id, 'line-opacity', road ? 0.16 : 0.12);
+                map.setPaintProperty(id, 'line-opacity', road ? 0.14 : 0.08);
             } else if (type === 'symbol') {
                 if (map.getPaintProperty(id, 'text-color') !== undefined) {
                     map.setPaintProperty(id, 'text-color', MAP_LABEL_LIGHT);
@@ -84,9 +86,9 @@ function applyMapWhiteningEffect(map) {
                 }
             } else if (type === 'raster') {
                 map.setPaintProperty(id, 'raster-saturation', -1);
-                map.setPaintProperty(id, 'raster-brightness-min', 0.9);
-                map.setPaintProperty(id, 'raster-brightness-max', 1);
-                map.setPaintProperty(id, 'raster-contrast', 0.08);
+                map.setPaintProperty(id, 'raster-brightness-min', 0.94);
+                map.setPaintProperty(id, 'raster-brightness-max', 1.04);
+                map.setPaintProperty(id, 'raster-contrast', 0.04);
             }
         } catch (_) {
             /* algunas capas no admiten ciertas propiedades */
@@ -114,7 +116,7 @@ function applyMapDarkEffect(map) {
                 map.setPaintProperty(id, 'fill-extrusion-opacity', 0.35);
             } else if (type === 'line') {
                 map.setPaintProperty(id, 'line-color', MAP_DARK_STREET_LINE);
-                map.setPaintProperty(id, 'line-opacity', road ? 0.8 : 0.3);
+                map.setPaintProperty(id, 'line-opacity', road ? 0.55 : 0.18);
             } else if (type === 'symbol') {
                 if (map.getPaintProperty(id, 'text-color') !== undefined) {
                     map.setPaintProperty(id, 'text-color', MAP_DARK_LABEL);
@@ -123,10 +125,10 @@ function applyMapDarkEffect(map) {
                     map.setPaintProperty(id, 'icon-color', MAP_DARK_STREET_LINE);
                 }
             } else if (type === 'raster') {
-                map.setPaintProperty(id, 'raster-saturation', -0.85);
-                map.setPaintProperty(id, 'raster-brightness-min', 0.04);
-                map.setPaintProperty(id, 'raster-brightness-max', 0.18);
-                map.setPaintProperty(id, 'raster-contrast', 0.25);
+                map.setPaintProperty(id, 'raster-saturation', -1);
+                map.setPaintProperty(id, 'raster-brightness-min', 0.01);
+                map.setPaintProperty(id, 'raster-brightness-max', 0.1);
+                map.setPaintProperty(id, 'raster-contrast', 0.3);
             }
         } catch (_) {
             /* algunas capas no admiten ciertas propiedades */
@@ -134,47 +136,66 @@ function applyMapDarkEffect(map) {
     }
 }
 
-function applyMapColorfulEffect(map) {
+function mixHexWithWhite(hex, whiteRatio) {
+    const cleaned = String(hex || '').trim().replace('#', '');
+    if (!/^[0-9a-fA-F]{3,6}$/.test(cleaned)) return MAP_PURE_WHITE;
+    const full = cleaned.length === 3 ? cleaned.split('').map(ch => ch + ch).join('') : cleaned;
+    const r = parseInt(full.slice(0, 2), 16);
+    const g = parseInt(full.slice(2, 4), 16);
+    const b = parseInt(full.slice(4, 6), 16);
+    const mix = (channel) => Math.round(channel + (255 - channel) * whiteRatio);
+    return `#${[mix(r), mix(g), mix(b)].map(v => v.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function getCurrentMapBgMode() {
+    return MAP_BG_MODES[mapBgModeIndex];
+}
+
+function getCategoryAccentFromButtons(catButtons) {
+    if (!catButtons || !catButtons.length) return MAP_CATEGORY_DEFAULT;
+    const active = [...catButtons].filter(btn => btn.classList.contains('active'));
+    if (!active.length) return MAP_CATEGORY_DEFAULT;
+    const lastActive = active[active.length - 1];
+    return getCategoryColor(lastActive.dataset.category);
+}
+
+function applyMapCategoryColorEffect(map, accentColor) {
     const style = map.getStyle();
     if (!style || !Array.isArray(style.layers)) return;
 
-    setMapContainerMode(MAP_NEAR_WHITE, 'colorful');
+    const color = accentColor || MAP_CATEGORY_DEFAULT;
+    currentCategoryMapAccent = color;
+    const streetFill = mixHexWithWhite(color, 0.9);
+    const labelColor = mixHexWithWhite(color, 0.62);
 
-    let roadColorIndex = 0;
+    setMapContainerMode(MAP_PURE_WHITE, 'category');
 
     for (const layer of style.layers) {
         const { id, type } = layer;
         const road = isRoadLayer(id);
-        const projectColor = PROJECT_COLORS[roadColorIndex % PROJECT_COLORS.length];
         try {
             if (type === 'background') {
-                map.setPaintProperty(id, 'background-color', MAP_NEAR_WHITE);
+                map.setPaintProperty(id, 'background-color', MAP_PURE_WHITE);
             } else if (type === 'fill') {
-                map.setPaintProperty(id, 'fill-color', MAP_NEAR_WHITE);
-                map.setPaintProperty(id, 'fill-opacity', 0.98);
+                map.setPaintProperty(id, 'fill-color', road ? streetFill : MAP_PURE_WHITE);
+                map.setPaintProperty(id, 'fill-opacity', road ? 0.58 : 1);
             } else if (type === 'fill-extrusion') {
-                map.setPaintProperty(id, 'fill-extrusion-color', MAP_NEAR_WHITE);
-                map.setPaintProperty(id, 'fill-extrusion-opacity', 0.08);
+                map.setPaintProperty(id, 'fill-extrusion-color', streetFill);
+                map.setPaintProperty(id, 'fill-extrusion-opacity', 0.12);
             } else if (type === 'line') {
-                if (road) {
-                    map.setPaintProperty(id, 'line-color', projectColor);
-                    map.setPaintProperty(id, 'line-opacity', 0.78);
-                    roadColorIndex += 1;
-                } else {
-                    map.setPaintProperty(id, 'line-color', MAP_NEAR_WHITE);
-                    map.setPaintProperty(id, 'line-opacity', 0.04);
-                }
+                map.setPaintProperty(id, 'line-color', road ? color : MAP_PURE_WHITE);
+                map.setPaintProperty(id, 'line-opacity', road ? 0.72 : 0.05);
             } else if (type === 'symbol') {
                 if (map.getPaintProperty(id, 'text-color') !== undefined) {
-                    map.setPaintProperty(id, 'text-color', MAP_LABEL_LIGHT);
+                    map.setPaintProperty(id, 'text-color', labelColor);
                 }
                 if (map.getPaintProperty(id, 'icon-color') !== undefined) {
-                    map.setPaintProperty(id, 'icon-color', MAP_LABEL_LIGHT);
+                    map.setPaintProperty(id, 'icon-color', labelColor);
                 }
             } else if (type === 'raster') {
-                map.setPaintProperty(id, 'raster-saturation', -1);
+                map.setPaintProperty(id, 'raster-saturation', -0.35);
                 map.setPaintProperty(id, 'raster-brightness-min', 0.9);
-                map.setPaintProperty(id, 'raster-brightness-max', 1);
+                map.setPaintProperty(id, 'raster-brightness-max', 1.02);
                 map.setPaintProperty(id, 'raster-contrast', 0.08);
             }
         } catch (_) {
@@ -183,9 +204,14 @@ function applyMapColorfulEffect(map) {
     }
 }
 
+function refreshCategoryMapColor(map, catButtons) {
+    if (!map || !map.isStyleLoaded() || getCurrentMapBgMode() !== 'category') return;
+    applyMapCategoryColorEffect(map, getCategoryAccentFromButtons(catButtons));
+}
+
 function applyMapBackgroundByMode(map, mode) {
     if (mode === 'dark') applyMapDarkEffect(map);
-    else if (mode === 'colorful') applyMapColorfulEffect(map);
+    else if (mode === 'category') applyMapCategoryColorEffect(map, getCategoryAccentFromButtons(categoryButtonsRef));
     else applyMapWhiteningEffect(map);
 }
 
@@ -385,10 +411,10 @@ function hexToRgba(hex, alpha = 0.6) {
 // Mapeo de colores por categoría
 function getCategoryColor(categoria) {
     const colorMap = {
-        'm': '#e9c47e', // memoria
-        'o': '#5959d2', // oficio
-        'r': '#92f47b', // refugio
-        'e': '#ec00ea'  // encuentro
+        'm': '#e9c47e', // memoria — dorado
+        'o': '#0000ff', // oficio — azul
+        'r': '#92f47b', // refugio — verde
+        'e': '#ec00ea'  // encuentro — rosa
     };
     return colorMap[String(categoria || '').toLowerCase()] || '#f0f0f0';
 }
@@ -556,6 +582,7 @@ function initCategoryUI(map, markers) {
 
     // Mostrar botones de categorías por defecto en la página de mapa (ya están visibles por CSS)
     const catButtons = categoriesNav.querySelectorAll('.category-button');
+    categoryButtonsRef = catButtons;
 
     // Evento para el footer 'CATEGORÍAS' -> ahora alterna las rectángulos de apoyo visual
     function toggleCategoryRects() {
@@ -582,6 +609,9 @@ function initCategoryUI(map, markers) {
             const act = new Set();
             catButtons.forEach(b => { if (b.classList.contains('active')) act.add((b.dataset.category||'').toLowerCase()); });
             updateMarkersFilter(map, markers, act);
+            if (getCurrentMapBgMode() === 'category') {
+                refreshCategoryMapColor(map, catButtons);
+            }
         });
     });
 
