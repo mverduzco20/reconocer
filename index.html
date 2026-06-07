@@ -22,7 +22,7 @@
                 <p class="hero-subtitle-bottom">EL RECORRIDO COTIDIANO</p>
             </div>
             <img src="./img/logocentroazul.png" alt="logo" style="position:absolute; top:12px; left:18px; height:20px; width:auto;">
-            <div style="position:absolute; top:12px; left:50%; transform:translateX(-50%); text-align:center; font-family:'Courier New', Courier, monospace; font-size:12px; font-weight:bold; color:#0000ff; letter-spacing:1px; width:auto;">
+            <div style="position:absolute; top:12px; left:50%; transform:translateX(calc(-50% - 2mm)); text-align:center; font-family:'Courier New', Courier, monospace; font-size:12px; font-weight:bold; color:#0000ff; letter-spacing:1px; width:auto;">
                 <p style="margin:0 0 8px 0;">Scroll para<br>seguir explorando</p>
                 <div style="width:1px; height:28px; background:#0000ff; margin:0 auto;"></div>
             </div>
@@ -30,8 +30,8 @@
 
         <img src="./img/city.png" alt="city" style="right:0; margin:0; padding:0; height:calc(100vh - 55px); width:auto; max-width:100vw; object-fit:contain; object-position:right bottom; display:block; z-index:1001; pointer-events:none; mix-blend-mode:multiply;">
 
-        <section id="map-preview" style="height:4188px; position:relative; background-color:#f1f1f1;">
-            <div style="position:sticky; top:0; height:100vh; overflow:hidden; margin-top:3188px;">
+        <section id="map-preview" style="position:relative; background-color:#f1f1f1;">
+            <div id="map-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
                 <iframe 
                     src="./map.html" 
                     style="width:100%; height:100%; border:none;"
@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
          if (reducedMotion) {
             tiles.forEach(function (tile) { tile.style.opacity = '1'; });
             positionCityImage();
+            if (typeof alignHeroSubtitles === 'function') alignHeroSubtitles();
             return;
          }
 
@@ -199,12 +200,33 @@ document.addEventListener('DOMContentLoaded', function () {
       .catch(useSvgFallback);
 });
 
+function positionMapPreview() {
+   const city = document.querySelector('img[alt="city"]');
+   const mapPreview = document.getElementById('map-preview');
+   const stickyWrap = document.getElementById('map-sticky-wrap');
+   const hero = document.getElementById('hero');
+   if (!city || !mapPreview || !stickyWrap || !hero) return;
+
+   const gapPx = 5 * 37.795275591;
+   const cityBottom = city.offsetTop + city.offsetHeight;
+   const heroBottom = hero.offsetTop + hero.offsetHeight;
+   const marginTop = Math.max(0, Math.round(cityBottom + gapPx - heroBottom));
+
+   stickyWrap.style.marginTop = marginTop + 'px';
+   mapPreview.style.height = (marginTop + window.innerHeight + 1000) + 'px';
+}
+
 function positionCityImage() {
    const home = document.getElementById('home');
    const city = document.querySelector('img[alt="city"]');
    const hero = document.getElementById('hero');
    const svg = document.querySelector('#hero-collage svg');
    if (!home || !city || !hero || !svg) return;
+
+   if (!city.complete || !city.naturalHeight) {
+      city.addEventListener('load', positionCityImage, { once: true });
+      return;
+   }
 
    home.style.position = 'relative';
 
@@ -220,10 +242,14 @@ function positionCityImage() {
    if (!vb || !vb.height) return;
 
    const scale = hero.offsetHeight / vb.height;
+   const cityDropCm = 2.16;
    city.style.position = 'absolute';
-   city.style.top = (hero.offsetTop + maxBottom * scale + 140) + 'px';
+   city.style.top = (hero.offsetTop + maxBottom * scale + 140 + cityDropCm * 96 / 2.54) + 'px';
    city.style.right = '0';
    city.style.bottom = 'auto';
+
+   positionMapPreview();
+   if (typeof alignHeroSubtitles === 'function') alignHeroSubtitles();
 }
 
 window.addEventListener('resize', positionCityImage);
@@ -261,6 +287,140 @@ document.addEventListener('DOMContentLoaded', function () {
    }
    check();
    setInterval(check, 1000);
+})();
+</script>
+<script>
+(function() {
+    var top1 = document.querySelector('.hero-subtitle-top');
+    var bot = document.querySelector('.hero-subtitle-bottom');
+
+    function place(el) {
+        if (!el) return;
+        var parent = el.parentElement;
+        if (!parent) return;
+        var rect = el.getBoundingClientRect();
+        var parentRect = parent.getBoundingClientRect();
+        el.style.position = 'absolute';
+        el.style.top = (rect.top - parentRect.top) + 'px';
+        el.style.left = (rect.left - parentRect.left) + 'px';
+        el.style.right = 'auto';
+        el.style.bottom = 'auto';
+        el.style.transform = 'none';
+    }
+
+    function getTileRects(svg) {
+        var rects = [];
+        svg.querySelectorAll('image, use').forEach(function (tile) {
+            try {
+                var r = tile.getBoundingClientRect();
+                if (r.width < 30 || r.height < 30) return;
+                rects.push({
+                    top: r.top,
+                    bottom: r.bottom,
+                    left: r.left,
+                    right: r.right
+                });
+            } catch (e) {}
+        });
+        return rects;
+    }
+
+    function measureSubtitleGap(el, tiles) {
+        if (!el || !tiles.length) return null;
+
+        var sr = el.getBoundingClientRect();
+        if (!sr.width || !sr.height) return null;
+
+        var centerX = (sr.left + sr.right) / 2;
+
+        var colTiles = tiles.filter(function (t) {
+            return t.left <= centerX + 10 && t.right >= centerX - 10;
+        });
+
+        var above = null;
+        var below = null;
+        colTiles.forEach(function (t) {
+            if (t.bottom <= sr.top + 3 && (!above || t.bottom > above.bottom)) above = t;
+            if (t.top >= sr.bottom - 3 && (!below || t.top < below.top)) below = t;
+        });
+
+        return {
+            el: el,
+            sr: sr,
+            above: above,
+            below: below,
+            gapMidY: above && below ? (above.bottom + below.top) / 2 : null
+        };
+    }
+
+    var SUBTITLE_DROP_MM = 2;
+
+    function mmToPx(mm) {
+        return mm * 96 / 25.4;
+    }
+
+    function applySubtitlePosition(spec, parentRect) {
+        if (!spec) return;
+
+        var el = spec.el;
+        var sr = spec.sr;
+        var top = sr.top - parentRect.top;
+        var left = sr.left - parentRect.left;
+
+        if (spec.gapMidY != null) {
+            top = spec.gapMidY - sr.height / 2 - parentRect.top;
+        }
+
+        top += mmToPx(SUBTITLE_DROP_MM + (el === bot ? 2 : 0));
+
+        el.style.position = 'absolute';
+        el.style.top = top + 'px';
+        el.style.left = left + 'px';
+        el.style.right = 'auto';
+        el.style.bottom = 'auto';
+        el.style.transform = 'none';
+    }
+
+    function resetForMeasure(el) {
+        if (!el) return;
+        el.style.removeProperty('position');
+        el.style.removeProperty('top');
+        el.style.removeProperty('left');
+        el.style.removeProperty('right');
+        el.style.removeProperty('bottom');
+        el.style.removeProperty('transform');
+    }
+
+    function alignHeroSubtitles() {
+        var svg = document.querySelector('#hero-collage svg');
+        var parent = top1 && top1.parentElement;
+        if (!svg || !parent) {
+            if (top1) place(top1);
+            if (bot) place(bot);
+            return;
+        }
+
+        resetForMeasure(top1);
+        resetForMeasure(bot);
+
+        var tiles = getTileRects(svg);
+        var parentRect = parent.getBoundingClientRect();
+
+        applySubtitlePosition(measureSubtitleGap(top1, tiles), parentRect);
+        applySubtitlePosition(measureSubtitleGap(bot, tiles), parentRect);
+    }
+
+    window.alignHeroSubtitles = alignHeroSubtitles;
+
+    function lockPositions() {
+        alignHeroSubtitles();
+    }
+
+    window.addEventListener('load', lockPositions);
+    window.addEventListener('resize', lockPositions);
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(lockPositions);
+    }
 })();
 </script>
 </body>

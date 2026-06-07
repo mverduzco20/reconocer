@@ -359,10 +359,10 @@ body {
     font-family: 'REconocer', serif;
     color: rgb(0, 0, 255);
     margin: 0;
-    font-size: calc(4.75em + 14pt);
+    font-size: calc(4.75em + 16pt);
     font-weight: normal;
     line-height: 1.1;
-    transform: translate(calc(145px + 1.5cm), calc(18px + 0.3cm));
+    transform: translate(calc(145px + 1.5cm), calc(18px + 0.3cm - 2mm));
     opacity: 0;
     animation: heroTextFadeIn 0.7s ease 1.6s forwards;
 }
@@ -378,7 +378,7 @@ body {
     text-transform: uppercase;
     white-space: nowrap;
     z-index: 10;
-    transform: translate(7vw, 23vh);
+    transform: translate(7vw, calc(23vh + 0.2cm));
     opacity: 0;
     animation: heroTextFadeIn 0.7s ease 1.1s forwards;
 }
@@ -394,7 +394,7 @@ body {
     text-transform: uppercase;
     white-space: nowrap;
     z-index: 10;
-    transform: translate(73vw, 77vh);
+    transform: translate(73vw, calc(77vh - 0.3cm));
     opacity: 0;
     animation: heroTextFadeIn 0.7s ease 2.1s forwards;
 
