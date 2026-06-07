@@ -7,6 +7,52 @@ const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
 const MAP_ZOOM = 15.5;
 const MAP_STYLE = 'mapbox://styles/valentina-nacif/cmpdcwwba00fc01scddw0cd2w';
+const MAP_NEAR_WHITE = '#f1f1f1';
+const MAP_STREET_LINE = '#f0f0f0';
+const MAP_STREET_FILL = '#f2f2f2';
+const MAP_LABEL_LIGHT = '#e8e8e8';
+
+function isRoadLayer(id) {
+    return /road|street|highway|bridge|tunnel|path|motorway|trunk|primary|secondary|tertiary|residential|service|transport|rail|avenue|calle/i.test(id);
+}
+
+function applyMapWhiteningEffect(map) {
+    const style = map.getStyle();
+    if (!style || !Array.isArray(style.layers)) return;
+
+    for (const layer of style.layers) {
+        const { id, type } = layer;
+        const road = isRoadLayer(id);
+        try {
+            if (type === 'background') {
+                map.setPaintProperty(id, 'background-color', MAP_NEAR_WHITE);
+            } else if (type === 'fill') {
+                map.setPaintProperty(id, 'fill-color', road ? MAP_STREET_FILL : MAP_NEAR_WHITE);
+                map.setPaintProperty(id, 'fill-opacity', road ? 0.55 : 0.98);
+            } else if (type === 'fill-extrusion') {
+                map.setPaintProperty(id, 'fill-extrusion-color', MAP_NEAR_WHITE);
+                map.setPaintProperty(id, 'fill-extrusion-opacity', 0.12);
+            } else if (type === 'line') {
+                map.setPaintProperty(id, 'line-color', MAP_STREET_LINE);
+                map.setPaintProperty(id, 'line-opacity', road ? 0.16 : 0.12);
+            } else if (type === 'symbol') {
+                if (map.getPaintProperty(id, 'text-color') !== undefined) {
+                    map.setPaintProperty(id, 'text-color', MAP_LABEL_LIGHT);
+                }
+                if (map.getPaintProperty(id, 'icon-color') !== undefined) {
+                    map.setPaintProperty(id, 'icon-color', MAP_STREET_LINE);
+                }
+            } else if (type === 'raster') {
+                map.setPaintProperty(id, 'raster-saturation', -1);
+                map.setPaintProperty(id, 'raster-brightness-min', 0.9);
+                map.setPaintProperty(id, 'raster-brightness-max', 1);
+                map.setPaintProperty(id, 'raster-contrast', 0.08);
+            }
+        } catch (_) {
+            /* algunas capas no admiten ciertas propiedades */
+        }
+    }
+}
 
 // ─────────────────────────────────────────────
 // INICIALIZACIÓN
@@ -28,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const activeCategories = new Set();
 
     map.on('load', () => {
+        applyMapWhiteningEffect(map);
         console.log('[reconocer] Map loaded con estilo:', MAP_STYLE);
         const style = map.getStyle();
         console.log('[reconocer] Style name:', style.name);

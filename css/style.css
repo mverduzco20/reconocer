@@ -34,7 +34,16 @@ html, body {
     top: 0;
     width: 100%;
     height: 100%;
-    background: #f0f0f0;
+    background: #f1f1f1;
+}
+
+/* Mapa de fondo casi blanco (#f1f1f1); el filtro solo afecta el canvas, no los marcadores */
+#map-container #mapa {
+    background: #f1f1f1;
+}
+
+#map-container .mapboxgl-canvas {
+    filter: brightness(1.16) saturate(0.02) contrast(0.84);
 }
 #home {
    background-color: #f1f1f1;
