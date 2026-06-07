@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reconocer — Mapa</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css?v=map-bg-category">
+    <link rel="stylesheet" href="./css/style.css?v=map-bg-blue22">
 </head>
 <body>
-<audio id="global-audio" loop preload="auto">
-   <source src="./audio/Sonidopag-.mp4" type="video/mp4">
-</audio>
+<audio id="global-audio" preload="auto" data-audio-base="./audio/"></audio>
     <div id="map-container">
         <div id="mapa"></div>
 
@@ -33,7 +31,6 @@
 
         <footer class="site-footer">
            <button class="sound-btn" id="sound-btn" aria-label="sonido">
-               <span class="sound-icon"></span>
                <input type="range" class="volume-slider" id="volume-slider" 
                       min="0" max="1" step="0.05" value="0" 
                       onclick="event.stopPropagation()">
@@ -85,7 +82,7 @@
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <script src="./js/secrets.js"></script>
-    <script src="./js/map.js?v=map-bg-category"></script>
+    <script src="./js/map.js?v=map-bg-blue22"></script>
     <script>
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -98,55 +95,7 @@
         });
     });
     </script>
-    <script>
-const audio = document.getElementById('global-audio');
-const volumeSlider = document.getElementById('volume-slider');
-
-// Start muted
-audio.volume = 0;
-audio.play().catch(() => {});
-
-if (volumeSlider) {
-   volumeSlider.value = 0;
-
-   volumeSlider.addEventListener('input', function(e) {
-       e.stopPropagation();
-       const val = parseFloat(this.value);
-       audio.volume = val;
-       const isOn = val > 0;
-       this.classList.toggle('active', isOn);
-       // Save state
-       localStorage.setItem('audioVolume', val);
-       localStorage.setItem('audioTime', audio.currentTime);
-   });
-
-   volumeSlider.addEventListener('click', function(e) {
-       e.stopPropagation();
-       if (parseFloat(this.value) === 0) {
-           this.value = 1;
-           audio.volume = 1;
-           this.classList.add('active');
-           localStorage.setItem('audioVolume', 1);
-       }
-   });
-}
-
-// Restore state from previous page
-const savedVolume = parseFloat(localStorage.getItem('audioVolume') || '0');
-const savedTime = parseFloat(localStorage.getItem('audioTime') || '0');
-audio.volume = savedVolume;
-if (volumeSlider) {
-   volumeSlider.value = savedVolume;
-   if (savedVolume > 0) volumeSlider.classList.add('active');
-}
-audio.currentTime = savedTime;
-
-// Save time before leaving page
-window.addEventListener('beforeunload', () => {
-   localStorage.setItem('audioTime', audio.currentTime);
-   localStorage.setItem('audioVolume', audio.volume);
-});
-</script>
+    <script src="./js/audio.js?v=6"></script>
 <script>
 const splash = document.getElementById('map-splash');
 const splashBtn = document.getElementById('splash-btn');

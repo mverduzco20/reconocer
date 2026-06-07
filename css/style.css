@@ -39,22 +39,49 @@ html, body {
     background: #f1f1f1;
 }
 
-/* Filtro del canvas del mapa; no afecta marcadores */
+/* Filtro solo en el canvas base; marcadores y popups quedan arriba sin filtro */
 #map-container #mapa {
     background: #ffffff;
 }
 
+#mapa .mapboxgl-canvas-container .mapboxgl-canvas {
+    position: relative;
+    z-index: 0;
+}
+
 #map-container .mapboxgl-canvas {
     filter: brightness(1.22) saturate(0) contrast(0.8);
-    transition: filter 300ms ease;
+}
+
+#map-container.map-bg-blue .mapboxgl-canvas {
+    transition: filter 1.8s ease-in-out;
 }
 
 #map-container.map-bg-dark .mapboxgl-canvas {
     filter: brightness(0.28) saturate(0) contrast(1.2);
 }
 
-#map-container.map-bg-category .mapboxgl-canvas {
-    filter: brightness(1.12) saturate(1.15) contrast(0.88);
+/* Entrada al filtro 3: rosa + azul por capas, sin monocromático encima */
+#map-container.map-bg-blue.map-bg-blue-base .mapboxgl-canvas {
+    filter: brightness(0.98) contrast(1.04);
+}
+
+/* Encuentro: rosa invertido monocromático */
+#map-container.map-bg-blue.map-bg-blue-encuentro .mapboxgl-canvas {
+    filter: grayscale(1) sepia(0.85) hue-rotate(292deg) saturate(4.8) brightness(0.97) contrast(1.02) !important;
+}
+
+#map-container.map-bg-blue.map-bg-blue-green .mapboxgl-canvas {
+    filter: grayscale(1) sepia(0.85) hue-rotate(68deg) saturate(3.4) brightness(0.99) contrast(1.02);
+}
+
+/* Oficio: monocromático azul #0000ff */
+#map-container.map-bg-blue.map-bg-blue-oficio .mapboxgl-canvas {
+    filter: grayscale(1) sepia(0.85) hue-rotate(196deg) saturate(5.2) brightness(0.93) contrast(1.04) !important;
+}
+
+#map-container.map-bg-blue.map-bg-blue-memoria .mapboxgl-canvas {
+    filter: grayscale(1) sepia(0.85) hue-rotate(18deg) saturate(3.6) brightness(1.03) contrast(1.02);
 }
 #home {
    background-color: #f1f1f1;
@@ -114,27 +141,20 @@ html, body {
    pointer-events: none;
    opacity: 0;
    z-index: 0;
+   transition: opacity 0.4s ease;
 }
 
-.city-collage--shown .city-collage__base {
-   animation: cityPieceFadeIn 1.2s ease 5s forwards;
+.city-collage--complete .city-collage__base {
+   opacity: 1;
 }
 
 .city-piece {
    position: absolute;
    overflow: hidden;
    line-height: 0;
-   will-change: opacity;
-   z-index: 1;
+   will-change: opacity, transform;
+   z-index: 2;
 }
-
-.city-piece--1 { z-index: 2; }
-.city-piece--2 { z-index: 3; }
-.city-piece--3 { z-index: 4; }
-.city-piece--4 { z-index: 5; }
-.city-piece--5 { z-index: 6; }
-.city-piece--6 { z-index: 7; }
-.city-piece--7 { z-index: 8; }
 
 .city-piece img {
    position: absolute;
@@ -148,20 +168,18 @@ html, body {
 
 .city-collage--shown .city-piece {
    opacity: 0;
-   animation: cityPieceFadeIn 1.1s ease forwards;
+   animation: cityPieceReveal 0.78s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s) forwards;
 }
 
-.city-collage--shown .city-piece--1 { animation-delay: 0.2s; }
-.city-collage--shown .city-piece--2 { animation-delay: 1s; }
-.city-collage--shown .city-piece--3 { animation-delay: 1.8s; }
-.city-collage--shown .city-piece--4 { animation-delay: 2.6s; }
-.city-collage--shown .city-piece--5 { animation-delay: 3.4s; }
-.city-collage--shown .city-piece--6 { animation-delay: 4.2s; }
-.city-collage--shown .city-piece--7 { animation-delay: 5s; }
-
-@keyframes cityPieceFadeIn {
-   from { opacity: 0; }
-   to { opacity: 1; }
+@keyframes cityPieceReveal {
+   from {
+      opacity: 0;
+      transform: translateY(-12px);
+   }
+   to {
+      opacity: 1;
+      transform: translateY(0);
+   }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -170,6 +188,11 @@ html, body {
    .city-collage__base {
       opacity: 1;
       animation: none;
+      transform: none;
+   }
+
+   .city-collage--complete .city-collage__base {
+      opacity: 1;
    }
 }
 
@@ -520,6 +543,10 @@ html, body {
     padding-right: 0;
 }
 
+.volume-slider.active {
+    opacity: 1;
+}
+
 .sound-btn {
     width: 75px;
     height: 55px;
@@ -527,11 +554,9 @@ html, body {
     border: none;
     cursor: pointer;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 0 6px;
+    padding: 0 8px;
     flex-shrink: 0;
     margin-left: -20px;
     box-sizing: border-box;
@@ -698,6 +723,17 @@ main, section, #hero {
    transform: translateY(2px);
    pointer-events: none;
    user-select: none;
+   transition: color 1s ease;
+}
+
+#footer-cat-companion.footer-cat-companion--dark .footer-map-filter-c {
+   color: #000000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .footer-map-filter-c {
+      transition: none;
+   }
 }
 
 .footer-cat-block {
@@ -950,19 +986,32 @@ a.footer-link {
 #mapa .mapboxgl-marker {
    pointer-events: auto;
    cursor: pointer;
+   position: absolute;
+   z-index: 12 !important;
+   filter: none !important;
    opacity: 0.7 !important;
+   mix-blend-mode: normal;
 }
 
 #mapa .mapboxgl-marker .marker {
    pointer-events: auto;
    cursor: pointer;
+   opacity: 0.7 !important;
+   filter: none !important;
+   position: relative;
+   z-index: 1;
+}
+
+/* Popups al click: siempre encima y sin filtro del mapa */
+#mapa .mapboxgl-popup {
+   z-index: 20 !important;
+   filter: none !important;
    opacity: 1 !important;
 }
 
-/* Popups al click: sin transparencia */
-#mapa .mapboxgl-popup,
 #mapa .mapboxgl-popup img {
    opacity: 1 !important;
+   filter: none !important;
 }
 
 .footer-rect {

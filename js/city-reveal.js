@@ -3,14 +3,15 @@
       sourceW: 2336,
       sourceH: 3118,
       pieces: [
-         { x: 1080, y: 0, w: 1256, h: 1080, order: 1 },
-         { x: 620, y: 260, w: 880, h: 720, order: 2 },
-         { x: 0, y: 480, w: 920, h: 980, order: 3 },
-         { x: 480, y: 920, w: 920, h: 780, order: 4 },
-         { x: 260, y: 1320, w: 1020, h: 820, order: 5 },
-         { x: 760, y: 1980, w: 1400, h: 980, order: 6 },
-         { x: 420, y: 2580, w: 980, h: 538, order: 7 }
-      ]
+         { x: 1080, y: 0, w: 1256, h: 1080, order: 1, revealGroup: 1 },
+         { x: 620, y: 260, w: 880, h: 720, order: 2, revealGroup: 2 },
+         { x: 0, y: 480, w: 920, h: 980, order: 3, revealGroup: 1 },
+         { x: 480, y: 920, w: 920, h: 780, order: 4, revealGroup: 2 },
+         { x: 260, y: 1320, w: 1020, h: 820, order: 5, revealGroup: 3 },
+         { x: 760, y: 1980, w: 1400, h: 980, order: 6, revealGroup: 4 },
+         { x: 420, y: 2580, w: 980, h: 538, order: 7, revealGroup: 5 }
+      ],
+      revealStepSec: 0.34
    };
 
    let stage = null;
@@ -36,11 +37,19 @@
       base.loading = 'eager';
       collage.appendChild(base);
 
-      CITY_COLLAGE.pieces
-         .sort(function (a, b) { return a.order - b.order; })
-         .forEach(function (piece) {
+      const revealGroups = CITY_COLLAGE.pieces
+         .map(function (piece) { return piece.revealGroup || piece.order; })
+         .sort(function (a, b) { return a - b; });
+      const maxRevealGroup = revealGroups[revealGroups.length - 1] || 1;
+      const revealStepSec = CITY_COLLAGE.revealStepSec || 0.34;
+
+      CITY_COLLAGE.pieces.forEach(function (piece) {
+            const revealGroup = piece.revealGroup || piece.order;
             const el = document.createElement('div');
             el.className = 'city-piece city-piece--' + piece.order;
+            el.dataset.revealGroup = String(revealGroup);
+            el.style.setProperty('--reveal-delay', ((revealGroup - 1) * revealStepSec) + 's');
+            el.style.zIndex = String(piece.order + 1);
             el.style.left = (piece.x / CITY_COLLAGE.sourceW * 100) + '%';
             el.style.top = (piece.y / CITY_COLLAGE.sourceH * 100) + '%';
             el.style.width = (piece.w / CITY_COLLAGE.sourceW * 100) + '%';
@@ -60,6 +69,9 @@
             collage.appendChild(el);
          });
 
+      collage.dataset.maxRevealGroup = String(maxRevealGroup);
+      collage.dataset.revealStepSec = String(revealStepSec);
+
       collage.dataset.built = '1';
 
       if (typeof positionCityImage === 'function') {
@@ -74,7 +86,7 @@
 
       if (reducedMotion) {
          collage.classList.remove('city-collage--pending');
-         collage.classList.add('city-collage--shown');
+         collage.classList.add('city-collage--shown', 'city-collage--complete');
          return;
       }
 
@@ -89,11 +101,30 @@
 
       function showCollage() {
          if (collage.classList.contains('city-collage--shown')) return;
-         collage.classList.remove('city-collage--pending');
+         collage.classList.remove('city-collage--pending', 'city-collage--complete');
          collage.classList.add('city-collage--shown');
          if (collageObserver) {
             collageObserver.disconnect();
             collageObserver = null;
+         }
+
+         const maxGroup = parseInt(collage.dataset.maxRevealGroup || '6', 10);
+         const stepSec = parseFloat(collage.dataset.revealStepSec || '0.34');
+         const lastPieces = collage.querySelectorAll('[data-reveal-group="' + maxGroup + '"]');
+         const finishReveal = function () {
+            collage.classList.add('city-collage--complete');
+         };
+
+         if (lastPieces.length) {
+            var completed = 0;
+            lastPieces.forEach(function (pieceEl) {
+               pieceEl.addEventListener('animationend', function () {
+                  completed += 1;
+                  if (completed >= lastPieces.length) finishReveal();
+               }, { once: true });
+            });
+         } else {
+            window.setTimeout(finishReveal, ((maxGroup - 1) * stepSec + 0.78) * 1000);
          }
       }
 
