@@ -1,0 +1,69 @@
+{
+  "sourceW": 2336,
+  "sourceH": 3118,
+  "pieces": [
+    {
+      "file": "piece-01.png",
+      "name": "church",
+      "x": 1080,
+      "y": 0,
+      "w": 1256,
+      "h": 1080,
+      "order": 1
+    },
+    {
+      "file": "piece-02.png",
+      "name": "cart",
+      "x": 620,
+      "y": 260,
+      "w": 880,
+      "h": 720,
+      "order": 2
+    },
+    {
+      "file": "piece-03.png",
+      "name": "stall",
+      "x": 0,
+      "y": 480,
+      "w": 920,
+      "h": 980,
+      "order": 3
+    },
+    {
+      "file": "piece-04.png",
+      "name": "awning",
+      "x": 480,
+      "y": 920,
+      "w": 920,
+      "h": 780,
+      "order": 4
+    },
+    {
+      "file": "piece-05.png",
+      "name": "building",
+      "x": 260,
+      "y": 1320,
+      "w": 1020,
+      "h": 820,
+      "order": 5
+    },
+    {
+      "file": "piece-06.png",
+      "name": "gate",
+      "x": 760,
+      "y": 1980,
+      "w": 1400,
+      "h": 980,
+      "order": 6
+    },
+    {
+      "file": "piece-07.png",
+      "name": "bottom",
+      "x": 420,
+      "y": 2580,
+      "w": 980,
+      "h": 538,
+      "order": 7
+    }
+  ]
+}
