@@ -7,6 +7,20 @@ const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
 const MAP_ZOOM = 15.5;
 const MAP_STYLE = 'mapbox://styles/valentina-nacif/cmpdcwwba00fc01scddw0cd2w';
+const POPUP_SCALE = 0.7;
+const POPUP_IMG_SIZE = Math.round(252 * POPUP_SCALE);
+const POPUP_WIDTH = Math.round(504 * POPUP_SCALE);
+const POPUP_HEIGHT = POPUP_IMG_SIZE;
+const POPUP_TEXT_WIDTH = POPUP_WIDTH - POPUP_IMG_SIZE;
+const POPUP_TEXT_HEIGHT = Math.round(POPUP_IMG_SIZE * 0.74);
+const POPUP_FONT_SIZE = Math.round(15 * POPUP_SCALE);
+const POPUP_PADDING = Math.round(11 * POPUP_SCALE);
+const POPUP_MAX_WIDTH = Math.round(476 * POPUP_SCALE);
+const POPUP_OFFSET = Math.round(14 * POPUP_SCALE);
+const MAX_OPEN_POPUPS = 3;
+const MARKER_OPACITY = 0.7;
+const openPopupEntries = [];
+
 const MAP_NEAR_WHITE = '#f1f1f1';
 const MAP_STREET_LINE = '#f0f0f0';
 const MAP_STREET_FILL = '#f2f2f2';
@@ -81,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[reconocer] Style version:', style.version);
         console.log('[reconocer] Style sprite:', style.sprite);
         console.log('[reconocer] Style glyphs:', style.glyphs);
+        loadHitosMarkers(map, markers);
     });
 
     map.on('error', (event) => {
@@ -97,8 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Controles de navegación (zoom + rotación)
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
-    // Cargar y parsear el CSV
-    fetch(CSV_URL)
+});
+
+function loadHitosMarkers(map, markers) {
+    fetch(CSV_URL, { cache: 'no-store' })
         .then(res => {
             if (!res.ok) throw new Error(`No se pudo cargar el CSV: ${res.status}`);
             return res.text();
@@ -117,11 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             rows.slice(1).forEach(row => agregarMarcador(map, row, markers, indices));
-            // después de cargar marcadores, inicializar la UI si existe
             initCategoryUI(map, markers);
         })
         .catch(err => console.error('[reconocer]', err));
-});
+}
 
 // Parse CSV rows with support for double-quoted and single-quoted fields
 function parseCsvRows(text) {
@@ -189,13 +205,16 @@ function normalizeCategoryValue(value) {
 function findRowCategory(row, indices = {}) {
     const categoryKeys = new Set(['m', 'o', 'r', 'e']);
 
+    // Usar solo la columna "categoria"; no inferir desde el nombre del archivo (ej. o22.jpg)
     if (indices.categoria >= 0 && row[indices.categoria] != null) {
         const candidate = normalizeCategoryValue(row[indices.categoria]);
         if (categoryKeys.has(candidate)) return candidate;
     }
 
+    // Respaldo: revisar solo columnas entre premio y relato, nunca el relato ni el archivo
+    const relatoIndex = indices.relato >= 0 ? indices.relato : row.length;
     const startIndex = Math.max(3, indices.categoria >= 0 ? indices.categoria : 3);
-    for (let i = startIndex; i < row.length; i++) {
+    for (let i = startIndex; i < relatoIndex; i++) {
         const candidate = normalizeCategoryValue(row[i]);
         if (categoryKeys.has(candidate)) return candidate;
     }
@@ -230,6 +249,70 @@ function getCategoryColor(categoria) {
     return colorMap[String(categoria || '').toLowerCase()] || '#f0f0f0';
 }
 
+function closeAllOpenPopups() {
+    const entries = [...openPopupEntries];
+    openPopupEntries.length = 0;
+    entries.forEach(entry => entry.popup.remove());
+}
+
+function removePopupEntry(popup) {
+    const idx = openPopupEntries.findIndex(entry => entry.popup === popup);
+    if (idx >= 0) {
+        openPopupEntries[idx].popup.remove();
+        openPopupEntries.splice(idx, 1);
+    }
+}
+
+function panPopupIntoView(map, popup) {
+    const popupEl = popup.getElement();
+    if (!popupEl) return;
+    const rect = popupEl.getBoundingClientRect();
+    const footerHeight = 85;
+    const padding = 10;
+    if (rect.top < padding) {
+        map.panBy([0, rect.top - padding], { duration: 300 });
+    } else if (rect.bottom > window.innerHeight - footerHeight - padding) {
+        map.panBy([0, rect.bottom - (window.innerHeight - footerHeight - padding)], { duration: 300 });
+    }
+    if (rect.left < padding) {
+        map.panBy([rect.left - padding, 0], { duration: 300 });
+    } else if (rect.right > window.innerWidth - 110 - padding) {
+        map.panBy([rect.right - (window.innerWidth - 110 - padding), 0], { duration: 300 });
+    }
+}
+
+function trackPopupClose(popup, entry) {
+    const onClose = () => {
+        popup.off('close', onClose);
+        const idx = openPopupEntries.indexOf(entry);
+        if (idx >= 0) openPopupEntries.splice(idx, 1);
+    };
+    popup.on('close', onClose);
+}
+
+function handleMarkerPopupClick(map, marker, popup) {
+    const openIndex = openPopupEntries.findIndex(entry => entry.marker === marker);
+    if (openIndex >= 0) {
+        removePopupEntry(openPopupEntries[openIndex].popup);
+        return;
+    }
+
+    if (openPopupEntries.length >= MAX_OPEN_POPUPS) {
+        closeAllOpenPopups();
+    }
+
+    if (popup.isOpen && popup.isOpen()) {
+        popup.remove();
+    }
+
+    popup.setLngLat(marker.getLngLat()).addTo(map);
+    const entry = { marker, popup };
+    openPopupEntries.push(entry);
+    trackPopupClose(popup, entry);
+
+    setTimeout(() => panPopupIntoView(map, popup), 50);
+}
+
 function agregarMarcador(map, row, markers, indices = {}) {
     const archivo = String(indices.archivo >= 0 ? row[indices.archivo] : row[0] || '').trim();
     const lat = parseFloat(indices.lat >= 0 ? row[indices.lat] : row[1]);
@@ -259,54 +342,48 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.className = 'marker';
     el.title = archivo;
     el.style.cursor = 'pointer';
+    el.style.opacity = String(MARKER_OPACITY);
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
-        ? `<img src="${imageUrl}" alt="${archivo}" style="width:252px;height:252px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`
-        : `<img src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="width:252px;height:252px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`;
+        ? `<img src="${imageUrl}" alt="${archivo}" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`
+        : `<img src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`;
 
     const popupText = relato
-        ? `<p style="margin:0;line-height:1.4;color:#000;font-family:'Courier New',Courier,monospace;font-size:15px;background:transparent;padding:11px;width:252px;height:252px;box-sizing:border-box;overflow-y:auto;word-break:break-word;">${relato}</p>`
+        ? `<p class="popup-relato" style="width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = hexToRgba(categoryColor, 0.7);
-    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};padding:0;border-radius:0;overflow:hidden;display:flex;flex-direction:row;align-items:flex-start;width:504px;height:252px;">${popupImage}${popupText}</div>`;
+    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupImage}${popupText}</div>`;
 
-    const popup = new mapboxgl.Popup({ 
-        offset: 14, 
-        closeButton: true, 
+    const popup = new mapboxgl.Popup({
+        offset: POPUP_OFFSET,
+        closeButton: true,
+        closeOnClick: false,
         className: 'category-popup',
-        maxWidth: '476px',
+        maxWidth: `${POPUP_MAX_WIDTH}px`,
         anchor: 'bottom'
     })
         .setHTML(popupContent);
 
     const marker = new mapboxgl.Marker(el)
-        .setLngLat([lng, lat])
-        .setPopup(popup);
+        .setLngLat([lng, lat]);
 
-    // almacenar meta (categoría) y la instancia del marcador
     marker._categoria = categoria || '';
+    marker._popup = popup;
     marker.addTo(map);
-    marker.getElement().addEventListener('click', () => {
-        setTimeout(() => {
-            const popupEl = document.querySelector('.mapboxgl-popup');
-            if (!popupEl) return;
-            const rect = popupEl.getBoundingClientRect();
-            const footerHeight = 85;
-            const padding = 10;
-            if (rect.top < padding) {
-                map.panBy([0, rect.top - padding], { duration: 300 });
-            } else if (rect.bottom > window.innerHeight - footerHeight - padding) {
-                map.panBy([0, rect.bottom - (window.innerHeight - footerHeight - padding)], { duration: 300 });
-            }
-            if (rect.left < padding) {
-                map.panBy([rect.left - padding, 0], { duration: 300 });
-            } else if (rect.right > window.innerWidth - 110 - padding) {
-                map.panBy([rect.right - (window.innerWidth - 110 - padding), 0], { duration: 300 });
-            }
-        }, 50);
+
+    const markerEl = marker.getElement();
+    markerEl.classList.add('map-marker-hit');
+    markerEl.style.pointerEvents = 'auto';
+    markerEl.style.opacity = String(MARKER_OPACITY);
+    el.style.pointerEvents = 'auto';
+
+    el.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        handleMarkerPopupClick(map, marker, popup);
     });
     markers.push(marker);
 }
@@ -321,6 +398,8 @@ function updateMarkersFilter(map, markers, activeSet) {
         } else if (activeSet.has(cat)) {
             m.addTo(map);
         } else {
+            const openIndex = openPopupEntries.findIndex(entry => entry.marker === m);
+            if (openIndex >= 0) removePopupEntry(openPopupEntries[openIndex].popup);
             try { m.remove(); } catch (e) { /* no importa */ }
         }
     });

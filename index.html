@@ -28,23 +28,33 @@
             </div>
         </section>
 
-        <img src="./img/city.png" alt="city" style="right:0; margin:0; padding:0; height:calc(100vh - 55px); width:auto; max-width:100vw; object-fit:contain; object-position:right bottom; display:block; z-index:1001; pointer-events:none; mix-blend-mode:multiply;">
+        <img src="./img/city.png" alt="city" style="margin:0; padding:0; height:calc(100vh - 55px); display:block; z-index:1001; pointer-events:none; mix-blend-mode:multiply;">
 
-        <div id="home-instructions" class="home-instructions" aria-hidden="true">
-            <div class="home-instruction-item">
+        <div id="home-instructions" class="home-instructions">
+            <div class="home-instruction-item home-instruction-item--with-lines">
                 <span class="home-instruction-num">1.</span>
                 <img src="./img/ins-04.png" alt="">
+                <span class="home-instruction-title home-instruction-title--two-lines">
+                    <span class="home-instruction-title-line">ELIGE UN</span>
+                    <span class="home-instruction-title-line">PUNTO DE PARTIDA</span>
+                </span>
             </div>
-            <div class="home-instruction-item">
+            <div class="home-instruction-item home-instruction-item--with-lines">
                 <span class="home-instruction-num">2.</span>
                 <img src="./img/ins-01.png" alt="">
+                <span class="home-instruction-title home-instruction-title--two-lines home-instruction-title--spaced home-instruction-title--spaced-wide">
+                    <span class="home-instruction-title-line">FILTRA</span>
+                    <span class="home-instruction-title-line">LAS CATEGORÍAS</span>
+                </span>
             </div>
             <div class="home-instruction-item">
                 <span class="home-instruction-num">3.</span>
+                <span class="home-instruction-title home-instruction-title--single home-instruction-title--spaced">SUBE TU IMAGEN</span>
                 <img src="./img/ins-02.png" alt="">
             </div>
             <div class="home-instruction-item">
                 <span class="home-instruction-num">4.</span>
+                <span class="home-instruction-title">DESBLOQUEA<br>ARCHIVO<br>COLECTIVO</span>
                 <img src="./img/ins-03.png" alt="">
             </div>
         </div>
@@ -52,7 +62,7 @@
         <section id="map-preview" style="position:relative; background-color:#f1f1f1;">
             <div id="map-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
                 <iframe 
-                    src="./map.html" 
+                    src="./map.html?v=marker-opacity-70" 
                     style="width:100%; height:100%; border:none;"
                     scrolling="no"
                     id="map-iframe">
@@ -215,12 +225,19 @@ document.addEventListener('DOMContentLoaded', function () {
          });
 
          positionCityImage();
+         if (typeof lockHeroTextPositions === 'function') lockHeroTextPositions();
       })
       .catch(useSvgFallback);
 });
 
 const CITY_STICKY_GAP_CM = 7;
-const INSTRUCTION_SIDE_MARGIN_CM = 5;
+const INSTRUCTION_SIDE_MARGIN_CM = 1;
+const INSTRUCTION_ITEMS_SHIFT_LEFT_CM = 5;
+const INSTRUCTION_ITEM2_SHIFT_RIGHT_CM = 1.4;
+
+function cmToPx(cm) {
+   return cm * 96 / 2.54;
+}
 
 function cityStickyGapPx() {
    return CITY_STICKY_GAP_CM * 96 / 2.54;
@@ -250,12 +267,11 @@ function positionInstructionIcons() {
 
    const iconSize = Math.round(gapPx * 0.95);
    const smallIconSize = Math.round(iconSize * 0.5508);
-   const firstTwoIconSize = Math.round(smallIconSize * 0.855);
 
-   row.querySelectorAll('.home-instruction-item').forEach(function (item, index) {
+   row.querySelectorAll('.home-instruction-item').forEach(function (item) {
       const img = item.querySelector('img');
       if (!img) return;
-      const size = index < 2 ? firstTwoIconSize : smallIconSize;
+      const size = smallIconSize;
       img.style.width = size + 'px';
       img.style.height = size + 'px';
       img.style.maxWidth = size + 'px';
@@ -277,8 +293,19 @@ function positionInstructionIcons() {
       ? Math.max(0, (innerWidth - totalIconWidth) / (items.length - 1))
       : 0;
 
+   const shiftLeftPx = cmToPx(INSTRUCTION_ITEMS_SHIFT_LEFT_CM);
+
    items.forEach(function (item, index) {
       item.style.marginLeft = index === 0 ? '0' : betweenGap + 'px';
+      if (index >= 1) {
+         let itemShiftPx = shiftLeftPx;
+         if (index === 1) {
+            itemShiftPx -= cmToPx(INSTRUCTION_ITEM2_SHIFT_RIGHT_CM);
+         }
+         item.style.transform = 'translateX(-' + itemShiftPx + 'px)';
+      } else {
+         item.style.transform = '';
+      }
    });
 }
 
@@ -329,10 +356,13 @@ function positionCityImage() {
    city.style.position = 'absolute';
    city.style.top = (hero.offsetTop + maxBottom * scale + 140 + cityDropCm * 96 / 2.54) + 'px';
    city.style.right = '0';
+   city.style.left = 'auto';
    city.style.bottom = 'auto';
+   city.style.maxWidth = '100%';
+   city.style.width = 'auto';
 
    positionMapPreview();
-   if (typeof alignHeroSubtitles === 'function') alignHeroSubtitles();
+   if (typeof lockHeroTextPositions === 'function') lockHeroTextPositions();
 }
 
 window.addEventListener('resize', positionCityImage);
@@ -374,8 +404,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script>
 (function() {
+    var heroEl = document.getElementById('hero');
     var top1 = document.querySelector('.hero-subtitle-top');
     var bot = document.querySelector('.hero-subtitle-bottom');
+    var title = document.querySelector('.hero-reconocer-title');
+    var heroTextLocked = false;
+    var heroTextLock = null;
 
     function place(el) {
         if (!el) return;
@@ -415,7 +449,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!sr.width || !sr.height) return null;
 
         var centerX = (sr.left + sr.right) / 2;
-
         var colTiles = tiles.filter(function (t) {
             return t.left <= centerX + 10 && t.right >= centerX - 10;
         });
@@ -493,16 +526,76 @@ document.addEventListener('DOMContentLoaded', function () {
         applySubtitlePosition(measureSubtitleGap(bot, tiles), parentRect);
     }
 
-    window.alignHeroSubtitles = alignHeroSubtitles;
+    function captureHeroTextLock() {
+        if (!heroEl) return;
 
-    function lockPositions() {
-        alignHeroSubtitles();
+        var heroRect = heroEl.getBoundingClientRect();
+        if (!heroRect.width || !heroRect.height) return;
+
+        heroTextLock = {
+            items: [top1, title, bot].filter(Boolean).map(function (el) {
+                var rect = el.getBoundingClientRect();
+                return {
+                    el: el,
+                    topPct: ((rect.top - heroRect.top) / heroRect.height) * 100,
+                    leftPct: ((rect.left - heroRect.left) / heroRect.width) * 100
+                };
+            })
+        };
     }
 
-    window.addEventListener('load', lockPositions);
-    window.addEventListener('resize', lockPositions);
+    function applyHeroTextLock() {
+        if (!heroEl || !heroTextLock || !heroTextLock.items.length) return;
+
+        heroTextLock.items.forEach(function (item) {
+            if (item.el.parentElement !== heroEl) {
+                heroEl.appendChild(item.el);
+            }
+            item.el.style.position = 'absolute';
+            item.el.style.top = item.topPct + '%';
+            item.el.style.left = item.leftPct + '%';
+            item.el.style.right = 'auto';
+            item.el.style.bottom = 'auto';
+            item.el.style.transform = 'none';
+            item.el.style.margin = '0';
+        });
+    }
+
+    function finalizeHeroTextLock() {
+        captureHeroTextLock();
+        if (!heroTextLock || !heroTextLock.items.length) return;
+        heroTextLocked = true;
+        applyHeroTextLock();
+    }
+
+    function fontsAreReady() {
+        return !document.fonts || document.fonts.status === 'loaded';
+    }
+
+    function lockHeroTextPositions() {
+        if (!heroEl) return;
+
+        if (heroTextLocked) {
+            applyHeroTextLock();
+            return;
+        }
+
+        if (!document.querySelector('#hero-collage svg')) return;
+        if (!fontsAreReady()) return;
+
+        alignHeroSubtitles();
+        requestAnimationFrame(function () {
+            requestAnimationFrame(finalizeHeroTextLock);
+        });
+    }
+
+    window.lockHeroTextPositions = lockHeroTextPositions;
+    window.alignHeroSubtitles = lockHeroTextPositions;
+
+    window.addEventListener('load', lockHeroTextPositions);
+    window.addEventListener('resize', lockHeroTextPositions);
     if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(lockPositions);
+        document.fonts.ready.then(lockHeroTextPositions);
     }
 })();
 </script>
