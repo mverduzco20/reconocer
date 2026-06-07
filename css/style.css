@@ -40,6 +40,44 @@ html, body {
    background-color: #f1f1f1;
 }
 
+.home-instructions {
+   position: absolute;
+   left: 0;
+   width: 100%;
+   padding-left: 5cm;
+   padding-right: 5cm;
+   display: flex;
+   justify-content: flex-start;
+   align-items: center;
+   z-index: 1002;
+   pointer-events: none;
+   box-sizing: border-box;
+}
+
+.home-instruction-item {
+   position: relative;
+   flex: 0 0 auto;
+}
+
+.home-instruction-num {
+   position: absolute;
+   top: 0;
+   left: 0;
+   margin: 6px;
+   font-family: 'Courier New', Courier, monospace;
+   font-weight: bold;
+   font-size: 17px;
+   color: #0000ff;
+   line-height: 1;
+   z-index: 1;
+}
+
+.home-instructions img {
+   display: block;
+   object-fit: contain;
+   flex: 0 0 auto;
+}
+
 #hero {
    width: 100%;
    height: calc(100vh - 55px);

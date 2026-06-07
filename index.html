@@ -30,6 +30,25 @@
 
         <img src="./img/city.png" alt="city" style="right:0; margin:0; padding:0; height:calc(100vh - 55px); width:auto; max-width:100vw; object-fit:contain; object-position:right bottom; display:block; z-index:1001; pointer-events:none; mix-blend-mode:multiply;">
 
+        <div id="home-instructions" class="home-instructions" aria-hidden="true">
+            <div class="home-instruction-item">
+                <span class="home-instruction-num">1.</span>
+                <img src="./img/ins-04.png" alt="">
+            </div>
+            <div class="home-instruction-item">
+                <span class="home-instruction-num">2.</span>
+                <img src="./img/ins-01.png" alt="">
+            </div>
+            <div class="home-instruction-item">
+                <span class="home-instruction-num">3.</span>
+                <img src="./img/ins-02.png" alt="">
+            </div>
+            <div class="home-instruction-item">
+                <span class="home-instruction-num">4.</span>
+                <img src="./img/ins-03.png" alt="">
+            </div>
+        </div>
+
         <section id="map-preview" style="position:relative; background-color:#f1f1f1;">
             <div id="map-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
                 <iframe 
@@ -200,6 +219,69 @@ document.addEventListener('DOMContentLoaded', function () {
       .catch(useSvgFallback);
 });
 
+const CITY_STICKY_GAP_CM = 7;
+const INSTRUCTION_SIDE_MARGIN_CM = 5;
+
+function cityStickyGapPx() {
+   return CITY_STICKY_GAP_CM * 96 / 2.54;
+}
+
+function positionInstructionIcons() {
+   const city = document.querySelector('img[alt="city"]');
+   const row = document.getElementById('home-instructions');
+   if (!city || !row) return;
+
+   const gapPx = cityStickyGapPx();
+   const cityBottom = city.offsetTop + city.offsetHeight;
+
+   row.style.position = 'absolute';
+   row.style.left = '0';
+   row.style.width = '100%';
+   row.style.paddingLeft = INSTRUCTION_SIDE_MARGIN_CM + 'cm';
+   row.style.paddingRight = INSTRUCTION_SIDE_MARGIN_CM + 'cm';
+   row.style.boxSizing = 'border-box';
+   row.style.display = 'flex';
+   row.style.justifyContent = 'flex-start';
+   row.style.alignItems = 'center';
+   row.style.zIndex = '1002';
+   row.style.pointerEvents = 'none';
+   row.style.top = cityBottom + 'px';
+   row.style.height = gapPx + 'px';
+
+   const iconSize = Math.round(gapPx * 0.95);
+   const smallIconSize = Math.round(iconSize * 0.5508);
+   const firstTwoIconSize = Math.round(smallIconSize * 0.855);
+
+   row.querySelectorAll('.home-instruction-item').forEach(function (item, index) {
+      const img = item.querySelector('img');
+      if (!img) return;
+      const size = index < 2 ? firstTwoIconSize : smallIconSize;
+      img.style.width = size + 'px';
+      img.style.height = size + 'px';
+      img.style.maxWidth = size + 'px';
+      img.style.maxHeight = size + 'px';
+      img.style.objectFit = 'contain';
+      item.style.flex = '0 0 auto';
+      item.style.marginLeft = '0';
+   });
+
+   const items = Array.prototype.slice.call(row.querySelectorAll('.home-instruction-item'));
+   const rowStyles = window.getComputedStyle(row);
+   const innerWidth = row.clientWidth
+      - parseFloat(rowStyles.paddingLeft)
+      - parseFloat(rowStyles.paddingRight);
+   const totalIconWidth = items.reduce(function (sum, item) {
+      return sum + item.offsetWidth;
+   }, 0);
+   const betweenGap = items.length > 1
+      ? Math.max(0, (innerWidth - totalIconWidth) / (items.length - 1))
+      : 0;
+
+   items.forEach(function (item, index) {
+      item.style.marginLeft = index === 0 ? '0' : betweenGap + 'px';
+   });
+}
+
 function positionMapPreview() {
    const city = document.querySelector('img[alt="city"]');
    const mapPreview = document.getElementById('map-preview');
@@ -207,13 +289,14 @@ function positionMapPreview() {
    const hero = document.getElementById('hero');
    if (!city || !mapPreview || !stickyWrap || !hero) return;
 
-   const gapPx = 5 * 37.795275591;
+   const gapPx = cityStickyGapPx();
    const cityBottom = city.offsetTop + city.offsetHeight;
    const heroBottom = hero.offsetTop + hero.offsetHeight;
    const marginTop = Math.max(0, Math.round(cityBottom + gapPx - heroBottom));
 
    stickyWrap.style.marginTop = marginTop + 'px';
    mapPreview.style.height = (marginTop + window.innerHeight + 1000) + 'px';
+   positionInstructionIcons();
 }
 
 function positionCityImage() {
