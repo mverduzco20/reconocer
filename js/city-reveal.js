@@ -19,7 +19,7 @@
    let collageRevealTimer = null;
    let collageRevealQueued = false;
    let reducedMotion = false;
-   const COLLAGE_DELAY_AFTER_TEXT_MS = 5200;
+   const COLLAGE_DELAY_AFTER_TEXT_MS = 1150;
 
    function buildCollage() {
       stage = document.getElementById('city-stage');

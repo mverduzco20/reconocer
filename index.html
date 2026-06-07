@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reconocer</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css?v=visual">
+    <link rel="stylesheet" href="./css/style.css?v=visual8">
 </head>
 
 <body>
@@ -401,28 +401,31 @@ function setupCityCopyReveal() {
       }
    }
 
-   function isCityCopyInView() {
-      const rect = cityStage.getBoundingClientRect();
+   const firstTextBlock = cityCopy.querySelector('.city-copy__block--1');
+
+   function isFirstTextInView() {
+      if (!firstTextBlock) return false;
+      const rect = firstTextBlock.getBoundingClientRect();
       const vh = window.innerHeight;
-      return rect.top < vh * 0.88 && rect.bottom > vh * 0.08;
+      return rect.top < vh * 0.82 && rect.bottom > vh * 0.18;
    }
 
-   if (isCityCopyInView()) {
+   if (isFirstTextInView()) {
       showCityCopy();
       return;
    }
 
-   if ('IntersectionObserver' in window) {
+   if ('IntersectionObserver' in window && firstTextBlock) {
       cityCopyRevealObserver = new IntersectionObserver(function (entries) {
          entries.forEach(function (entry) {
             if (entry.isIntersecting) showCityCopy();
          });
-      }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
-      cityCopyRevealObserver.observe(cityStage);
+      }, { threshold: 0.35, rootMargin: '0px 0px -8% 0px' });
+      cityCopyRevealObserver.observe(firstTextBlock);
    }
 
    function revealOnScroll() {
-      if (!isCityCopyInView()) return;
+      if (!isFirstTextInView()) return;
       showCityCopy();
       window.removeEventListener('scroll', revealOnScroll);
       document.removeEventListener('scroll', revealOnScroll);
@@ -432,7 +435,7 @@ function setupCityCopyReveal() {
    revealOnScroll();
 
    window.setTimeout(function () {
-      if (!cityCopy.classList.contains('city-copy--shown') && isCityCopyInView()) {
+      if (!cityCopy.classList.contains('city-copy--shown') && isFirstTextInView()) {
          showCityCopy();
       }
    }, 400);
@@ -441,7 +444,7 @@ function setupCityCopyReveal() {
 window.addEventListener('resize', positionCityImage);
 window.addEventListener('load', setupCityCopyReveal);
 </script>
-<script src="./js/city-reveal.js?v=visual"></script>
+<script src="./js/city-reveal.js?v=visual2"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
    const contexto = document.querySelector('.contexto-img');

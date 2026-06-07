@@ -185,16 +185,18 @@ html, body {
    will-change: opacity;
 }
 
-.city-copy__block--1,
-.city-copy__block--2,
-.city-copy__block--3 {
-   font-size: calc(22px + 6pt);
-}
-
 .city-copy__block--1 {
+   font-size: calc(22px + 6pt);
    left: 8%;
    top: 9%;
    line-height: 1.42;
+}
+
+.city-copy__block--2,
+.city-copy__block--3 {
+   font-family: 'Courier New', Courier, monospace;
+   font-size: calc(22px + 3pt);
+   font-weight: bold;
 }
 
 .city-copy__block--2 {
@@ -206,14 +208,14 @@ html, body {
 .city-copy__block--3 {
    left: 8%;
    top: 41%;
-   transform: translateX(2cm);
+   transform: translateX(2cm) translateY(1cm);
 }
 
 .city-copy__block--4 {
    left: 24%;
    top: 53%;
    transform: translateX(3cm) translateY(2cm);
-   font-size: calc(22px + 4pt);
+   font-size: calc(22px + 2pt);
    line-height: 1.42;
 }
 
