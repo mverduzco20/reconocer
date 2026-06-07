@@ -4,19 +4,40 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reconocer — Sobre el proyecto</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css?v=visual10">
 </head>
 <body class="page-docs">
 <audio id="global-audio" preload="auto" data-audio-base="../audio/"></audio>
-    <main style="padding:20px; min-height:100vh;">
-        <h1 class="reconocer-title">Sobre el proyecto</h1>
-        <p>Documentación y notas del proyecto.</p>
+    <main class="docs-main">
+        <p class="docs-eyebrow">ORIENTACIÓN URBANA DESDE EL RECORRIDO COTIDIANO</p>
+        <h1 class="docs-title">(<span class="reconocer-alt-r">R</span>e)conocer</h1>
+        <p class="docs-lead">Un mapa colectivo para recorrer el territorio por medio de la observación y el juego.</p>
+
+        <section class="docs-section">
+            <h2 class="docs-heading">¿Qué es?</h2>
+            <p class="docs-copy">Este proyecto busca crear un archivo vivo de hitos urbanos: lugares que las personas reconocen, recuerdan y usan para orientarse. A partir de San Ángel, Ciudad de México, se invita a explorar la ciudad por categorías — memoria, oficio, refugio y encuentro — y a sumar nuevas miradas al mapa.</p>
+        </section>
+
+        <section class="docs-section">
+            <h2 class="docs-heading">Cómo funciona</h2>
+            <ol class="docs-list">
+                <li>Elige un punto de partida en la cartografía.</li>
+                <li>Filtra las categorías para definir tu ruta.</li>
+                <li>Sube un hito: captura el momento y comparte una imagen.</li>
+                <li>Descubre el archivo colectivo de la comunidad.</li>
+            </ol>
+        </section>
+
+        <section class="docs-section">
+            <h2 class="docs-heading">Documentación</h2>
+            <p class="docs-copy">Esta sección seguirá creciendo con notas de proceso, referencias y decisiones de diseño del semestre.</p>
+        </section>
     </main>
 
     <footer class="site-footer">
        <button class="sound-btn" id="sound-btn" aria-label="sonido">
-           <input type="range" class="volume-slider" id="volume-slider" 
-                  min="0" max="1" step="0.05" value="0" 
+           <input type="range" class="volume-slider" id="volume-slider"
+                  min="0" max="1" step="0.05" value="0"
                   onclick="event.stopPropagation()">
        </button>
        <div class="footer-left" style="margin-left: 30px; flex: 1;">

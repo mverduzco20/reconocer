@@ -507,6 +507,65 @@ html, body {
    min-height: 100vh;
    box-sizing: border-box;
 }
+
+.docs-main {
+   max-width: 720px;
+   margin: 0 auto;
+   padding: 48px 24px 100px;
+   color: #111;
+}
+
+.docs-eyebrow {
+   margin: 0 0 12px;
+   font-family: 'Courier New', Courier, monospace;
+   font-size: 11px;
+   font-weight: bold;
+   letter-spacing: 1px;
+   color: #0000ff;
+   text-transform: uppercase;
+}
+
+.docs-title {
+   margin: 0 0 16px;
+   font-size: clamp(2rem, 8vw, 3.2rem);
+   line-height: 1.05;
+   color: #0000ff;
+}
+
+.docs-lead {
+   margin: 0 0 40px;
+   font-size: 1.05rem;
+   line-height: 1.5;
+   max-width: 34rem;
+}
+
+.docs-section {
+   margin-bottom: 32px;
+}
+
+.docs-heading {
+   margin: 0 0 10px;
+   font-family: 'Courier New', Courier, monospace;
+   font-size: 12px;
+   letter-spacing: 1px;
+   text-transform: uppercase;
+   color: #0000ff;
+}
+
+.docs-copy,
+.docs-list {
+   margin: 0;
+   font-size: 0.98rem;
+   line-height: 1.6;
+}
+
+.docs-list {
+   padding-left: 1.2rem;
+}
+
+.docs-list li + li {
+   margin-top: 8px;
+}
 #map-container {
     position: relative;
     width: 100%;
