@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reconocer</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/style.css?v=visual">
 </head>
 
 <body>
@@ -33,14 +33,14 @@
                 <p class="city-copy__block city-copy__block--1">A veces no recordamos una calle.<br>Recordamos una sombra.<br>El sonido de una fuente...</p>
                 <p class="city-copy__block city-copy__block--2">Una textura.</p>
                 <p class="city-copy__block city-copy__block--3">Una pintura.</p>
-                <p class="city-copy__block city-copy__block--4">La ciudad también<br>se construye desde<br>esos fragmentos.</p>
+                <p class="city-copy__block city-copy__block--4">La ciudad también se construye<br>desde esos fragmentos.</p>
                 <p class="city-copy__block city-copy__block--5 city-copy__block--stacked">
                     <span class="city-copy__line">Este proyecto busca crear un mapa colectivo</span>
                     <span class="city-copy__line">en el que puedas recorrer tu territorio</span>
                     <span class="city-copy__line">por medio de la observación y el juego.</span>
                 </p>
             </div>
-            <img src="./img/city.png" alt="" class="city-collage" id="city-collage" aria-hidden="true">
+            <div class="city-collage" id="city-collage" aria-hidden="true"></div>
         </div>
 
         <div id="home-instructions" class="home-instructions">
@@ -364,11 +364,84 @@ function positionCityImage() {
 
    positionMapPreview();
    if (typeof lockHeroTextPositions === 'function') lockHeroTextPositions();
+   setupCityCopyReveal();
    window.dispatchEvent(new Event('cityLayoutReady'));
 }
 
+var cityCopyRevealObserver = null;
+
+function setupCityCopyReveal() {
+   const cityCopy = document.querySelector('.city-copy');
+   const cityStage = document.getElementById('city-stage');
+   if (!cityCopy || !cityStage) return;
+
+   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+   if (reducedMotion) {
+      cityCopy.classList.remove('city-copy--pending');
+      cityCopy.classList.add('city-copy--shown');
+      return;
+   }
+
+   if (cityCopy.classList.contains('city-copy--shown')) return;
+
+   if (cityCopyRevealObserver) {
+      cityCopyRevealObserver.disconnect();
+      cityCopyRevealObserver = null;
+   }
+
+   cityCopy.classList.add('city-copy--pending');
+
+   function showCityCopy() {
+      if (cityCopy.classList.contains('city-copy--shown')) return;
+      cityCopy.classList.remove('city-copy--pending');
+      cityCopy.classList.add('city-copy--shown');
+      if (cityCopyRevealObserver) {
+         cityCopyRevealObserver.disconnect();
+         cityCopyRevealObserver = null;
+      }
+   }
+
+   function isCityCopyInView() {
+      const rect = cityStage.getBoundingClientRect();
+      const vh = window.innerHeight;
+      return rect.top < vh * 0.88 && rect.bottom > vh * 0.08;
+   }
+
+   if (isCityCopyInView()) {
+      showCityCopy();
+      return;
+   }
+
+   if ('IntersectionObserver' in window) {
+      cityCopyRevealObserver = new IntersectionObserver(function (entries) {
+         entries.forEach(function (entry) {
+            if (entry.isIntersecting) showCityCopy();
+         });
+      }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
+      cityCopyRevealObserver.observe(cityStage);
+   }
+
+   function revealOnScroll() {
+      if (!isCityCopyInView()) return;
+      showCityCopy();
+      window.removeEventListener('scroll', revealOnScroll);
+      document.removeEventListener('scroll', revealOnScroll);
+   }
+   window.addEventListener('scroll', revealOnScroll, { passive: true });
+   document.addEventListener('scroll', revealOnScroll, { passive: true });
+   revealOnScroll();
+
+   window.setTimeout(function () {
+      if (!cityCopy.classList.contains('city-copy--shown') && isCityCopyInView()) {
+         showCityCopy();
+      }
+   }, 400);
+}
+
 window.addEventListener('resize', positionCityImage);
+window.addEventListener('load', setupCityCopyReveal);
 </script>
+<script src="./js/city-reveal.js?v=visual"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
    const contexto = document.querySelector('.contexto-img');

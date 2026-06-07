@@ -97,30 +97,104 @@ html, body {
 .city-collage {
    position: relative;
    flex: 0 0 auto;
-   height: calc(100vh - 55px);
    aspect-ratio: 2336 / 3118;
-   max-width: min(58vw, 100%);
-   width: auto;
-   object-fit: contain;
-   object-position: right top;
+   width: min(calc((100vh - 55px) * 2336 / 3118), 58vw);
+   height: min(calc(100vh - 55px), calc(58vw * 3118 / 2336));
    display: block;
+   overflow: visible;
+}
+
+.city-collage__base {
+   position: absolute;
+   left: 0;
+   top: 0;
+   width: 100%;
+   height: 100%;
+   display: block;
+   pointer-events: none;
+   opacity: 0;
+   z-index: 0;
+}
+
+.city-collage--shown .city-collage__base {
+   animation: cityPieceFadeIn 1.2s ease 5s forwards;
+}
+
+.city-piece {
+   position: absolute;
+   overflow: hidden;
+   line-height: 0;
+   will-change: opacity;
+   z-index: 1;
+}
+
+.city-piece--1 { z-index: 2; }
+.city-piece--2 { z-index: 3; }
+.city-piece--3 { z-index: 4; }
+.city-piece--4 { z-index: 5; }
+.city-piece--5 { z-index: 6; }
+.city-piece--6 { z-index: 7; }
+.city-piece--7 { z-index: 8; }
+
+.city-piece img {
+   position: absolute;
+   display: block;
+   max-width: none;
+}
+
+.city-collage--pending .city-piece {
+   opacity: 0;
+}
+
+.city-collage--shown .city-piece {
+   opacity: 0;
+   animation: cityPieceFadeIn 1.1s ease forwards;
+}
+
+.city-collage--shown .city-piece--1 { animation-delay: 0.2s; }
+.city-collage--shown .city-piece--2 { animation-delay: 1s; }
+.city-collage--shown .city-piece--3 { animation-delay: 1.8s; }
+.city-collage--shown .city-piece--4 { animation-delay: 2.6s; }
+.city-collage--shown .city-piece--5 { animation-delay: 3.4s; }
+.city-collage--shown .city-piece--6 { animation-delay: 4.2s; }
+.city-collage--shown .city-piece--7 { animation-delay: 5s; }
+
+@keyframes cityPieceFadeIn {
+   from { opacity: 0; }
+   to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .city-collage--pending .city-piece,
+   .city-collage--shown .city-piece,
+   .city-collage__base {
+      opacity: 1;
+      animation: none;
+   }
 }
 
 .city-copy__block {
    position: absolute;
    margin: 0;
-   font-family: 'Courier New', Courier, monospace;
-   font-size: 22px;
+   font-family: 'REconocer', serif;
+   font-size: calc(22px + 2pt);
    font-weight: normal;
    color: #0000ff;
    line-height: 1.25;
    text-align: left;
+   will-change: opacity;
+}
+
+.city-copy__block--1,
+.city-copy__block--2,
+.city-copy__block--3 {
+   font-size: calc(22px + 6pt);
 }
 
 .city-copy__block--1 {
    left: 8%;
    top: 9%;
-   font-family: 'REconocer', serif;
+   line-height: 1.42;
 }
 
 .city-copy__block--2 {
@@ -138,18 +212,52 @@ html, body {
 .city-copy__block--4 {
    left: 24%;
    top: 53%;
-   transform: translateX(1cm);
+   transform: translateX(3cm) translateY(2cm);
+   font-size: calc(22px + 4pt);
+   line-height: 1.42;
 }
 
 .city-copy__block--5 {
    left: 8%;
    top: calc(74% + 1cm);
    max-width: none;
+   font-family: 'Courier New', Courier, monospace;
+   font-size: calc(22px - 2pt);
+   text-align: center;
+   transform: translateX(3cm) translateY(1.5cm);
 }
 
 .city-copy__block--stacked .city-copy__line {
    display: block;
    white-space: nowrap;
+}
+
+.city-copy--pending .city-copy__block {
+   opacity: 0;
+}
+
+.city-copy--shown .city-copy__block {
+   opacity: 0;
+   animation: cityCopyFadeIn 0.9s ease forwards;
+}
+
+.city-copy--shown .city-copy__block--1 { animation-delay: 0.15s; }
+.city-copy--shown .city-copy__block--2 { animation-delay: 1.15s; }
+.city-copy--shown .city-copy__block--3 { animation-delay: 2.15s; }
+.city-copy--shown .city-copy__block--4 { animation-delay: 3.15s; }
+.city-copy--shown .city-copy__block--5 { animation-delay: 4.15s; }
+
+@keyframes cityCopyFadeIn {
+   from { opacity: 0; }
+   to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .city-copy--pending .city-copy__block,
+   .city-copy--shown .city-copy__block {
+      opacity: 1;
+      animation: none;
+   }
 }
 
 .home-instructions {
@@ -167,7 +275,7 @@ html, body {
    pointer-events: none;
    box-sizing: border-box;
    overflow: visible;
-   transform: translateY(1cm);
+   transform: translateY(0.5cm);
 }
 
 .home-instruction-item {
@@ -641,7 +749,7 @@ body {
     line-height: 1.1;
     transform: translate(calc(145px + 1.5cm), calc(18px + 0.3cm - 2mm));
     opacity: 0;
-    animation: heroTextFadeIn 0.7s ease 1.6s forwards;
+    animation: heroTextFadeIn 0.7s ease 2.6s forwards;
 }
 
 .hero-subtitle-top {
@@ -673,7 +781,7 @@ body {
     z-index: 10;
     transform: translate(73vw, calc(77vh - 0.3cm));
     opacity: 0;
-    animation: heroTextFadeIn 0.7s ease 2.1s forwards;
+    animation: heroTextFadeIn 0.7s ease 4.1s forwards;
 
 }
 
