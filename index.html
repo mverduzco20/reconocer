@@ -34,28 +34,47 @@
             <div class="home-instruction-item home-instruction-item--with-lines">
                 <span class="home-instruction-num">1.</span>
                 <img src="./img/ins-04.png" alt="">
-                <span class="home-instruction-title home-instruction-title--two-lines">
-                    <span class="home-instruction-title-line">ELIGE UN</span>
-                    <span class="home-instruction-title-line">PUNTO DE PARTIDA</span>
-                </span>
+                <div class="home-instruction-copy">
+                    <span class="home-instruction-title home-instruction-title--two-lines">
+                        <span class="home-instruction-title-line">ELIGE UN</span>
+                        <span class="home-instruction-title-line">PUNTO DE PARTIDA</span>
+                    </span>
+                    <span class="home-instruction-subtext">Selecciona tu punto de partida en el mapa.</span>
+                </div>
             </div>
             <div class="home-instruction-item home-instruction-item--with-lines">
                 <span class="home-instruction-num">2.</span>
                 <img src="./img/ins-01.png" alt="">
-                <span class="home-instruction-title home-instruction-title--two-lines home-instruction-title--spaced home-instruction-title--spaced-wide">
-                    <span class="home-instruction-title-line">FILTRA</span>
-                    <span class="home-instruction-title-line">LAS CATEGORÍAS</span>
-                </span>
+                <div class="home-instruction-copy">
+                    <span class="home-instruction-title home-instruction-title--two-lines home-instruction-title--spaced home-instruction-title--spaced-wide">
+                        <span class="home-instruction-title-line">FILTRA</span>
+                        <span class="home-instruction-title-line">LAS CATEGORÍAS</span>
+                    </span>
+                    <span class="home-instruction-subtext home-instruction-subtext--stacked">
+                        <span class="home-instruction-subtext-line">Elige qué tipo</span>
+                        <span class="home-instruction-subtext-line">ruta quieres tomar.</span>
+                    </span>
+                </div>
             </div>
-            <div class="home-instruction-item">
+            <div class="home-instruction-item home-instruction-item--with-lines home-instruction-item--step3">
                 <span class="home-instruction-num">3.</span>
-                <span class="home-instruction-title home-instruction-title--single home-instruction-title--spaced">SUBE TU IMAGEN</span>
                 <img src="./img/ins-02.png" alt="">
+                <div class="home-instruction-copy">
+                    <span class="home-instruction-title home-instruction-title--single home-instruction-title--step3-text">SUBE TU HITO</span>
+                    <span class="home-instruction-subtext">Captura el momento y sube una imagen.</span>
+                </div>
             </div>
-            <div class="home-instruction-item">
+            <div class="home-instruction-item home-instruction-item--with-lines">
                 <span class="home-instruction-num">4.</span>
-                <span class="home-instruction-title">DESBLOQUEA<br>ARCHIVO<br>COLECTIVO</span>
                 <img src="./img/ins-03.png" alt="">
+                <div class="home-instruction-copy">
+                    <span class="home-instruction-title home-instruction-title--stacked-lines">
+                        <span class="home-instruction-title-line">DESBLOQUEA</span>
+                        <span class="home-instruction-title-line">ARCHIVO</span>
+                        <span class="home-instruction-title-line">COLECTIVO</span>
+                    </span>
+                    <span class="home-instruction-subtext">Descubre los relatos e imágenes de la comunidad.</span>
+                </div>
             </div>
         </div>
 
@@ -232,8 +251,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 const CITY_STICKY_GAP_CM = 7;
 const INSTRUCTION_SIDE_MARGIN_CM = 1;
-const INSTRUCTION_ITEMS_SHIFT_LEFT_CM = 5;
-const INSTRUCTION_ITEM2_SHIFT_RIGHT_CM = 1.4;
 
 function cmToPx(cm) {
    return cm * 96 / 2.54;
@@ -258,7 +275,8 @@ function positionInstructionIcons() {
    row.style.paddingRight = INSTRUCTION_SIDE_MARGIN_CM + 'cm';
    row.style.boxSizing = 'border-box';
    row.style.display = 'flex';
-   row.style.justifyContent = 'flex-start';
+   row.style.flexDirection = 'row';
+   row.style.justifyContent = 'space-between';
    row.style.alignItems = 'center';
    row.style.zIndex = '1002';
    row.style.pointerEvents = 'none';
@@ -278,34 +296,8 @@ function positionInstructionIcons() {
       img.style.maxHeight = size + 'px';
       img.style.objectFit = 'contain';
       item.style.flex = '0 0 auto';
-      item.style.marginLeft = '0';
-   });
-
-   const items = Array.prototype.slice.call(row.querySelectorAll('.home-instruction-item'));
-   const rowStyles = window.getComputedStyle(row);
-   const innerWidth = row.clientWidth
-      - parseFloat(rowStyles.paddingLeft)
-      - parseFloat(rowStyles.paddingRight);
-   const totalIconWidth = items.reduce(function (sum, item) {
-      return sum + item.offsetWidth;
-   }, 0);
-   const betweenGap = items.length > 1
-      ? Math.max(0, (innerWidth - totalIconWidth) / (items.length - 1))
-      : 0;
-
-   const shiftLeftPx = cmToPx(INSTRUCTION_ITEMS_SHIFT_LEFT_CM);
-
-   items.forEach(function (item, index) {
-      item.style.marginLeft = index === 0 ? '0' : betweenGap + 'px';
-      if (index >= 1) {
-         let itemShiftPx = shiftLeftPx;
-         if (index === 1) {
-            itemShiftPx -= cmToPx(INSTRUCTION_ITEM2_SHIFT_RIGHT_CM);
-         }
-         item.style.transform = 'translateX(-' + itemShiftPx + 'px)';
-      } else {
-         item.style.transform = '';
-      }
+      item.style.marginLeft = '';
+      item.style.transform = '';
    });
 }
 
@@ -322,7 +314,7 @@ function positionMapPreview() {
    const marginTop = Math.max(0, Math.round(cityBottom + gapPx - heroBottom));
 
    stickyWrap.style.marginTop = marginTop + 'px';
-   mapPreview.style.height = (marginTop + window.innerHeight + 1000) + 'px';
+   mapPreview.style.height = (marginTop + window.innerHeight) + 'px';
    positionInstructionIcons();
 }
 

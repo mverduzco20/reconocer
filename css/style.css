@@ -78,17 +78,32 @@ img[alt="city"] {
    padding-left: 1cm;
    padding-right: 1cm;
    display: flex;
-   justify-content: flex-start;
+   flex-direction: row;
+   justify-content: space-between;
    align-items: center;
    z-index: 1002;
    pointer-events: none;
    box-sizing: border-box;
-   overflow: hidden;
+   overflow: visible;
+   transform: translateY(1cm);
 }
 
 .home-instruction-item {
    position: relative;
    flex: 0 0 auto;
+}
+
+.home-instruction-item:nth-child(n + 2) {
+   margin-left: 0.35cm;
+}
+
+.home-instruction-item--step3 {
+   transform: translateX(-0.5cm);
+}
+
+.home-instruction-title--step3-text {
+   letter-spacing: 0.04em;
+   word-spacing: 0.05em;
 }
 
 .home-instruction-item--with-lines {
@@ -140,14 +155,48 @@ img[alt="city"] {
    transform: none;
 }
 
+.home-instruction-item--step3.home-instruction-item--with-lines .home-instruction-num {
+   transform: translateX(0.8cm);
+}
+
+.home-instruction-item--step3.home-instruction-item--with-lines img {
+   transform: translateX(0.3cm) scale(0.7);
+   transform-origin: left center;
+}
+
+.home-instruction-item--with-lines .home-instruction-copy {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   margin: 6px 0 0 -0.8cm;
+   flex: 0 0 auto;
+   max-width: 10.5rem;
+}
+
 .home-instruction-item--with-lines .home-instruction-title {
    position: static;
    left: auto;
-   margin: 6px 0 0 0;
+   margin: 0;
    flex: 0 0 auto;
 }
 
-.home-instruction-title--two-lines .home-instruction-title-line {
+.home-instruction-subtext {
+   margin: 4px 0 0 0;
+   font-family: 'Courier New', Courier, monospace;
+   font-weight: normal;
+   font-size: 15px;
+   color: #0000ff;
+   line-height: 1.2;
+   text-align: left;
+   text-transform: none;
+}
+
+.home-instruction-subtext--stacked .home-instruction-subtext-line {
+   display: block;
+}
+
+.home-instruction-title--two-lines .home-instruction-title-line,
+.home-instruction-title--stacked-lines .home-instruction-title-line {
    display: block;
    white-space: nowrap;
 }
@@ -156,6 +205,8 @@ img[alt="city"] {
    display: block;
    object-fit: contain;
    flex: 0 0 auto;
+   transform: scale(0.7);
+   transform-origin: left center;
 }
 
 #hero {
