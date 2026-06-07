@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconocer</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css?v=visual8">
+</head>
+
+<body>
+<audio id="global-audio" loop preload="auto">
+   <source src="./audio/Sonidopag-.mp4" type="video/mp4">
+</audio>
+    <main id="home">
+        <section id="hero" style="display:flex; align-items:center; justify-content:center; position:relative;">
+            <div id="hero-collage" class="hero-collage" aria-hidden="true"></div>
+            <div class="hero-content">
+                <p class="hero-subtitle-top">ORIENTACIÓN URBANA DESDE</p>
+                <h1 class="hero-reconocer-title">(<span class="reconocer-alt-r">R</span>e)conocer</h1>
+                <p class="hero-subtitle-bottom">EL RECORRIDO COTIDIANO</p>
+            </div>
+            <img src="./img/logocentroazul.png" alt="logo" style="position:absolute; top:12px; left:18px; height:20px; width:auto;">
+            <div style="position:absolute; top:12px; left:50%; transform:translateX(calc(-50% - 2mm)); text-align:center; font-family:'Courier New', Courier, monospace; font-size:12px; font-weight:bold; color:#0000ff; letter-spacing:1px; width:auto;">
+                <p style="margin:0 0 8px 0;">Scroll para<br>seguir explorando</p>
+                <div style="width:1px; height:28px; background:#0000ff; margin:0 auto;"></div>
+            </div>
+        </section>
+
+        <div id="city-stage" class="city-stage">
+            <div class="city-copy" aria-hidden="true">
+                <p class="city-copy__block city-copy__block--1">A veces no recordamos una calle.<br>Recordamos una sombra.<br>El sonido de una fuente...</p>
+                <p class="city-copy__block city-copy__block--2">Una textura.</p>
+                <p class="city-copy__block city-copy__block--3">Una pintura.</p>
+                <p class="city-copy__block city-copy__block--4">La ciudad también se construye<br>desde esos fragmentos.</p>
+                <p class="city-copy__block city-copy__block--5 city-copy__block--stacked">
+                    <span class="city-copy__line">Este proyecto busca crear un mapa colectivo</span>
+                    <span class="city-copy__line">en el que puedas recorrer tu territorio</span>
+                    <span class="city-copy__line">por medio de la observación y el juego.</span>
+                </p>
+            </div>
+            <div class="city-collage" id="city-collage" aria-hidden="true"></div>
+        </div>
+
+        <div id="home-instructions" class="home-instructions">
+            <div class="home-instruction-item home-instruction-item--with-lines">
+                <span class="home-instruction-num">1.</span>
+                <img src="./img/ins-04.png" alt="">
+                <div class="home-instruction-copy">
+                    <span class="home-instruction-title home-instruction-title--two-lines">
+                        <span class="home-instruction-title-line">ELIGE UN</span>
+                        <span class="home-instruction-title-line">PUNTO DE PARTIDA</span>
+                    </span>
+                    <span class="home-instruction-subtext">Selecciona tu punto de partida en el mapa.</span>
+                </div>
+            </div>
+            <div class="home-instruction-item home-instruction-item--with-lines">
+                <span class="home-instruction-num">2.</span>
+                <img src="./img/ins-01.png" alt="">
+                <div class="home-instruction-copy">
+                    <span class="home-instruction-title home-instruction-title--two-lines home-instruction-title--spaced home-instruction-title--spaced-wide">
+                        <span class="home-instruction-title-line">FILTRA</span>
+                        <span class="home-instruction-title-line">LAS CATEGORÍAS</span>
+                    </span>
+                    <span class="home-instruction-subtext home-instruction-subtext--stacked">
+                        <span class="home-instruction-subtext-line">Elige qué tipo</span>
+                        <span class="home-instruction-subtext-line">ruta quieres tomar.</span>
+                    </span>
+                </div>
+            </div>
+            <div class="home-instruction-item home-instruction-item--with-lines home-instruction-item--step3">
+                <span class="home-instruction-num">3.</span>
+                <img src="./img/ins-02.png" alt="">
+                <div class="home-instruction-copy">
+                    <span class="home-instruction-title home-instruction-title--single home-instruction-title--step3-text">SUBE TU HITO</span>
+                    <span class="home-instruction-subtext">Captura el momento y sube una imagen.</span>
+                </div>
+            </div>
+            <div class="home-instruction-item home-instruction-item--with-lines">
+                <span class="home-instruction-num">4.</span>
+                <img src="./img/ins-03.png" alt="">
+                <div class="home-instruction-copy">
+                    <span class="home-instruction-title home-instruction-title--stacked-lines">
+                        <span class="home-instruction-title-line">DESBLOQUEA</span>
+                        <span class="home-instruction-title-line">ARCHIVO</span>
+                        <span class="home-instruction-title-line">COLECTIVO</span>
+                    </span>
+                    <span class="home-instruction-subtext">Descubre los relatos e imágenes de la comunidad.</span>
+                </div>
+            </div>
+        </div>
+
+        <section id="map-preview" style="position:relative; background-color:#f1f1f1;">
+            <div id="map-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
+                <iframe 
+                    src="./map.html?v=marker-opacity-70" 
+                    style="width:100%; height:100%; border:none;"
+                    scrolling="no"
+                    id="map-iframe">
+                </iframe>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+       <button class="sound-btn" id="sound-btn" aria-label="sonido">
+           <span class="sound-icon"></span>
+           <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.05" value="0"
+               onclick="event.stopPropagation()">
+       </button>
+       <div class="footer-left" style="margin-left: 30px; flex: 1;">
+           <a href="./docs/index.html" class="footer-link footer-link-lg">(SOBRE EL PROYECTO)</a>
+       </div>
+       <div class="footer-center" style="position:absolute; left:50%; transform:translateX(-50%);">
+           <a href="./index.html" class="footer-link footer-link-lg active-page">(INICIO)</a>
+       </div>
+       <div class="footer-right" style="margin-right: 30px;">
+           <a href="./map.html" class="footer-link footer-link-lg">(CARTOGRAFÍA)</a>
+       </div>
+    </footer>
+    <!-- 
+    <prompt>
+     - Crea con mapbox un mapa en 'reconocer.html'
+    - Define marcadores para las ubicaciones dentro del archivo './csv/reconocer.csv'
+    - Define un archivo js para controlar las acciones y configuraciones de mapbox, el archivo se tiene que llamar './js/reconocer.js'
+    - Los marcadores serán imágenes de 64x64px, define un placeholder, será reemplazado posteriormente por thumbs
+    </prompt>
+    -->
+    <!-- Map scripts only load on map.html to avoid initializing map on Home -->
+    <script>
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
+                e.preventDefault();
+                document.body.style.transition = 'opacity 600ms ease';
+                document.body.style.opacity = '0';
+                setTimeout(() => { window.location.href = href; }, 360);
+            });
+        });
+    </script>
+    <script>
+const audio = document.getElementById('global-audio');
+const volumeSlider = document.getElementById('volume-slider');
+
+// Start muted
+audio.volume = 0;
+audio.play().catch(() => {});
+
+if (volumeSlider) {
+   volumeSlider.value = 0;
+
+   volumeSlider.addEventListener('input', function(e) {
+       e.stopPropagation();
+       const val = parseFloat(this.value);
+       audio.volume = val;
+       const isOn = val > 0;
+       this.classList.toggle('active', isOn);
+       // Save state
+       localStorage.setItem('audioVolume', val);
+       localStorage.setItem('audioTime', audio.currentTime);
+   });
+
+   volumeSlider.addEventListener('click', function(e) {
+       e.stopPropagation();
+       if (parseFloat(this.value) === 0) {
+           this.value = 1;
+           audio.volume = 1;
+           this.classList.add('active');
+           localStorage.setItem('audioVolume', 1);
+       }
+   });
+}
+
+// Restore state from previous page
+const savedVolume = parseFloat(localStorage.getItem('audioVolume') || '0');
+const savedTime = parseFloat(localStorage.getItem('audioTime') || '0');
+audio.volume = savedVolume;
+if (volumeSlider) {
+   volumeSlider.value = savedVolume;
+   if (savedVolume > 0) volumeSlider.classList.add('active');
+}
+audio.currentTime = savedTime;
+
+// Save time before leaving page
+window.addEventListener('beforeunload', () => {
+   localStorage.setItem('audioTime', audio.currentTime);
+   localStorage.setItem('audioVolume', audio.volume);
+});
+</script>
+<script>
+document.querySelectorAll('.footer-link').forEach(link => {
+   link.classList.remove('active-page');
+});
+document.querySelector('a[href="./index.html"]')?.classList.add('active-page');
+</script>
+<script>
+window.addEventListener('load', () => {
+   window.scrollTo({ top: 0, behavior: 'instant' });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+   const host = document.getElementById('hero-collage');
+   if (!host) return;
+
+   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+   const tileDelay = 0.05;
+   const startDelay = 0.45;
+   const tileDuration = 0.6;
+
+   function useSvgFallback() {
+      host.classList.add('hero-collage--fallback');
+      host.style.opacity = reducedMotion ? '1' : '';
+   }
+
+   fetch('./img/home-collage.svg')
+      .then(function (res) {
+         if (!res.ok) throw new Error('svg fetch failed');
+         return res.text();
+      })
+      .then(function (svgText) {
+         svgText = svgText.replace(/xlink:href="([^"]+)"/g, function (_, path) {
+            if (path.charAt(0) === '#' || path.indexOf('./img/') === 0 || path.indexOf('http') === 0 || path.indexOf('data:') === 0) {
+               return 'xlink:href="' + path + '"';
+            }
+            return 'xlink:href="./img/' + path + '"';
+         });
+         host.innerHTML = svgText;
+         const svg = host.querySelector('svg');
+         if (svg) {
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+         }
+
+         const tiles = host.querySelectorAll('image, use');
+         if (!tiles.length) {
+            useSvgFallback();
+            return;
+         }
+
+         host.classList.add('is-ready');
+
+         if (reducedMotion) {
+            tiles.forEach(function (tile) { tile.style.opacity = '1'; });
+            positionCityImage();
+            if (typeof alignHeroSubtitles === 'function') alignHeroSubtitles();
+            return;
+         }
+
+         tiles.forEach(function (tile, i) {
+            tile.style.opacity = '0';
+            tile.style.animation = 'homeTileIn ' + tileDuration + 's ease forwards';
+            tile.style.animationDelay = (startDelay + i * tileDelay) + 's';
+         });
+
+         positionCityImage();
+         if (typeof lockHeroTextPositions === 'function') lockHeroTextPositions();
+      })
+      .catch(useSvgFallback);
+});
+
+const CITY_STICKY_GAP_CM = 7;
+const INSTRUCTION_SIDE_MARGIN_CM = 1;
+
+function cmToPx(cm) {
+   return cm * 96 / 2.54;
+}
+
+function cityStickyGapPx() {
+   return CITY_STICKY_GAP_CM * 96 / 2.54;
+}
+
+function positionInstructionIcons() {
+   const cityStage = document.getElementById('city-stage');
+   const row = document.getElementById('home-instructions');
+   if (!cityStage || !row) return;
+
+   const gapPx = cityStickyGapPx();
+   const cityBottom = cityStage.offsetTop + cityStage.offsetHeight;
+
+   row.style.position = 'absolute';
+   row.style.left = '0';
+   row.style.width = '100%';
+   row.style.paddingLeft = INSTRUCTION_SIDE_MARGIN_CM + 'cm';
+   row.style.paddingRight = INSTRUCTION_SIDE_MARGIN_CM + 'cm';
+   row.style.boxSizing = 'border-box';
+   row.style.display = 'flex';
+   row.style.flexDirection = 'row';
+   row.style.justifyContent = 'space-between';
+   row.style.alignItems = 'center';
+   row.style.zIndex = '1002';
+   row.style.pointerEvents = 'none';
+   row.style.top = cityBottom + 'px';
+   row.style.height = gapPx + 'px';
+
+   const iconSize = Math.round(gapPx * 0.95);
+   const smallIconSize = Math.round(iconSize * 0.5508);
+
+   row.querySelectorAll('.home-instruction-item').forEach(function (item) {
+      const img = item.querySelector('img');
+      if (!img) return;
+      const size = smallIconSize;
+      img.style.width = size + 'px';
+      img.style.height = size + 'px';
+      img.style.maxWidth = size + 'px';
+      img.style.maxHeight = size + 'px';
+      img.style.objectFit = 'contain';
+      item.style.flex = '0 0 auto';
+      item.style.marginLeft = '';
+      item.style.transform = '';
+   });
+}
+
+function positionMapPreview() {
+   const cityStage = document.getElementById('city-stage');
+   const mapPreview = document.getElementById('map-preview');
+   const stickyWrap = document.getElementById('map-sticky-wrap');
+   const hero = document.getElementById('hero');
+   if (!cityStage || !mapPreview || !stickyWrap || !hero) return;
+
+   const gapPx = cityStickyGapPx();
+   const cityBottom = cityStage.offsetTop + cityStage.offsetHeight;
+   const heroBottom = hero.offsetTop + hero.offsetHeight;
+   const marginTop = Math.max(0, Math.round(cityBottom + gapPx - heroBottom));
+
+   stickyWrap.style.marginTop = marginTop + 'px';
+   mapPreview.style.height = (marginTop + window.innerHeight) + 'px';
+   positionInstructionIcons();
+}
+
+function positionCityImage() {
+   const home = document.getElementById('home');
+   const cityStage = document.getElementById('city-stage');
+   const collage = document.getElementById('city-collage');
+   const hero = document.getElementById('hero');
+   const svg = document.querySelector('#hero-collage svg');
+   if (!home || !cityStage || !collage || !hero || !svg) return;
+
+   home.style.position = 'relative';
+
+   let maxBottom = 0;
+   svg.querySelectorAll('image, use').forEach(function (el) {
+      try {
+         const box = el.getBBox();
+         maxBottom = Math.max(maxBottom, box.y + box.height);
+      } catch (e) {}
+   });
+
+   const vb = svg.viewBox.baseVal;
+   if (!vb || !vb.height) return;
+
+   const scale = hero.offsetHeight / vb.height;
+   const cityDropCm = 2.16;
+   cityStage.style.position = 'absolute';
+   cityStage.style.top = (hero.offsetTop + maxBottom * scale + 140 + cityDropCm * 96 / 2.54) + 'px';
+   cityStage.style.left = '0';
+   cityStage.style.right = '0';
+   cityStage.style.bottom = 'auto';
+   cityStage.style.width = '100%';
+   cityStage.style.maxWidth = '100%';
+
+   positionMapPreview();
+   if (typeof lockHeroTextPositions === 'function') lockHeroTextPositions();
+   setupCityCopyReveal();
+   window.dispatchEvent(new Event('cityLayoutReady'));
+}
+
+var cityCopyRevealObserver = null;
+
+function setupCityCopyReveal() {
+   const cityCopy = document.querySelector('.city-copy');
+   const cityStage = document.getElementById('city-stage');
+   if (!cityCopy || !cityStage) return;
+
+   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+   if (reducedMotion) {
+      cityCopy.classList.remove('city-copy--pending');
+      cityCopy.classList.add('city-copy--shown');
+      return;
+   }
+
+   if (cityCopy.classList.contains('city-copy--shown')) return;
+
+   if (cityCopyRevealObserver) {
+      cityCopyRevealObserver.disconnect();
+      cityCopyRevealObserver = null;
+   }
+
+   cityCopy.classList.add('city-copy--pending');
+
+   function showCityCopy() {
+      if (cityCopy.classList.contains('city-copy--shown')) return;
+      cityCopy.classList.remove('city-copy--pending');
+      cityCopy.classList.add('city-copy--shown');
+      if (cityCopyRevealObserver) {
+         cityCopyRevealObserver.disconnect();
+         cityCopyRevealObserver = null;
+      }
+   }
+
+   const firstTextBlock = cityCopy.querySelector('.city-copy__block--1');
+
+   function isFirstTextInView() {
+      if (!firstTextBlock) return false;
+      const rect = firstTextBlock.getBoundingClientRect();
+      const vh = window.innerHeight;
+      return rect.top < vh * 0.82 && rect.bottom > vh * 0.18;
+   }
+
+   if (isFirstTextInView()) {
+      showCityCopy();
+      return;
+   }
+
+   if ('IntersectionObserver' in window && firstTextBlock) {
+      cityCopyRevealObserver = new IntersectionObserver(function (entries) {
+         entries.forEach(function (entry) {
+            if (entry.isIntersecting) showCityCopy();
+         });
+      }, { threshold: 0.35, rootMargin: '0px 0px -8% 0px' });
+      cityCopyRevealObserver.observe(firstTextBlock);
+   }
+
+   function revealOnScroll() {
+      if (!isFirstTextInView()) return;
+      showCityCopy();
+      window.removeEventListener('scroll', revealOnScroll);
+      document.removeEventListener('scroll', revealOnScroll);
+   }
+   window.addEventListener('scroll', revealOnScroll, { passive: true });
+   document.addEventListener('scroll', revealOnScroll, { passive: true });
+   revealOnScroll();
+
+   window.setTimeout(function () {
+      if (!cityCopy.classList.contains('city-copy--shown') && isFirstTextInView()) {
+         showCityCopy();
+      }
+   }, 400);
+}
+
+window.addEventListener('resize', positionCityImage);
+window.addEventListener('load', setupCityCopyReveal);
+</script>
+<script src="./js/city-reveal.js?v=visual2"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+   const contexto = document.querySelector('.contexto-img');
+   const mapPreview = document.getElementById('map-preview');
+   if (!contexto || !mapPreview) return;
+
+   function updateContexto() {
+      const heroBottom = mapPreview.getBoundingClientRect().top;
+      const show = heroBottom < window.innerHeight - 80;
+      contexto.classList.toggle('is-visible', show);
+   }
+
+   window.addEventListener('scroll', updateContexto, { passive: true });
+   window.addEventListener('resize', updateContexto);
+   updateContexto();
+});
+</script>
+<script>
+(function () {
+   if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) return;
+   var files = ['./index.html', './css/style.css'];
+   var stamps = {};
+   function check() {
+      files.forEach(function (url) {
+         fetch(url, { cache: 'no-store', method: 'HEAD' }).then(function (res) {
+            var lm = res.headers.get('Last-Modified') || res.headers.get('ETag') || '';
+            if (stamps[url] && stamps[url] !== lm) location.reload();
+            stamps[url] = lm;
+         }).catch(function () {});
+      });
+   }
+   check();
+   setInterval(check, 1000);
+})();
+</script>
+<script>
+(function() {
+    var heroEl = document.getElementById('hero');
+    var top1 = document.querySelector('.hero-subtitle-top');
+    var bot = document.querySelector('.hero-subtitle-bottom');
+    var title = document.querySelector('.hero-reconocer-title');
+    var heroTextLocked = false;
+    var heroTextLock = null;
+
+    function place(el) {
+        if (!el) return;
+        var parent = el.parentElement;
+        if (!parent) return;
+        var rect = el.getBoundingClientRect();
+        var parentRect = parent.getBoundingClientRect();
+        el.style.position = 'absolute';
+        el.style.top = (rect.top - parentRect.top) + 'px';
+        el.style.left = (rect.left - parentRect.left) + 'px';
+        el.style.right = 'auto';
+        el.style.bottom = 'auto';
+        el.style.transform = 'none';
+    }
+
+    function getTileRects(svg) {
+        var rects = [];
+        svg.querySelectorAll('image, use').forEach(function (tile) {
+            try {
+                var r = tile.getBoundingClientRect();
+                if (r.width < 30 || r.height < 30) return;
+                rects.push({
+                    top: r.top,
+                    bottom: r.bottom,
+                    left: r.left,
+                    right: r.right
+                });
+            } catch (e) {}
+        });
+        return rects;
+    }
+
+    function measureSubtitleGap(el, tiles) {
+        if (!el || !tiles.length) return null;
+
+        var sr = el.getBoundingClientRect();
+        if (!sr.width || !sr.height) return null;
+
+        var centerX = (sr.left + sr.right) / 2;
+        var colTiles = tiles.filter(function (t) {
+            return t.left <= centerX + 10 && t.right >= centerX - 10;
+        });
+
+        var above = null;
+        var below = null;
+        colTiles.forEach(function (t) {
+            if (t.bottom <= sr.top + 3 && (!above || t.bottom > above.bottom)) above = t;
+            if (t.top >= sr.bottom - 3 && (!below || t.top < below.top)) below = t;
+        });
+
+        return {
+            el: el,
+            sr: sr,
+            above: above,
+            below: below,
+            gapMidY: above && below ? (above.bottom + below.top) / 2 : null
+        };
+    }
+
+    var SUBTITLE_DROP_MM = 2;
+
+    function mmToPx(mm) {
+        return mm * 96 / 25.4;
+    }
+
+    function applySubtitlePosition(spec, parentRect) {
+        if (!spec) return;
+
+        var el = spec.el;
+        var sr = spec.sr;
+        var top = sr.top - parentRect.top;
+        var left = sr.left - parentRect.left;
+
+        if (spec.gapMidY != null) {
+            top = spec.gapMidY - sr.height / 2 - parentRect.top;
+        }
+
+        top += mmToPx(SUBTITLE_DROP_MM + (el === bot ? 2 : 0));
+
+        el.style.position = 'absolute';
+        el.style.top = top + 'px';
+        el.style.left = left + 'px';
+        el.style.right = 'auto';
+        el.style.bottom = 'auto';
+        el.style.transform = 'none';
+    }
+
+    function resetForMeasure(el) {
+        if (!el) return;
+        el.style.removeProperty('position');
+        el.style.removeProperty('top');
+        el.style.removeProperty('left');
+        el.style.removeProperty('right');
+        el.style.removeProperty('bottom');
+        el.style.removeProperty('transform');
+    }
+
+    function alignHeroSubtitles() {
+        var svg = document.querySelector('#hero-collage svg');
+        var parent = top1 && top1.parentElement;
+        if (!svg || !parent) {
+            if (top1) place(top1);
+            if (bot) place(bot);
+            return;
+        }
+
+        resetForMeasure(top1);
+        resetForMeasure(bot);
+
+        var tiles = getTileRects(svg);
+        var parentRect = parent.getBoundingClientRect();
+
+        applySubtitlePosition(measureSubtitleGap(top1, tiles), parentRect);
+        applySubtitlePosition(measureSubtitleGap(bot, tiles), parentRect);
+    }
+
+    function captureHeroTextLock() {
+        if (!heroEl) return;
+
+        var heroRect = heroEl.getBoundingClientRect();
+        if (!heroRect.width || !heroRect.height) return;
+
+        heroTextLock = {
+            items: [top1, title, bot].filter(Boolean).map(function (el) {
+                var rect = el.getBoundingClientRect();
+                return {
+                    el: el,
+                    topPct: ((rect.top - heroRect.top) / heroRect.height) * 100,
+                    leftPct: ((rect.left - heroRect.left) / heroRect.width) * 100
+                };
+            })
+        };
+    }
+
+    function applyHeroTextLock() {
+        if (!heroEl || !heroTextLock || !heroTextLock.items.length) return;
+
+        heroTextLock.items.forEach(function (item) {
+            if (item.el.parentElement !== heroEl) {
+                heroEl.appendChild(item.el);
+            }
+            item.el.style.position = 'absolute';
+            item.el.style.top = item.topPct + '%';
+            item.el.style.left = item.leftPct + '%';
+            item.el.style.right = 'auto';
+            item.el.style.bottom = 'auto';
+            item.el.style.transform = 'none';
+            item.el.style.margin = '0';
+        });
+    }
+
+    function finalizeHeroTextLock() {
+        captureHeroTextLock();
+        if (!heroTextLock || !heroTextLock.items.length) return;
+        heroTextLocked = true;
+        applyHeroTextLock();
+    }
+
+    function fontsAreReady() {
+        return !document.fonts || document.fonts.status === 'loaded';
+    }
+
+    function lockHeroTextPositions() {
+        if (!heroEl) return;
+
+        if (heroTextLocked) {
+            applyHeroTextLock();
+            return;
+        }
+
+        if (!document.querySelector('#hero-collage svg')) return;
+        if (!fontsAreReady()) return;
+
+        alignHeroSubtitles();
+        requestAnimationFrame(function () {
+            requestAnimationFrame(finalizeHeroTextLock);
+        });
+    }
+
+    window.lockHeroTextPositions = lockHeroTextPositions;
+    window.alignHeroSubtitles = lockHeroTextPositions;
+
+    window.addEventListener('load', lockHeroTextPositions);
+    window.addEventListener('resize', lockHeroTextPositions);
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(lockHeroTextPositions);
+    }
+})();
+</script>
+</body>
+
+</html>

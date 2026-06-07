@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconocer — Mapa</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css?v=marker-opacity-70">
+</head>
+<body>
+<audio id="global-audio" loop preload="auto">
+   <source src="./audio/Sonidopag-.mp4" type="video/mp4">
+</audio>
+    <div id="map-container">
+        <div id="mapa"></div>
+
+        <nav id="categories-nav" class="categories-open">
+            <div class="categories-wrapper">
+                <div class="cat-rects" aria-hidden="true">
+                    <div class="cat-rect memoria" data-for="memoria-button"></div>
+                    <div class="cat-rect oficio" data-for="oficio-button"></div>
+                    <div class="cat-rect refugio" data-for="refugio-button"></div>
+                    <div class="cat-rect encuentro" data-for="encuentro-button"></div>
+                </div>
+                <div class="cat-buttons">
+                    <button class="category-button" id="memoria-button" data-category="m"><span class="label">MEMORIA</span><span class="swatch"></span></button>
+                    <button class="category-button" id="oficio-button" data-category="o"><span class="label">OFICIO</span><span class="swatch"></span></button>
+                    <button class="category-button" id="refugio-button" data-category="r"><span class="label">REFUGIO</span><span class="swatch"></span></button>
+                    <button class="category-button" id="encuentro-button" data-category="e"><span class="label">ENCUENTRO</span><span class="swatch"></span></button>
+                </div>
+            </div>
+        </nav>
+
+        <footer class="site-footer">
+           <button class="sound-btn" id="sound-btn" aria-label="sonido">
+               <span class="sound-icon"></span>
+               <input type="range" class="volume-slider" id="volume-slider" 
+                      min="0" max="1" step="0.05" value="0" 
+                      onclick="event.stopPropagation()">
+           </button>
+           <div class="footer-left" style="margin-left: 20px; margin-right: 20px; flex: 1;">
+               <a href="./docs/index.html" class="footer-link footer-link-lg">(SOBRE EL PROYECTO)</a>
+           </div>
+           <div class="footer-center" style="position:absolute; left:50%; transform:translateX(-50%);">
+               <a href="./index.html" class="footer-link footer-link-lg">(INICIO)</a>
+           </div>
+           <div class="footer-right">
+               <button class="footer-link footer-link-lg" id="categories-button">(CATEGORÍAS)</button>
+               <div id="category-rects-footer">
+                   <div class="footer-rect" style="background:rgba(233,196,126,0.6)">
+                       <img src="./img/m40.jpg" alt="memoria" class="rect-img">
+                       <p class="rect-text">Explora las huellas que el tiempo ha dejado en el lugar. Fachadas, materiales, detalles y espacios que conservan historias, transformaciones y recuerdos del pasado.</p>
+                   </div>
+                   <div class="footer-rect" style="background:rgba(89,89,210,0.6)">
+                       <img src="./img/o26.jpg" alt="oficio" class="rect-img">
+                       <p class="rect-text">Explora negocios, talleres, mercados y espacios que forman parte de la actividad cotidiana del lugar. Espacios que reflejan la actividad, los saberes y la vida diaria del territorio.</p>
+                   </div>
+                   <div class="footer-rect" style="background:rgba(146,244,123,0.32)">
+                       <img src="./img/r34.jpg" alt="refugio" class="rect-img">
+                       <p class="rect-text">Sigue los espacios donde las personas se reúnen, conversan y comparten el territorio. Plazas, paradas de camión, parques, puntos donde la vida colectiva se hace visible.</p>
+                   </div>
+                   <div class="footer-rect" style="background:rgba(236,0,234,0.32)">
+                       <img src="./img/e25.jpg" alt="encuentro" class="rect-img">
+                       <p class="rect-text">Toma esta ruta para seguir los puntos donde las personas coinciden. Espacios de convivencia, intercambio y actividad que dan forma a la vida cotidiana y turística del lugar.</p>
+                   </div>
+               </div>
+               <div class="footer-cat-actions">
+                   <button type="button" class="footer-cat-block" id="footer-cat-companion" aria-label="Cambiar fondo del mapa">
+                       <span class="footer-map-filter-c" aria-hidden="true">C</span>
+                   </button>
+                   <button type="button" class="footer-cat-block" id="cat-arrow-btn" aria-label="Abrir categorías">
+                       <span id="cat-arrow">→</span>
+                   </button>
+               </div>
+           </div>
+        </footer>
+        <div id="map-splash">
+            <div id="splash-overlay"></div>
+            <div id="splash-modal">
+                <p>Estos hitos fueron rescatados a partir de lo que la gente reconoce a la hora de intentar orientarse dentro de San Ángel, ciudad de México. La esperanza es que esto llegue a más personas, más lugares, y el mapa siga creciendo.</p>
+                <button id="splash-btn">ACEPTAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+    <script src="./js/secrets.js"></script>
+    <script src="./js/map.js?v=map-bg-project-colors"></script>
+    <script>
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
+            e.preventDefault();
+            document.body.style.transition = 'opacity 600ms ease';
+            document.body.style.opacity = '0';
+            setTimeout(() => { window.location.href = href; }, 360);
+        });
+    });
+    </script>
+    <script>
+const audio = document.getElementById('global-audio');
+const volumeSlider = document.getElementById('volume-slider');
+
+// Start muted
+audio.volume = 0;
+audio.play().catch(() => {});
+
+if (volumeSlider) {
+   volumeSlider.value = 0;
+
+   volumeSlider.addEventListener('input', function(e) {
+       e.stopPropagation();
+       const val = parseFloat(this.value);
+       audio.volume = val;
+       const isOn = val > 0;
+       this.classList.toggle('active', isOn);
+       // Save state
+       localStorage.setItem('audioVolume', val);
+       localStorage.setItem('audioTime', audio.currentTime);
+   });
+
+   volumeSlider.addEventListener('click', function(e) {
+       e.stopPropagation();
+       if (parseFloat(this.value) === 0) {
+           this.value = 1;
+           audio.volume = 1;
+           this.classList.add('active');
+           localStorage.setItem('audioVolume', 1);
+       }
+   });
+}
+
+// Restore state from previous page
+const savedVolume = parseFloat(localStorage.getItem('audioVolume') || '0');
+const savedTime = parseFloat(localStorage.getItem('audioTime') || '0');
+audio.volume = savedVolume;
+if (volumeSlider) {
+   volumeSlider.value = savedVolume;
+   if (savedVolume > 0) volumeSlider.classList.add('active');
+}
+audio.currentTime = savedTime;
+
+// Save time before leaving page
+window.addEventListener('beforeunload', () => {
+   localStorage.setItem('audioTime', audio.currentTime);
+   localStorage.setItem('audioVolume', audio.volume);
+});
+</script>
+<script>
+const splash = document.getElementById('map-splash');
+const splashBtn = document.getElementById('splash-btn');
+
+if (splashBtn) {
+   splashBtn.addEventListener('click', () => {
+       splash.classList.add('hidden');
+       setTimeout(() => { splash.style.display = 'none'; }, 600);
+   });
+}
+</script>
+</body>
+</html>
