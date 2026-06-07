@@ -24,19 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create Mapbox config for Pages
-        env:
-          MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
-        run: |
-          if [ -z "$MAPBOX_TOKEN" ]; then
-            echo "MAPBOX_TOKEN secret is missing. Cartography will not load on GitHub Pages."
-            exit 0
-          fi
-          cat > js/secrets.js <<EOF
-          window.TOKEN = "${MAPBOX_TOKEN}";
-          window.MAPBOX_TOKEN = window.TOKEN;
-          EOF
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
