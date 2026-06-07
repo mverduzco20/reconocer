@@ -373,35 +373,37 @@ body {
     font-family: 'REconocer', serif;
     color: rgb(0, 0, 255);
     margin: 0;
-    font-size: calc(4.75em + 2pt);
+    font-size: calc(4.75em + 9pt);
     font-weight: normal;
     line-height: 1.1;
-    transform: translate(145px, 18px);
+    transform: translate(calc(145px + 1.5cm), 18px);
 }
 
-#hero .hero-subtitle-top {
+.hero-subtitle-top {
     position: fixed;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 20px;
+    font-size: 22px;
     color: #0000ff;
     margin: 0;
     text-transform: uppercase;
     white-space: nowrap;
     z-index: 10;
-    transform: translate(5vw, 28vh);
+    bottom: calc(38% + 4.87cm);
+    right: calc(17% + 8.5cm);
 }
 
 #hero .hero-subtitle-bottom {
     position: fixed;
+    top: 0;
+    left: 0;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 20px;
+    font-size: 22px;
     color: #0000ff;
     margin: 0;
     text-transform: uppercase;
     white-space: nowrap;
     z-index: 10;
-    bottom: 38%;
-    right: 17%;
+    transform: translate(calc(5vw + 16cm), calc(28vh + 0.5cm));
 }
 
 @keyframes fadeIn {
