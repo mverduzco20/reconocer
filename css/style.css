@@ -97,6 +97,7 @@ html, body {
    left: 22%;
    bottom: 40%;
    text-align: left;
+   opacity: 1;
 }
 
 #hero .hero-content p {
@@ -107,27 +108,12 @@ html, body {
    margin-top: 0.35em;
 }
 
-#hero .hero-content {
-   opacity: 0;
-   animation: heroContentIn 0.8s ease 1.1s forwards;
-}
-
-@keyframes heroContentIn {
+@keyframes heroTextFadeIn {
    from {
       opacity: 0;
-      transform: translateY(10px);
    }
    to {
       opacity: 1;
-      transform: translateY(0);
-   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-   #hero .hero-content {
-      opacity: 1;
-      animation: none;
-      transform: none;
    }
 }
 
@@ -373,26 +359,15 @@ body {
     font-family: 'REconocer', serif;
     color: rgb(0, 0, 255);
     margin: 0;
-    font-size: calc(4.75em + 9pt);
+    font-size: calc(4.75em + 14pt);
     font-weight: normal;
     line-height: 1.1;
-    transform: translate(calc(145px + 1.5cm), 18px);
+    transform: translate(calc(145px + 1.5cm), calc(18px + 0.3cm));
+    opacity: 0;
+    animation: heroTextFadeIn 0.7s ease 1.6s forwards;
 }
 
 .hero-subtitle-top {
-    position: fixed;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 22px;
-    color: #0000ff;
-    margin: 0;
-    text-transform: uppercase;
-    white-space: nowrap;
-    z-index: 10;
-    bottom: calc(38% + 4.87cm);
-    right: calc(17% + 8.5cm);
-}
-
-#hero .hero-subtitle-bottom {
     position: fixed;
     top: 0;
     left: 0;
@@ -403,7 +378,35 @@ body {
     text-transform: uppercase;
     white-space: nowrap;
     z-index: 10;
-    transform: translate(calc(5vw + 16cm), calc(28vh + 0.5cm));
+    transform: translate(7vw, 23vh);
+    opacity: 0;
+    animation: heroTextFadeIn 0.7s ease 1.1s forwards;
+}
+
+.hero-subtitle-bottom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 22px;
+    color: #0000ff;
+    margin: 0;
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 10;
+    transform: translate(73vw, 77vh);
+    opacity: 0;
+    animation: heroTextFadeIn 0.7s ease 2.1s forwards;
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .hero-subtitle-top,
+   #hero .hero-reconocer-title,
+   #hero .hero-subtitle-bottom {
+      opacity: 1;
+      animation: none;
+   }
 }
 
 @keyframes fadeIn {
