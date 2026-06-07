@@ -40,7 +40,7 @@
                     <span class="city-copy__line">por medio de la observación y el juego.</span>
                 </p>
             </div>
-            <img src="./img/city.png" alt="city">
+            <img src="./img/city.png" alt="" class="city-collage" id="city-collage" aria-hidden="true">
         </div>
 
         <div id="home-instructions" class="home-instructions">
@@ -334,15 +334,10 @@ function positionMapPreview() {
 function positionCityImage() {
    const home = document.getElementById('home');
    const cityStage = document.getElementById('city-stage');
-   const city = cityStage && cityStage.querySelector('img[alt="city"]');
+   const collage = document.getElementById('city-collage');
    const hero = document.getElementById('hero');
    const svg = document.querySelector('#hero-collage svg');
-   if (!home || !cityStage || !city || !hero || !svg) return;
-
-   if (!city.complete || !city.naturalHeight) {
-      city.addEventListener('load', positionCityImage, { once: true });
-      return;
-   }
+   if (!home || !cityStage || !collage || !hero || !svg) return;
 
    home.style.position = 'relative';
 
@@ -369,6 +364,7 @@ function positionCityImage() {
 
    positionMapPreview();
    if (typeof lockHeroTextPositions === 'function') lockHeroTextPositions();
+   window.dispatchEvent(new Event('cityLayoutReady'));
 }
 
 window.addEventListener('resize', positionCityImage);

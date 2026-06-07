@@ -26,13 +26,39 @@ const MAP_STREET_LINE = '#f0f0f0';
 const MAP_STREET_FILL = '#f2f2f2';
 const MAP_LABEL_LIGHT = '#e8e8e8';
 
+const MAP_DARK_BG = '#000000';
+const MAP_DARK_STREET_FILL = '#141414';
+const MAP_DARK_STREET_LINE = '#3a3a3a';
+const MAP_DARK_LABEL = '#5a5a5a';
+
+const PROJECT_COLORS = ['#0000ff', '#e9c47e', '#92f47b', '#ec00ea'];
+
+const MAP_BG_MODES = ['white', 'dark', 'colorful'];
+const MAP_BG_LABELS = ['Mapa blanco', 'Mapa negro', 'Mapa colorido'];
+
+let mapBgModeIndex = 0;
+
 function isRoadLayer(id) {
     return /road|street|highway|bridge|tunnel|path|motorway|trunk|primary|secondary|tertiary|residential|service|transport|rail|avenue|calle/i.test(id);
+}
+
+function setMapContainerMode(color, mode) {
+    const container = document.getElementById('map-container');
+    const mapa = document.getElementById('mapa');
+    if (container) {
+        container.style.backgroundColor = color;
+        container.classList.remove('map-bg-dark', 'map-bg-colorful');
+        if (mode === 'dark') container.classList.add('map-bg-dark');
+        if (mode === 'colorful') container.classList.add('map-bg-colorful');
+    }
+    if (mapa) mapa.style.backgroundColor = color;
 }
 
 function applyMapWhiteningEffect(map) {
     const style = map.getStyle();
     if (!style || !Array.isArray(style.layers)) return;
+
+    setMapContainerMode(MAP_NEAR_WHITE, 'white');
 
     for (const layer of style.layers) {
         const { id, type } = layer;
@@ -68,6 +94,121 @@ function applyMapWhiteningEffect(map) {
     }
 }
 
+function applyMapDarkEffect(map) {
+    const style = map.getStyle();
+    if (!style || !Array.isArray(style.layers)) return;
+
+    setMapContainerMode(MAP_DARK_BG, 'dark');
+
+    for (const layer of style.layers) {
+        const { id, type } = layer;
+        const road = isRoadLayer(id);
+        try {
+            if (type === 'background') {
+                map.setPaintProperty(id, 'background-color', MAP_DARK_BG);
+            } else if (type === 'fill') {
+                map.setPaintProperty(id, 'fill-color', road ? MAP_DARK_STREET_FILL : MAP_DARK_BG);
+                map.setPaintProperty(id, 'fill-opacity', road ? 0.9 : 1);
+            } else if (type === 'fill-extrusion') {
+                map.setPaintProperty(id, 'fill-extrusion-color', road ? MAP_DARK_STREET_FILL : MAP_DARK_BG);
+                map.setPaintProperty(id, 'fill-extrusion-opacity', 0.35);
+            } else if (type === 'line') {
+                map.setPaintProperty(id, 'line-color', MAP_DARK_STREET_LINE);
+                map.setPaintProperty(id, 'line-opacity', road ? 0.8 : 0.3);
+            } else if (type === 'symbol') {
+                if (map.getPaintProperty(id, 'text-color') !== undefined) {
+                    map.setPaintProperty(id, 'text-color', MAP_DARK_LABEL);
+                }
+                if (map.getPaintProperty(id, 'icon-color') !== undefined) {
+                    map.setPaintProperty(id, 'icon-color', MAP_DARK_STREET_LINE);
+                }
+            } else if (type === 'raster') {
+                map.setPaintProperty(id, 'raster-saturation', -0.85);
+                map.setPaintProperty(id, 'raster-brightness-min', 0.04);
+                map.setPaintProperty(id, 'raster-brightness-max', 0.18);
+                map.setPaintProperty(id, 'raster-contrast', 0.25);
+            }
+        } catch (_) {
+            /* algunas capas no admiten ciertas propiedades */
+        }
+    }
+}
+
+function applyMapColorfulEffect(map) {
+    const style = map.getStyle();
+    if (!style || !Array.isArray(style.layers)) return;
+
+    setMapContainerMode(MAP_NEAR_WHITE, 'colorful');
+
+    let roadColorIndex = 0;
+
+    for (const layer of style.layers) {
+        const { id, type } = layer;
+        const road = isRoadLayer(id);
+        const projectColor = PROJECT_COLORS[roadColorIndex % PROJECT_COLORS.length];
+        try {
+            if (type === 'background') {
+                map.setPaintProperty(id, 'background-color', MAP_NEAR_WHITE);
+            } else if (type === 'fill') {
+                map.setPaintProperty(id, 'fill-color', MAP_NEAR_WHITE);
+                map.setPaintProperty(id, 'fill-opacity', 0.98);
+            } else if (type === 'fill-extrusion') {
+                map.setPaintProperty(id, 'fill-extrusion-color', MAP_NEAR_WHITE);
+                map.setPaintProperty(id, 'fill-extrusion-opacity', 0.08);
+            } else if (type === 'line') {
+                if (road) {
+                    map.setPaintProperty(id, 'line-color', projectColor);
+                    map.setPaintProperty(id, 'line-opacity', 0.78);
+                    roadColorIndex += 1;
+                } else {
+                    map.setPaintProperty(id, 'line-color', MAP_NEAR_WHITE);
+                    map.setPaintProperty(id, 'line-opacity', 0.04);
+                }
+            } else if (type === 'symbol') {
+                if (map.getPaintProperty(id, 'text-color') !== undefined) {
+                    map.setPaintProperty(id, 'text-color', MAP_LABEL_LIGHT);
+                }
+                if (map.getPaintProperty(id, 'icon-color') !== undefined) {
+                    map.setPaintProperty(id, 'icon-color', MAP_LABEL_LIGHT);
+                }
+            } else if (type === 'raster') {
+                map.setPaintProperty(id, 'raster-saturation', -1);
+                map.setPaintProperty(id, 'raster-brightness-min', 0.9);
+                map.setPaintProperty(id, 'raster-brightness-max', 1);
+                map.setPaintProperty(id, 'raster-contrast', 0.08);
+            }
+        } catch (_) {
+            /* algunas capas no admiten ciertas propiedades */
+        }
+    }
+}
+
+function applyMapBackgroundByMode(map, mode) {
+    if (mode === 'dark') applyMapDarkEffect(map);
+    else if (mode === 'colorful') applyMapColorfulEffect(map);
+    else applyMapWhiteningEffect(map);
+}
+
+function cycleMapBackground(map) {
+    mapBgModeIndex = (mapBgModeIndex + 1) % MAP_BG_MODES.length;
+    applyMapBackgroundByMode(map, MAP_BG_MODES[mapBgModeIndex]);
+}
+
+function initMapBackgroundUI(map) {
+    const filterButton = document.getElementById('footer-cat-companion');
+    if (!filterButton || filterButton.dataset.bgBound === '1') return;
+
+    filterButton.dataset.bgBound = '1';
+    filterButton.setAttribute('aria-label', MAP_BG_LABELS[mapBgModeIndex]);
+    filterButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!map || !map.isStyleLoaded()) return;
+        cycleMapBackground(map);
+        filterButton.setAttribute('aria-label', MAP_BG_LABELS[mapBgModeIndex]);
+    });
+}
+
 // ─────────────────────────────────────────────
 // INICIALIZACIÓN
 // ─────────────────────────────────────────────
@@ -87,8 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Categorías activas
     const activeCategories = new Set();
 
+    initMapBackgroundUI(map);
+
     map.on('load', () => {
-        applyMapWhiteningEffect(map);
+        mapBgModeIndex = 0;
+        applyMapBackgroundByMode(map, MAP_BG_MODES[mapBgModeIndex]);
         console.log('[reconocer] Map loaded con estilo:', MAP_STYLE);
         const style = map.getStyle();
         console.log('[reconocer] Style name:', style.name);
@@ -414,14 +558,21 @@ function initCategoryUI(map, markers) {
     const catButtons = categoriesNav.querySelectorAll('.category-button');
 
     // Evento para el footer 'CATEGORÍAS' -> ahora alterna las rectángulos de apoyo visual
+    function toggleCategoryRects() {
+        const rectsFooter = document.getElementById('category-rects-footer');
+        if (rectsFooter) rectsFooter.classList.toggle('open');
+        const arrow = document.getElementById('cat-arrow');
+        if (arrow) arrow.classList.toggle('vertical');
+        if (categoriesButton) categoriesButton.classList.toggle('underlined');
+    }
+
     if (categoriesButton) {
-        categoriesButton.addEventListener('click', (e) => {
-            const rectsFooter = document.getElementById('category-rects-footer');
-            if (rectsFooter) rectsFooter.classList.toggle('open');
-            const arrow = document.getElementById('cat-arrow');
-            if (arrow) arrow.classList.toggle('vertical');
-            categoriesButton.classList.toggle('underlined');
-        });
+        categoriesButton.addEventListener('click', toggleCategoryRects);
+    }
+
+    const catArrowBtn = document.getElementById('cat-arrow-btn');
+    if (catArrowBtn) {
+        catArrowBtn.addEventListener('click', toggleCategoryRects);
     }
 
     // Click en botones de categoría controla el filtrado (multi-select)
