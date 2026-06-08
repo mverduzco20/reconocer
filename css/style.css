@@ -512,18 +512,9 @@ html, body {
    position: relative;
 }
 
-/* Mapa embebido en home/docs: sin splash, logo ni footer duplicados */
-html.map-embed #map-splash,
-html.map-embed .corner-logo,
-html.map-embed .site-footer,
-html.map-embed #categories-nav {
+/* Sticky embebido (home/docs): solo ocultar el footer duplicado del iframe */
+html.map-embed .site-footer {
    display: none !important;
-}
-
-html.map-embed body,
-html.map-embed #map-container,
-html.map-embed #map-container #mapa {
-   background: #f1f1f1 !important;
 }
 
 .docs-page-title {
@@ -626,6 +617,10 @@ html.map-embed #map-container #mapa {
 #docs-sticky-block {
    position: relative;
    z-index: 30;
+}
+
+.page-docs #docs-sticky-wrap {
+   height: calc(100vh - 55px);
 }
 
 .docs-map-collage {
@@ -742,15 +737,6 @@ html.map-embed #map-container #mapa {
    height: 290px;
    z-index: 8;
    object-position: center 14%;
-}
-
-.page-docs .docs-map-collage {
-   bottom: calc(100% - 40px);
-   z-index: 35;
-}
-
-.page-docs .docs-map-thanks {
-   bottom: calc(100% - 40px);
 }
 
 .docs-epilogue-panel {
@@ -1199,12 +1185,6 @@ body {
 .corner-logo:focus-visible {
     color: #0000ff;
     opacity: 0.85;
-}
-
-.page-docs .corner-logo.corner-logo--hidden-by-sticky {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
 }
 
 #hero .hero-reconocer-title {

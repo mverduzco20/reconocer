@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reconocer — Documentación</title>
-    <link rel="stylesheet" href="../css/style.css?v=docs-embed-1">
+    <link rel="stylesheet" href="../css/style.css?v=docs-sticky-footer">
 </head>
 <body class="page-docs">
-    <a href="../index.html" class="corner-logo" id="docs-page-logo" aria-label="Inicio REconocer">(<span class="reconocer-alt-r">R</span>e)</a>
+    <a href="../index.html" class="corner-logo" aria-label="Inicio REconocer">(<span class="reconocer-alt-r">R</span>e)</a>
     <h1 class="docs-page-title">Documentación</h1>
 
     <div class="docs-canvas">
@@ -61,7 +61,7 @@
                     <span class="docs-map-thanks__line">de pelo.tqm</span>
                 </p>
             </div>
-            <div id="docs-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
+            <div id="docs-sticky-wrap" style="position:sticky; top:0; overflow:hidden;">
                 <iframe
                     src="../map.html?v=pages-deploy-2&embed=1"
                     style="width:100%; height:100%; border:none;"
@@ -94,6 +94,7 @@
     <script src="../js/audio.js?v=11"></script>
     <script>
     const DOCS_STICKY_GAP_CM = 0;
+    const DOCS_FOOTER_HEIGHT = 55;
 
     function docsStickyGapPx() {
         return DOCS_STICKY_GAP_CM * 96 / 2.54;
@@ -124,27 +125,11 @@
 
         stickyBlock.style.marginTop = marginTop + 'px';
         stickyWrap.style.marginTop = '';
-        docsPreview.style.height = (marginTop + window.innerHeight) + 'px';
+        docsPreview.style.height = (marginTop + window.innerHeight - DOCS_FOOTER_HEIGHT) + 'px';
     }
 
-    function updateDocsPageLogo() {
-        const logo = document.getElementById('docs-page-logo');
-        const stickyWrap = document.getElementById('docs-sticky-wrap');
-        if (!logo || !stickyWrap) return;
-
-        const hide = stickyWrap.getBoundingClientRect().top <= 12;
-        logo.classList.toggle('corner-logo--hidden-by-sticky', hide);
-    }
-
-    window.addEventListener('load', function () {
-        positionDocsPreview();
-        updateDocsPageLogo();
-    });
-    window.addEventListener('resize', function () {
-        positionDocsPreview();
-        updateDocsPageLogo();
-    });
-    window.addEventListener('scroll', updateDocsPageLogo, { passive: true });
+    window.addEventListener('load', positionDocsPreview);
+    window.addEventListener('resize', positionDocsPreview);
 
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function(e) {

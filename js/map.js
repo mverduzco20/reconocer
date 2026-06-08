@@ -6,10 +6,7 @@
 const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
 const MAP_ZOOM = 15.5;
-const IS_MAP_EMBED = window.self !== window.top || /[?&]embed=1/.test(location.search);
-const MAP_FIT_PADDING = IS_MAP_EMBED
-    ? { top: 0, bottom: 16, left: 70, right: 70 }
-    : { top: 100, bottom: 110, left: 70, right: 70 };
+const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
 const MAP_FIT_SINGLE_ZOOM = 16.5;

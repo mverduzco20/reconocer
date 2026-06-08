@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reconocer — Mapa</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css?v=docs-embed-1">
+    <link rel="stylesheet" href="./css/style.css?v=embed-footer-only">
     <script>
     (function () {
         if (window.self !== window.top || /[?&]embed=1/.test(location.search)) {
@@ -91,7 +91,7 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <script src="./js/map-token.js"></script>
     <script src="./js/secrets.js" onerror="void 0"></script>
-    <script src="./js/map.js?v=map-embed-1"></script>
+    <script src="./js/map.js?v=map-bg-blue23"></script>
     <script>
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -108,17 +108,8 @@
 <script>
 const splash = document.getElementById('map-splash');
 const splashBtn = document.getElementById('splash-btn');
-const isMapEmbed = document.documentElement.classList.contains('map-embed');
 
-function hideSplash() {
-   if (!splash) return;
-   splash.classList.add('hidden');
-   splash.style.display = 'none';
-}
-
-if (isMapEmbed) {
-   hideSplash();
-} else if (splashBtn) {
+if (splashBtn) {
    splashBtn.addEventListener('click', () => {
        splash.classList.add('hidden');
        setTimeout(() => { splash.style.display = 'none'; }, 600);
