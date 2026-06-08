@@ -4,10 +4,10 @@
    if (!audio) return;
 
    const STORAGE_VOLUME = 'audioVolume';
+   const STORAGE_LAST_VOLUME = 'audioLastVolume';
    const STORAGE_TIME = 'audioTime';
    const STORAGE_TRACK = 'audioTrack';
    const audioBase = audio.dataset.audioBase || './audio/';
-   const startMuted = audio.dataset.startMuted === 'true';
 
    const FALLBACK_PLAYLIST = [
       'bombilla..mp4',
@@ -26,8 +26,13 @@
       return parseFloat(localStorage.getItem(STORAGE_VOLUME) || '0');
    }
 
+   function getLastAudibleVolume() {
+      const last = parseFloat(localStorage.getItem(STORAGE_LAST_VOLUME) || '1');
+      return Number.isNaN(last) || last <= 0 ? 1 : last;
+   }
+
    function getInitialVolume() {
-      return startMuted ? 0 : getSavedVolume();
+      return getSavedVolume();
    }
 
    function getSavedTime() {
@@ -44,11 +49,14 @@
       audio.volume = volume;
       audio.muted = volume === 0;
       if (volumeSlider) {
-         volumeSlider.value = String(volume);
+         volumeSlider.value = volume === 0 ? '0.5' : String(volume);
          volumeSlider.classList.toggle('active', volume > 0);
       }
       if (persist !== false) {
          localStorage.setItem(STORAGE_VOLUME, String(volume));
+         if (volume > 0) {
+            localStorage.setItem(STORAGE_LAST_VOLUME, String(volume));
+         }
       }
       return volume;
    }
@@ -57,6 +65,9 @@
       if (!ready) return;
       const volume = audio.muted ? 0 : audio.volume;
       localStorage.setItem(STORAGE_VOLUME, String(volume));
+      if (volume > 0) {
+         localStorage.setItem(STORAGE_LAST_VOLUME, String(volume));
+      }
       localStorage.setItem(STORAGE_TIME, String(audio.currentTime));
       localStorage.setItem(STORAGE_TRACK, String(trackIndex));
    }
@@ -104,11 +115,11 @@
       ready = true;
       bindPlaybackEvents();
       loadTrack(getSavedTrack());
-      applyVolume(getInitialVolume(), !startMuted);
+      applyVolume(getSavedVolume(), false);
 
       audio.addEventListener('loadedmetadata', function onReady() {
          restoreTime();
-         const initialVolume = getInitialVolume();
+         const initialVolume = getSavedVolume();
          if (initialVolume > 0) {
             ensurePlaying().catch(function () {
                function resumeOnce() {
@@ -142,29 +153,53 @@
 
    window.addEventListener('pageshow', function () {
       if (!ready) return;
-      if (startMuted) {
-         applyVolume(0, false);
-         ensurePlaying();
-         return;
-      }
-      if (getSavedVolume() > 0) resumeFromStorage();
+      applyVolume(getSavedVolume(), false);
+      restoreTime();
+      ensurePlaying();
    });
 
    if (volumeSlider) {
+      let lastVolumeBeforeMute = getLastAudibleVolume();
+      let sliderClickStartX = 0;
+      let sliderDidMove = false;
+      let mutedAtPointerDown = false;
+
+      volumeSlider.addEventListener('pointerdown', function (e) {
+         mutedAtPointerDown = !volumeSlider.classList.contains('active');
+         if (!mutedAtPointerDown) {
+            lastVolumeBeforeMute = parseFloat(volumeSlider.value);
+         }
+         sliderClickStartX = e.clientX;
+         sliderDidMove = false;
+      });
+
+      volumeSlider.addEventListener('pointermove', function (e) {
+         if (Math.abs(e.clientX - sliderClickStartX) > 4) {
+            sliderDidMove = true;
+         }
+      });
+
       volumeSlider.addEventListener('input', function (e) {
          e.stopPropagation();
          const val = applyVolume(parseFloat(this.value));
-         if (val > 0) ensurePlaying();
+         if (val > 0) {
+            lastVolumeBeforeMute = val;
+            ensurePlaying();
+         }
          saveState();
       });
 
       volumeSlider.addEventListener('click', function (e) {
          e.stopPropagation();
-         if (parseFloat(this.value) === 0) {
-            applyVolume(1);
+         if (sliderDidMove) return;
+         e.preventDefault();
+         if (!mutedAtPointerDown) {
+            applyVolume(0);
+         } else {
+            applyVolume(lastVolumeBeforeMute || getLastAudibleVolume());
             ensurePlaying();
-            saveState();
          }
+         saveState();
       });
    }
 

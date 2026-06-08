@@ -576,6 +576,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Controles de navegación (zoom + rotación)
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
+    map.on('click', function (e) {
+        const target = e.originalEvent && e.originalEvent.target;
+        if (target && target.closest('.mapboxgl-marker, .map-marker-hit, .marker, .mapboxgl-popup, .category-popup')) {
+            return;
+        }
+        closeAllOpenPopups();
+    });
+
 });
 
 function loadHitosMarkers(map, markers) {
