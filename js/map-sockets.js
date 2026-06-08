@@ -529,9 +529,44 @@ function initMapBackgroundUI(map) {
 }
 
 // ─────────────────────────────────────────────
+// WEBSOCKETS (TOUCHDESIGNER CONTROL)
+// ─────────────────────────────────────────────
+const wsUrl = "wss://td-tests-b8ab469bdcc6.herokuapp.com";
+let ws;
+
+function connectWebSocket() {
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+        console.log("[reconocer] WebSocket conectado");
+        // Al cargar la página tiene que mandar el evento de Home
+        sendWsPayload({ Pagina: "Home" });
+    };
+
+    ws.onclose = () => {
+        console.log("[reconocer] WebSocket desconectado, reconectando...");
+        setTimeout(connectWebSocket, 3000);
+    };
+
+    ws.onerror = (error) => {
+        console.error("[reconocer] WebSocket error:", error);
+        ws.close();
+    };
+}
+
+function sendWsPayload(payload) {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        console.log("[reconocer] Enviando payload:", payload);
+        ws.send(JSON.stringify(payload));
+    }
+}
+
+// ─────────────────────────────────────────────
 // INICIALIZACIÓN
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+    connectWebSocket();
+
     mapboxgl.accessToken = window.MAPBOX_TOKEN;
 
     const map = new mapboxgl.Map({
@@ -594,7 +629,9 @@ function loadHitosMarkers(map, markers) {
                 lat: header.findIndex(h => h.includes('lat')),
                 lng: header.findIndex(h => h.includes('long')),
                 categoria: header.findIndex(h => h.includes('categoria')),
-                relato: header.findIndex(h => h.includes('relato'))
+                relato: header.findIndex(h => h.includes('relato')),
+                id: header.findIndex(h => h === 'id' || h === 'identificador'),
+                premio: header.findIndex(h => h.includes('premio') || h.includes('recompensa'))
             };
 
             rows.slice(1).forEach(row => agregarMarcador(map, row, markers, indices));
@@ -751,6 +788,19 @@ function handleMarkerPopupClick(map, marker, popup) {
         return;
     }
 
+    // WebSockets event: Abrir detalle de marcador/hito
+    if (marker._tienePremio) {
+        sendWsPayload({
+            Pagina: "Recompensa",
+            ID: marker._hitoId
+        });
+    } else {
+        sendWsPayload({
+            Pagina: "Hito",
+            ID: marker._hitoId
+        });
+    }
+
     if (openPopupEntries.length >= MAX_OPEN_POPUPS) {
         closeAllOpenPopups();
     }
@@ -773,6 +823,17 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const lng = parseFloat(indices.lng >= 0 ? row[indices.lng] : row[2]);
     const categoriaRaw = findRowCategory(row, indices);
     const relatoRaw = indices.relato >= 0 ? row[indices.relato] : row[row.length - 1];
+
+    const premioRaw = indices.premio >= 0 ? row[indices.premio] : '';
+    const tienePremio = String(premioRaw).toLowerCase().trim() === 'si';
+    
+    let hitoId = 0;
+    if (indices.id >= 0 && row[indices.id]) {
+        hitoId = parseInt(row[indices.id], 10);
+    } else {
+        const match = archivo.match(/\d+/);
+        if (match) hitoId = parseInt(match[0], 10);
+    }
 
     if (!archivo || isNaN(lat) || isNaN(lng)) return;
 
@@ -826,6 +887,8 @@ function agregarMarcador(map, row, markers, indices = {}) {
 
     marker._categoria = categoria || '';
     marker._popup = popup;
+    marker._hitoId = isNaN(hitoId) ? 0 : hitoId;
+    marker._tienePremio = tienePremio;
     marker.addTo(map);
 
     const markerEl = marker.getElement();
@@ -938,11 +1001,24 @@ function initCategoryUI(map, markers) {
         btn.addEventListener('click', () => {
             const category = (btn.dataset.category || '').toLowerCase();
 
-            if (getCurrentMapBgMode() === 'blue') {
-                btn.classList.toggle('active');
-                const isActive = btn.classList.contains('active');
-                const act = getActiveCategorySet(catButtons);
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            const act = getActiveCategorySet(catButtons);
 
+            // --- WEBSOCKETS EVENT: Cambios de vista de Mapa ---
+            let mapaId = "Completo";
+            if (act.size === 1) {
+                if (act.has("m")) mapaId = "Memoria";
+                else if (act.has("o")) mapaId = "Oficio";
+                else if (act.has("e")) mapaId = "Encuentro";
+                else if (act.has("r")) mapaId = "Refugio";
+            }
+            sendWsPayload({
+                Pagina: "Mapa",
+                ID: mapaId
+            });
+
+            if (getCurrentMapBgMode() === 'blue') {
                 if (act.size === 0) {
                     startMapBluePreviewLoop(map, { fitOverview: true });
                     return;
@@ -960,8 +1036,6 @@ function initCategoryUI(map, markers) {
                 return;
             }
 
-            btn.classList.toggle('active');
-            const act = getActiveCategorySet(catButtons);
             updateMarkersFilter(map, markers, act);
             scheduleMapFitToFilteredMarkers(map, markers, act);
         });
