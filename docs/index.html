@@ -3,36 +3,75 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reconocer — Sobre el proyecto</title>
-    <link rel="stylesheet" href="../css/style.css?v=visual10">
+    <title>Reconocer — Documentación</title>
+    <link rel="stylesheet" href="../css/style.css?v=docs-sticky-footer">
 </head>
 <body class="page-docs">
-<audio id="global-audio" preload="auto" data-audio-base="../audio/"></audio>
-    <main class="docs-main">
-        <p class="docs-eyebrow">ORIENTACIÓN URBANA DESDE EL RECORRIDO COTIDIANO</p>
-        <h1 class="docs-title">(<span class="reconocer-alt-r">R</span>e)conocer</h1>
-        <p class="docs-lead">Un mapa colectivo para recorrer el territorio por medio de la observación y el juego.</p>
+    <a href="../index.html" class="corner-logo" aria-label="Inicio REconocer">(<span class="reconocer-alt-r">R</span>e)</a>
+    <h1 class="docs-page-title">Documentación</h1>
 
-        <section class="docs-section">
-            <h2 class="docs-heading">¿Qué es?</h2>
-            <p class="docs-copy">Este proyecto busca crear un archivo vivo de hitos urbanos: lugares que las personas reconocen, recuerdan y usan para orientarse. A partir de San Ángel, Ciudad de México, se invita a explorar la ciudad por categorías — memoria, oficio, refugio y encuentro — y a sumar nuevas miradas al mapa.</p>
-        </section>
+    <div class="docs-canvas">
+        <img src="../img/lineadocu.png" alt="" class="docs-line" aria-hidden="true">
 
-        <section class="docs-section">
-            <h2 class="docs-heading">Cómo funciona</h2>
-            <ol class="docs-list">
-                <li>Elige un punto de partida en la cartografía.</li>
-                <li>Filtra las categorías para definir tu ruta.</li>
-                <li>Sube un hito: captura el momento y comparte una imagen.</li>
-                <li>Descubre el archivo colectivo de la comunidad.</li>
-            </ol>
-        </section>
+        <div class="docs-flow">
+            <section class="docs-block docs-block--1">
+                <h2 class="docs-block__title">El Proceso y el Descubrimiento de Capas</h2>
+                <p class="docs-block__text">Iniciar las salidas de campo en San Ángel fue un reto metodológico. Sin embargo, caminar el lugar muchas veces nos permitió reconocer esquinas y rostros habituales. Entre más explorábamos, más capas de la historia y el espacio de San Ángel se iban revelando ante nosotras.</p>
+            </section>
 
-        <section class="docs-section">
-            <h2 class="docs-heading">Documentación</h2>
-            <p class="docs-copy">Esta sección seguirá creciendo con notas de proceso, referencias y decisiones de diseño del semestre.</p>
-        </section>
-    </main>
+            <div class="docs-spacer docs-spacer--photos-1" aria-hidden="true"></div>
+
+            <section class="docs-block docs-block--2">
+                <h2 class="docs-block__title">El Encuentro con el Arte y la Comunidad</h2>
+                <p class="docs-block__text">Las últimas visitas fueron las más enriquecedoras. Conectamos con la memoria viva del lugar a través de datos históricos, leyendas de casas embrujadas y pláticas con artistas del Bazar del Sábado. Conversar con creadores que han trabajado para instituciones como Bellas Artes fue increíble para nuestro gusto por el arte.</p>
+            </section>
+
+            <div class="docs-spacer docs-spacer--photos-2" aria-hidden="true"></div>
+
+            <section class="docs-block docs-block--3">
+                <h2 class="docs-block__title docs-block__title--center">Mirada Propia</h2>
+                <p class="docs-block__text docs-block__text--center">Aunque fue un proceso complejo, decidimos hablar desde una perspectiva personal y honesta. Este proyecto documenta y rescata aquello que capturó nuestra atención a través del diseño y la comunicación visual.</p>
+            </section>
+
+            <div class="docs-spacer docs-spacer--photos-3" aria-hidden="true"></div>
+
+            <div class="docs-spacer docs-spacer--before-sticky" aria-hidden="true"></div>
+        </div>
+    </div>
+
+    <section id="docs-preview" style="position:relative; background-color:#f1f1f1;" aria-label="Cierre">
+        <div id="docs-sticky-block">
+            <div class="docs-map-collage" aria-hidden="true">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d10" src="../img/d10.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d8" src="../img/d8.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d3" src="../img/d3.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d6" src="../img/d6.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d19" src="../img/d19.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d4" src="../img/d4.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d2" src="../img/d2.jpg" alt="">
+            </div>
+            <div class="docs-map-thanks">
+                <p class="docs-map-thanks__text">
+                    <span class="docs-map-thanks__line">Agradezco los buenos y malos</span>
+                    <span class="docs-map-thanks__line">momentos que vale</span>
+                    <span class="docs-map-thanks__line">y mafer</span>
+                    <span class="docs-map-thanks__line">pasaron en este</span>
+                    <span class="docs-map-thanks__line">proyecto, las risas</span>
+                    <span class="docs-map-thanks__line">y las jaladas</span>
+                    <span class="docs-map-thanks__line">de pelo.tqm</span>
+                </p>
+            </div>
+            <div id="docs-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
+                <iframe
+                    src="../map.html?v=pages-deploy-2&embed=1"
+                    style="width:100%; height:100%; border:none;"
+                    scrolling="no"
+                    id="docs-map-iframe"
+                    title="Vista previa del mapa">
+                </iframe>
+            </div>
+        </div>
+    </section>
 
     <footer class="site-footer">
        <button class="sound-btn" id="sound-btn" aria-label="sonido">
@@ -50,7 +89,47 @@
            <a href="../map.html" class="footer-link footer-link-lg">(CARTOGRAFÍA)</a>
        </div>
     </footer>
+
+    <audio id="global-audio" preload="auto" data-audio-base="../audio/"></audio>
+    <script src="../js/audio.js?v=11"></script>
     <script>
+    const DOCS_STICKY_GAP_CM = 0;
+
+    function docsStickyGapPx() {
+        return DOCS_STICKY_GAP_CM * 96 / 2.54;
+    }
+
+    function positionDocsPreview() {
+        const title = document.querySelector('.docs-page-title');
+        const canvas = document.querySelector('.docs-canvas');
+        const flow = canvas.querySelector('.docs-flow');
+        const docsPreview = document.getElementById('docs-preview');
+        const stickyBlock = document.getElementById('docs-sticky-block');
+        const stickyWrap = document.getElementById('docs-sticky-wrap');
+        if (!title || !canvas || !flow || !docsPreview || !stickyBlock || !stickyWrap) return;
+
+        const titleBottom = title.offsetTop + title.offsetHeight;
+
+        canvas.style.position = 'absolute';
+        canvas.style.top = titleBottom + 'px';
+        canvas.style.left = '0';
+        canvas.style.right = '0';
+        canvas.style.width = '100%';
+        canvas.style.bottom = 'auto';
+        canvas.style.minHeight = '0';
+
+        const gapPx = docsStickyGapPx();
+        const contentBottom = canvas.offsetTop + flow.offsetTop + flow.offsetHeight;
+        const marginTop = Math.max(0, Math.round(contentBottom + gapPx - titleBottom));
+
+        stickyBlock.style.marginTop = marginTop + 'px';
+        stickyWrap.style.marginTop = '';
+        docsPreview.style.height = (marginTop + window.innerHeight) + 'px';
+    }
+
+    window.addEventListener('load', positionDocsPreview);
+    window.addEventListener('resize', positionDocsPreview);
+
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
@@ -62,12 +141,5 @@
         });
     });
     </script>
-    <script src="../js/audio.js?v=6"></script>
-<script>
-document.querySelectorAll('.footer-link').forEach(link => {
-   link.classList.remove('active-page');
-});
-document.querySelector('a[href="../docs/index.html"]')?.classList.add('active-page');
-</script>
 </body>
 </html>

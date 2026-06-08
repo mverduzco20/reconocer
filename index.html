@@ -10,7 +10,7 @@
 </head>
 
 <body>
-<audio id="global-audio" preload="auto" data-audio-base="./audio/" data-start-muted="true"></audio>
+<audio id="global-audio" preload="auto" data-audio-base="./audio/"></audio>
     <main id="home">
         <section id="hero" style="display:flex; align-items:center; justify-content:center; position:relative;">
             <div id="hero-collage" class="hero-collage" aria-hidden="true"></div>
@@ -89,10 +89,10 @@
             </div>
         </div>
 
-        <section id="map-preview" style="position:relative; background-color:#f1f1f1;">
+        <section id="map-preview" style="position:relative; background-color:#f1f1f1; overflow:hidden;">
             <div id="map-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
                 <iframe 
-                    src="./map.html?v=pages-deploy-2" 
+                    src="./map.html?v=pages-deploy-2&embed=1" 
                     style="width:100%; height:100%; border:none;"
                     scrolling="no"
                     id="map-iframe">
@@ -137,7 +137,7 @@
             });
         });
     </script>
-    <script src="./js/audio.js?v=6"></script>
+    <script src="./js/audio.js?v=11"></script>
 <script>
 document.querySelectorAll('.footer-link').forEach(link => {
    link.classList.remove('active-page');

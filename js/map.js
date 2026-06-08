@@ -576,6 +576,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Controles de navegación (zoom + rotación)
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
+    map.on('click', function (e) {
+        const target = e.originalEvent && e.originalEvent.target;
+        if (target && target.closest('.mapboxgl-marker, .map-marker-hit, .marker, .mapboxgl-popup, .category-popup')) {
+            return;
+        }
+        closeAllOpenPopups();
+    });
+
 });
 
 function loadHitosMarkers(map, markers) {
@@ -808,7 +816,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
         : '';
 
     const categoryColor = getCategoryColor(categoria);
-    const categoryBackground = hexToRgba(categoryColor, 0.7);
+    const categoryBackground = hexToRgba(categoryColor, 0.84);
     const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupImage}${popupText}</div>`;
 
     const popup = new mapboxgl.Popup({

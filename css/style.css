@@ -91,7 +91,9 @@ html, body {
 }
 
 #map-preview,
-#map-sticky-wrap {
+#map-sticky-wrap,
+#docs-preview,
+#docs-sticky-wrap {
    width: 100%;
    max-width: 100%;
    overflow-x: hidden;
@@ -505,13 +507,284 @@ html, body {
 .page-docs main {
    background-color: #f1f1f1;
    min-height: 100vh;
+   padding-bottom: 55px;
    box-sizing: border-box;
+   position: relative;
+}
+
+/* Sticky embebido (home/docs): solo ocultar el footer duplicado del iframe */
+html.map-embed .site-footer {
+   display: none !important;
+}
+
+.docs-page-title {
+   margin: 2cm 0 0;
+   padding: 0 24px;
+   font-family: 'REconocer', serif;
+   font-size: clamp(56px, 9vw, 88px);
+   font-weight: normal;
+   line-height: 0.95;
+   text-align: center;
+   color: #0000ff;
+}
+
+.docs-canvas {
+   position: relative;
+   width: min(1180px, 100%);
+   margin: 0 auto;
+   padding: 100px clamp(24px, 5vw, 48px) 80px clamp(72px, 11vw, 156px);
+   box-sizing: border-box;
+}
+
+.docs-line {
+   position: absolute;
+   top: 100px;
+   left: clamp(72px, 11vw, 156px);
+   width: 255px;
+   max-width: calc(100% - 96px);
+   height: auto;
+   margin: 0;
+   z-index: 0;
+   pointer-events: none;
+}
+
+.docs-flow {
+   position: relative;
+   z-index: 2;
+}
+
+.docs-block__title,
+.docs-block__text {
+   margin: 0;
+   font-family: "Courier New", Courier, monospace;
+   color: #0000ff;
+}
+
+.docs-block__title {
+   font-size: 18px;
+   line-height: 1.25;
+   font-weight: normal;
+   margin-bottom: 18px;
+}
+
+.docs-block__title--center {
+   text-align: center;
+}
+
+.docs-block__text {
+   font-size: 14px;
+   line-height: 1.55;
+   max-width: 34ch;
+}
+
+.docs-block__text--center {
+   text-align: center;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.docs-block--1 {
+   max-width: 320px;
+}
+
+.docs-block--2 {
+   max-width: 360px;
+   margin-left: auto;
+   margin-right: clamp(24px, 8vw, 120px);
+}
+
+.docs-block--3 {
+   max-width: 420px;
+   margin-left: clamp(40px, 12vw, 180px);
+}
+
+.docs-spacer--photos-1 {
+   height: 420px;
+}
+
+.docs-spacer--photos-2 {
+   height: 520px;
+}
+
+.docs-spacer--photos-3 {
+   height: 460px;
+}
+
+.docs-spacer--before-sticky {
+   height: 420px;
+}
+
+#docs-sticky-block {
+   position: relative;
+   z-index: 30;
+}
+
+.docs-map-collage {
+   position: absolute;
+   left: 0;
+   bottom: 100%;
+   width: 1050px;
+   max-width: 100vw;
+   height: 398px;
+   z-index: 31;
+   pointer-events: none;
+   overflow: visible;
+}
+
+.docs-map-thanks {
+   position: absolute;
+   left: calc(1050px + 1.2cm);
+   right: clamp(16px, 6vw, 80px);
+   bottom: 100%;
+   height: 398px;
+   box-sizing: border-box;
+   display: flex;
+   align-items: flex-start;
+   justify-content: center;
+   padding: calc(43px + 1cm) 0.8cm 0;
+   z-index: 32;
+   pointer-events: none;
+}
+
+.docs-map-thanks__text {
+   margin: 0;
+   width: min(100%, 22ch);
+   font-family: "Courier New", Courier, monospace;
+   font-size: 14px;
+   line-height: 1.55;
+   color: #0000ff;
+   text-align: left;
+}
+
+.docs-map-thanks__line {
+   display: block;
+}
+
+.docs-map-collage__photo {
+   position: absolute;
+   display: block;
+   object-fit: cover;
+   box-shadow: none;
+}
+
+/* Columna 1 — parque (la más alta) */
+.docs-map-collage__photo--d10 {
+   left: 0;
+   bottom: 0;
+   width: 212px;
+   height: 398px;
+   z-index: 3;
+   object-position: 0% 38%;
+}
+
+/* Columna 2 — muro / pareja (misma altura que d10) */
+.docs-map-collage__photo--d8 {
+   left: 188px;
+   bottom: 0;
+   width: 232px;
+   height: 398px;
+   z-index: 2;
+   object-position: center 22%;
+}
+
+/* Columna 3 — libreta (pegada a d8) */
+.docs-map-collage__photo--d3 {
+   left: 420px;
+   bottom: 145px;
+   width: 168px;
+   height: 210px;
+   z-index: 6;
+   object-position: center 8%;
+}
+
+.docs-map-collage__photo--d6 {
+   left: calc(420px - 1cm);
+   bottom: 0;
+   width: calc(220px + 1cm);
+   height: 145px;
+   z-index: 1;
+   object-position: center 34%;
+}
+
+/* Columna 4 — mujer de espaldas (hasta cámara, tapa 2.ª libreta) */
+.docs-map-collage__photo--d19 {
+   left: 542px;
+   bottom: 0;
+   width: 354px;
+   height: 355px;
+   z-index: 7;
+   object-position: 30% center;
+}
+
+.docs-map-collage__photo--d4 {
+   left: 640px;
+   bottom: 0;
+   width: 256px;
+   height: 145px;
+   z-index: 7;
+   object-position: center 54%;
+}
+
+/* Columna 5 — denim / posters (pegada a d4) */
+.docs-map-collage__photo--d2 {
+   left: 896px;
+   bottom: 0;
+   width: 154px;
+   height: 290px;
+   z-index: 8;
+   object-position: center 14%;
+}
+
+.docs-epilogue-panel {
+   position: relative;
+   width: 100%;
+   height: 100%;
+   padding: 56px 24px 88px;
+   background-color: #efefef;
+   background-image: url('../img/city.png');
+   background-repeat: no-repeat;
+   background-position: center top;
+   background-size: cover;
+   box-sizing: border-box;
+}
+
+.corner-logo--epilogue {
+   position: absolute;
+   top: 20px;
+   left: 18px;
+}
+
+.docs-epilogue__card {
+   width: min(420px, 92vw);
+   margin: 120px auto 0;
+   padding: 24px;
+   background: #fff;
+   border: 1px solid #0000ff;
+   box-sizing: border-box;
+}
+
+.docs-epilogue__card p {
+   margin: 0;
+   font-family: "Courier New", Courier, monospace;
+   font-size: 13px;
+   line-height: 1.55;
+   color: #0000ff;
+}
+
+.docs-epilogue__btn {
+   display: block;
+   width: 120px;
+   height: 28px;
+   margin: 18px auto 0;
+   padding: 0;
+   border: 1px solid #b5b5b5;
+   background: #fff;
 }
 
 .docs-main {
    max-width: 720px;
    margin: 0 auto;
-   padding: 48px 24px 100px;
+   padding: 0 24px 100px;
    color: #111;
 }
 
@@ -586,7 +859,7 @@ html, body {
     justify-content: space-between;
     padding: 0 0 0 20px;
     box-sizing: border-box;
-    z-index: 999;
+    z-index: 1001;
 }
 
 .footer-left {
@@ -627,10 +900,26 @@ html, body {
     accent-color: #fff;
     -webkit-appearance: none;
     appearance: none;
-    height: 3px;
-    background: #fff;
+    height: 12px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
     border-radius: 2px;
     outline: none;
+}
+
+.volume-slider::-webkit-slider-runnable-track {
+    height: 3px;
+    border-radius: 2px;
+    background: transparent;
+}
+
+.volume-slider.active::-webkit-slider-runnable-track {
+    background: #fff;
+}
+
+.volume-slider:not(.active)::-webkit-slider-runnable-track {
+    background: transparent;
 }
 
 .volume-slider::-webkit-slider-thumb {
@@ -638,9 +927,45 @@ html, body {
     appearance: none;
     width: 12px;
     height: 12px;
-    border-radius: 50%;
+    border-radius: 0;
     background: #fff;
+    border: none;
+    box-shadow: none;
+    margin-top: -4.5px;
     cursor: pointer;
+}
+
+.volume-slider:not(.active)::-webkit-slider-thumb {
+    background: rgb(0, 0, 255);
+}
+
+.volume-slider::-moz-range-track {
+    height: 3px;
+    border-radius: 2px;
+    background: transparent;
+    border: none;
+}
+
+.volume-slider.active::-moz-range-track {
+    background: #fff;
+}
+
+.volume-slider:not(.active)::-moz-range-track {
+    background: transparent;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 0;
+    background: #fff;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.volume-slider:not(.active)::-moz-range-thumb {
+    background: rgb(0, 0, 255);
 }
 
 .footer-link {
@@ -835,6 +1160,27 @@ body {
 
 .reconocer-alt-r {
     font-family: 'REconocer Alt R', 'REconocer', serif;
+}
+
+.corner-logo {
+    position: fixed;
+    top: 12px;
+    left: 18px;
+    z-index: 2100;
+    font-family: 'REconocer', serif;
+    color: #0000ff;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: normal;
+    text-decoration: none;
+    letter-spacing: 0;
+    pointer-events: auto;
+}
+
+.corner-logo:hover,
+.corner-logo:focus-visible {
+    color: #0000ff;
+    opacity: 0.85;
 }
 
 #hero .hero-reconocer-title {
