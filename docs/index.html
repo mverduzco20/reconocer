@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reconocer — Documentación</title>
-    <link rel="stylesheet" href="../css/style.css?v=docs-sticky-map8">
+    <link rel="stylesheet" href="../css/style.css?v=docs-thanks-8">
 </head>
 <body class="page-docs">
     <a href="../index.html" class="corner-logo" id="docs-page-logo" aria-label="Inicio REconocer">(<span class="reconocer-alt-r">R</span>e)</a>
@@ -35,33 +35,41 @@
 
             <div class="docs-spacer docs-spacer--photos-3" aria-hidden="true"></div>
 
-            <section class="docs-block docs-block--4">
-                <p class="docs-block__text">Agradesco los buenos y malos momentos que vale y mafer pasaron en este proyecto, las risas, y las jaladas de pelo. tqm no dejes de ser mi amiga pls.</p>
-            </section>
-
-        </div>
-
-        <div class="docs-map-collage" aria-hidden="true">
-            <img class="docs-map-collage__photo docs-map-collage__photo--d10" src="../img/d10.jpg" alt="">
-            <img class="docs-map-collage__photo docs-map-collage__photo--d8" src="../img/d8.jpg" alt="">
-            <img class="docs-map-collage__photo docs-map-collage__photo--d8-car" src="../img/d8.jpg" alt="">
-            <img class="docs-map-collage__photo docs-map-collage__photo--d3" src="../img/d3.jpg" alt="">
-            <img class="docs-map-collage__photo docs-map-collage__photo--d6" src="../img/d6.jpg" alt="">
-            <img class="docs-map-collage__photo docs-map-collage__photo--d17" src="../img/d17.jpg" alt="">
-            <img class="docs-map-collage__photo docs-map-collage__photo--d4" src="../img/d4.jpg" alt="">
-            <img class="docs-map-collage__photo docs-map-collage__photo--d2" src="../img/d2.jpg" alt="">
+            <div class="docs-spacer docs-spacer--before-sticky" aria-hidden="true"></div>
         </div>
     </div>
 
     <section id="docs-preview" style="position:relative; background-color:#f1f1f1;" aria-label="Cierre">
-        <div id="docs-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
-            <iframe
-                src="../map.html?v=pages-deploy-2"
-                style="width:100%; height:100%; border:none;"
-                scrolling="no"
-                id="docs-map-iframe"
-                title="Vista previa del mapa">
-            </iframe>
+        <div id="docs-sticky-block">
+            <div class="docs-map-collage" aria-hidden="true">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d10" src="../img/d10.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d8" src="../img/d8.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d3" src="../img/d3.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d6" src="../img/d6.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d19" src="../img/d19.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d4" src="../img/d4.jpg" alt="">
+                <img class="docs-map-collage__photo docs-map-collage__photo--d2" src="../img/d2.jpg" alt="">
+            </div>
+            <div class="docs-map-thanks">
+                <p class="docs-map-thanks__text">
+                    <span class="docs-map-thanks__line">Agradezco los buenos y malos</span>
+                    <span class="docs-map-thanks__line">momentos que vale</span>
+                    <span class="docs-map-thanks__line">y mafer</span>
+                    <span class="docs-map-thanks__line">pasaron en este</span>
+                    <span class="docs-map-thanks__line">proyecto, las risas</span>
+                    <span class="docs-map-thanks__line">y las jaladas</span>
+                    <span class="docs-map-thanks__line">de pelo.tqm</span>
+                </p>
+            </div>
+            <div id="docs-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
+                <iframe
+                    src="../map.html?v=pages-deploy-2"
+                    style="width:100%; height:100%; border:none;"
+                    scrolling="no"
+                    id="docs-map-iframe"
+                    title="Vista previa del mapa">
+                </iframe>
+            </div>
         </div>
     </section>
 
@@ -85,7 +93,7 @@
     <audio id="global-audio" preload="auto" data-audio-base="../audio/"></audio>
     <script src="../js/audio.js?v=10"></script>
     <script>
-    const DOCS_STICKY_GAP_CM = 7;
+    const DOCS_STICKY_GAP_CM = 0;
 
     function docsStickyGapPx() {
         return DOCS_STICKY_GAP_CM * 96 / 2.54;
@@ -94,9 +102,11 @@
     function positionDocsPreview() {
         const title = document.querySelector('.docs-page-title');
         const canvas = document.querySelector('.docs-canvas');
+        const flow = canvas.querySelector('.docs-flow');
         const docsPreview = document.getElementById('docs-preview');
+        const stickyBlock = document.getElementById('docs-sticky-block');
         const stickyWrap = document.getElementById('docs-sticky-wrap');
-        if (!title || !canvas || !docsPreview || !stickyWrap) return;
+        if (!title || !canvas || !flow || !docsPreview || !stickyBlock || !stickyWrap) return;
 
         const titleBottom = title.offsetTop + title.offsetHeight;
 
@@ -106,18 +116,15 @@
         canvas.style.right = '0';
         canvas.style.width = '100%';
         canvas.style.bottom = 'auto';
+        canvas.style.minHeight = '0';
 
         const gapPx = docsStickyGapPx();
-        const contentBottom = canvas.offsetTop + canvas.offsetHeight;
+        const contentBottom = canvas.offsetTop + flow.offsetTop + flow.offsetHeight;
         const marginTop = Math.max(0, Math.round(contentBottom + gapPx - titleBottom));
 
-        stickyWrap.style.marginTop = marginTop + 'px';
+        stickyBlock.style.marginTop = marginTop + 'px';
+        stickyWrap.style.marginTop = '0';
         docsPreview.style.height = (marginTop + window.innerHeight) + 'px';
-
-        const collage = document.querySelector('.docs-map-collage');
-        if (collage) {
-            collage.style.top = (canvas.offsetHeight + gapPx - collage.offsetHeight) + 'px';
-        }
     }
 
     function updateDocsPageLogo() {

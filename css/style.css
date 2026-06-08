@@ -526,7 +526,6 @@ html, body {
 .docs-canvas {
    position: relative;
    width: min(1180px, 100%);
-   min-height: 3400px;
    margin: 0 auto;
    padding: 100px clamp(24px, 5vw, 48px) 80px clamp(72px, 11vw, 156px);
    box-sizing: border-box;
@@ -594,12 +593,6 @@ html, body {
    margin-left: clamp(40px, 12vw, 180px);
 }
 
-.docs-block--4 {
-   max-width: 300px;
-   margin-left: auto;
-   margin-right: clamp(16px, 6vw, 80px);
-}
-
 .docs-spacer--photos-1 {
    height: 420px;
 }
@@ -612,14 +605,54 @@ html, body {
    height: 460px;
 }
 
+.docs-spacer--before-sticky {
+   height: 420px;
+}
+
+#docs-sticky-block {
+   position: relative;
+   z-index: 30;
+}
+
 .docs-map-collage {
    position: absolute;
-   left: 50%;
-   width: min(704px, 94vw);
-   height: 318px;
-   transform: translateX(-50%);
-   z-index: 25;
+   left: 0;
+   bottom: 100%;
+   width: 1050px;
+   max-width: 100vw;
+   height: 398px;
+   z-index: 31;
    pointer-events: none;
+   overflow: visible;
+}
+
+.docs-map-thanks {
+   position: absolute;
+   left: calc(1050px + 1.2cm);
+   right: clamp(16px, 6vw, 80px);
+   bottom: 100%;
+   height: 398px;
+   box-sizing: border-box;
+   display: flex;
+   align-items: flex-start;
+   justify-content: center;
+   padding: calc(43px + 1cm) 0.8cm 0;
+   z-index: 32;
+   pointer-events: none;
+}
+
+.docs-map-thanks__text {
+   margin: 0;
+   width: min(100%, 22ch);
+   font-family: "Courier New", Courier, monospace;
+   font-size: 14px;
+   line-height: 1.55;
+   color: #0000ff;
+   text-align: left;
+}
+
+.docs-map-thanks__line {
+   display: block;
 }
 
 .docs-map-collage__photo {
@@ -633,77 +666,68 @@ html, body {
 .docs-map-collage__photo--d10 {
    left: 0;
    bottom: 0;
-   width: 144px;
-   height: 318px;
-   z-index: 1;
-   object-position: center 38%;
-}
-
-/* Columna 2 — muro + capó */
-.docs-map-collage__photo--d8 {
-   left: 108px;
-   bottom: 116px;
-   width: 148px;
-   height: 202px;
-   z-index: 2;
-   object-position: 52% 14%;
-}
-
-.docs-map-collage__photo--d8-car {
-   left: 114px;
-   bottom: 0;
-   width: 198px;
-   height: 116px;
+   width: 212px;
+   height: 398px;
    z-index: 3;
-   object-position: center 94%;
+   object-position: 0% 38%;
 }
 
-/* Columna 3 — libros + risa */
+/* Columna 2 — muro / pareja (misma altura que d10) */
+.docs-map-collage__photo--d8 {
+   left: 188px;
+   bottom: 0;
+   width: 232px;
+   height: 398px;
+   z-index: 2;
+   object-position: center 22%;
+}
+
+/* Columna 3 — libreta (pegada a d8) */
 .docs-map-collage__photo--d3 {
-   left: 244px;
-   bottom: 116px;
-   width: 134px;
-   height: 168px;
-   z-index: 4;
-   object-position: center 12%;
+   left: 420px;
+   bottom: 145px;
+   width: 168px;
+   height: 210px;
+   z-index: 6;
+   object-position: center 8%;
 }
 
 .docs-map-collage__photo--d6 {
-   left: 270px;
+   left: calc(420px - 1cm);
    bottom: 0;
-   width: 176px;
-   height: 116px;
-   z-index: 5;
-   object-position: center 38%;
+   width: calc(220px + 1cm);
+   height: 145px;
+   z-index: 1;
+   object-position: center 34%;
 }
 
-/* Columna 4 — muro rojo + fachada */
-.docs-map-collage__photo--d17 {
-   left: 352px;
-   bottom: 116px;
-   width: 162px;
-   height: 194px;
-   z-index: 6;
-   object-position: 46% 36%;
+/* Columna 4 — mujer de espaldas (hasta cámara, tapa 2.ª libreta) */
+.docs-map-collage__photo--d19 {
+   left: 542px;
+   bottom: 0;
+   width: 354px;
+   height: 355px;
+   z-index: 7;
+   object-position: 30% center;
 }
 
 .docs-map-collage__photo--d4 {
-   left: 382px;
+   left: 640px;
    bottom: 0;
-   width: 206px;
-   height: 116px;
+   width: 256px;
+   height: 145px;
    z-index: 7;
-   object-position: center 58%;
+   object-position: center 54%;
 }
 
-/* Columna 5 — denim / posters */
+/* Columna 5 — denim / posters (pegada a d4) */
 .docs-map-collage__photo--d2 {
-   left: 562px;
+   left: 896px;
    bottom: 0;
-   width: 124px;
-   height: 232px;
+   width: 154px;
+   height: 290px;
    z-index: 8;
-   object-position: center 18%;
+   object-position: center 14%;
 }
 
 .docs-epilogue-panel {
