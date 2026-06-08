@@ -854,7 +854,7 @@ html, body {
     justify-content: space-between;
     padding: 0 0 0 20px;
     box-sizing: border-box;
-    z-index: 999;
+    z-index: 1001;
 }
 
 .footer-left {
