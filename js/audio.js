@@ -9,11 +9,10 @@
    const STORAGE_TRACK = 'audioTrack';
    const audioBase = audio.dataset.audioBase || './audio/';
 
-   const FALLBACK_PLAYLIST = [
+   const PLAYLIST_ORDER = [
       'bombilla..mp4',
       'fuenterisco.mp4',
       'casaestudio_1.mp4',
-      'iglesia.mp4',
       'mercadoflores.mp4',
       'casaroja.mp4'
    ];
@@ -21,18 +20,19 @@
    let playlist = [];
    let trackIndex = 0;
    let ready = false;
+   let currentSrc = '';
 
-   function getSavedVolume() {
-      return parseFloat(localStorage.getItem(STORAGE_VOLUME) || '0');
+   function normalizePlaylist(files) {
+      const incoming = Array.isArray(files) ? files.filter(Boolean) : PLAYLIST_ORDER.slice();
+      const ordered = PLAYLIST_ORDER.filter(function (name) {
+         return incoming.indexOf(name) !== -1;
+      });
+      return ordered.length ? ordered : PLAYLIST_ORDER.slice();
    }
 
    function getLastAudibleVolume() {
       const last = parseFloat(localStorage.getItem(STORAGE_LAST_VOLUME) || '1');
       return Number.isNaN(last) || last <= 0 ? 1 : last;
-   }
-
-   function getInitialVolume() {
-      return getSavedVolume();
    }
 
    function getSavedTime() {
@@ -46,29 +46,42 @@
 
    function applyVolume(val, persist) {
       const volume = Math.max(0, Math.min(1, val));
+      if (volume === 0) {
+         applyMuteUI();
+         return 0;
+      }
+      audio.muted = false;
       audio.volume = volume;
-      audio.muted = volume === 0;
       if (volumeSlider) {
-         volumeSlider.value = volume === 0 ? '0.5' : String(volume);
-         volumeSlider.classList.toggle('active', volume > 0);
+         volumeSlider.value = String(volume);
+         volumeSlider.classList.add('active');
       }
       if (persist !== false) {
          localStorage.setItem(STORAGE_VOLUME, String(volume));
-         if (volume > 0) {
-            localStorage.setItem(STORAGE_LAST_VOLUME, String(volume));
-         }
+         localStorage.setItem(STORAGE_LAST_VOLUME, String(volume));
       }
       return volume;
    }
 
-   function saveState() {
-      if (!ready) return;
-      const volume = audio.muted ? 0 : audio.volume;
-      localStorage.setItem(STORAGE_VOLUME, String(volume));
-      if (volume > 0) {
-         localStorage.setItem(STORAGE_LAST_VOLUME, String(volume));
+   function applyMuteUI() {
+      audio.volume = getLastAudibleVolume();
+      audio.muted = true;
+      if (volumeSlider) {
+         volumeSlider.value = '0.5';
+         volumeSlider.classList.remove('active');
       }
-      localStorage.setItem(STORAGE_TIME, String(audio.currentTime));
+   }
+
+   function saveState() {
+      if (!ready || !playlist.length) return;
+      const audible = audio.muted ? 0 : audio.volume;
+      if (audible > 0) {
+         localStorage.setItem(STORAGE_VOLUME, String(audible));
+         localStorage.setItem(STORAGE_LAST_VOLUME, String(audible));
+      }
+      if (!Number.isNaN(audio.currentTime)) {
+         localStorage.setItem(STORAGE_TIME, String(audio.currentTime));
+      }
       localStorage.setItem(STORAGE_TRACK, String(trackIndex));
    }
 
@@ -79,7 +92,9 @@
    function restoreTime() {
       const savedTime = getSavedTime();
       if (Number.isNaN(savedTime) || savedTime <= 0) return;
-      if (audio.duration && savedTime < audio.duration) {
+      if (!audio.duration || Number.isNaN(audio.duration)) return;
+      if (savedTime >= audio.duration - 0.25) return;
+      if (Math.abs(audio.currentTime - savedTime) > 0.35) {
          audio.currentTime = savedTime;
       }
    }
@@ -87,7 +102,12 @@
    function loadTrack(index) {
       if (!playlist.length) return;
       trackIndex = ((index % playlist.length) + playlist.length) % playlist.length;
-      audio.src = audioBase + playlist[trackIndex];
+      const src = audioBase + playlist[trackIndex];
+      if (currentSrc === src && audio.getAttribute('src')) {
+         return;
+      }
+      currentSrc = src;
+      audio.src = src;
       audio.load();
    }
 
@@ -95,44 +115,28 @@
       loadTrack(trackIndex + 1);
       audio.addEventListener('canplay', function () {
          audio.currentTime = 0;
+         localStorage.setItem(STORAGE_TIME, '0');
+         applyMuteUI();
          ensurePlaying();
          saveState();
       }, { once: true });
-   }
-
-   function resumeFromStorage() {
-      applyVolume(getInitialVolume());
-      if (!ready) return ensurePlaying();
-      restoreTime();
-      return ensurePlaying();
    }
 
    function bindPlaybackEvents() {
       audio.addEventListener('ended', playNextTrack);
    }
 
-   function startAfterReady() {
+   function startAfterReady(files) {
+      playlist = normalizePlaylist(files);
+      trackIndex = Math.min(Math.max(getSavedTrack(), 0), playlist.length - 1);
       ready = true;
       bindPlaybackEvents();
-      loadTrack(getSavedTrack());
-      applyVolume(getSavedVolume(), false);
+      loadTrack(trackIndex);
+      applyMuteUI();
 
-      audio.addEventListener('loadedmetadata', function onReady() {
+      audio.addEventListener('loadedmetadata', function () {
          restoreTime();
-         const initialVolume = getSavedVolume();
-         if (initialVolume > 0) {
-            ensurePlaying().catch(function () {
-               function resumeOnce() {
-                  resumeFromStorage();
-                  document.removeEventListener('pointerdown', resumeOnce);
-                  document.removeEventListener('keydown', resumeOnce);
-               }
-               document.addEventListener('pointerdown', resumeOnce);
-               document.addEventListener('keydown', resumeOnce);
-            });
-         } else {
-            ensurePlaying();
-         }
+         ensurePlaying();
       }, { once: true });
    }
 
@@ -142,18 +146,15 @@
          return res.json();
       })
       .then(function (files) {
-         playlist = Array.isArray(files) ? files.filter(Boolean) : FALLBACK_PLAYLIST;
-         if (!playlist.length) playlist = FALLBACK_PLAYLIST.slice();
-         startAfterReady();
+         startAfterReady(files);
       })
       .catch(function () {
-         playlist = FALLBACK_PLAYLIST.slice();
-         startAfterReady();
+         startAfterReady(PLAYLIST_ORDER.slice());
       });
 
    window.addEventListener('pageshow', function () {
       if (!ready) return;
-      applyVolume(getSavedVolume(), false);
+      applyMuteUI();
       restoreTime();
       ensurePlaying();
    });
@@ -194,7 +195,7 @@
          if (sliderDidMove) return;
          e.preventDefault();
          if (!mutedAtPointerDown) {
-            applyVolume(0);
+            applyMuteUI();
          } else {
             applyVolume(lastVolumeBeforeMute || getLastAudibleVolume());
             ensurePlaying();
@@ -204,5 +205,8 @@
    }
 
    window.addEventListener('beforeunload', saveState);
+   document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') saveState();
+   });
    setInterval(saveState, 2000);
 })();

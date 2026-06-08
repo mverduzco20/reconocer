@@ -816,7 +816,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
         : '';
 
     const categoryColor = getCategoryColor(categoria);
-    const categoryBackground = hexToRgba(categoryColor, 0.7);
+    const categoryBackground = hexToRgba(categoryColor, 0.84);
     const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupImage}${popupText}</div>`;
 
     const popup = new mapboxgl.Popup({
