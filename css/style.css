@@ -507,7 +507,6 @@ html, body {
 .page-docs main {
    background-color: #f1f1f1;
    min-height: 100vh;
-   padding-bottom: 55px;
    box-sizing: border-box;
    position: relative;
 }
@@ -584,30 +583,215 @@ html.map-embed .site-footer {
 }
 
 .docs-block--1 {
+   position: relative;
+   z-index: 2;
+   width: 100%;
+   margin-bottom: 12px;
+}
+
+.docs-block--1 .docs-block__title {
+   position: relative;
+   z-index: 2;
    max-width: 320px;
+   margin-bottom: 24px;
+}
+
+.docs-block--1__grid {
+   display: grid;
+   grid-template-columns: minmax(150px, 200px) minmax(200px, 300px) minmax(110px, 138px) minmax(170px, 230px);
+   column-gap: clamp(14px, 2.5vw, 28px);
+   row-gap: 18px;
+   align-items: start;
+}
+
+.docs-block--1__grid .docs-block__text {
+   position: relative;
+   z-index: 2;
+   max-width: 34ch;
+   margin: 0;
+}
+
+.docs-block__p1 {
+   grid-column: 1 / 3;
+   grid-row: 1;
+}
+
+.docs-block__p2 {
+   grid-column: 2;
+   grid-row: 2;
+}
+
+.docs-block__p3 {
+   grid-column: 2;
+   grid-row: 3;
+}
+
+.docs-block--1__grid .docs-photo {
+   position: relative;
+   z-index: 1;
+   display: block;
+   width: 100%;
+   height: auto;
+   object-fit: contain;
 }
 
 .docs-block--2 {
-   max-width: 360px;
-   margin-left: auto;
-   margin-right: clamp(24px, 8vw, 120px);
+   position: relative;
+   z-index: 2;
+   width: 100%;
+   max-width: none;
+   margin: 28px 0 0;
+}
+
+.docs-block--2 .docs-block__title,
+.docs-block--2 .docs-block__p6 {
+   position: relative;
+   z-index: 2;
+   max-width: 34ch;
+}
+
+.docs-block--2 .docs-block__p6 {
+   margin-bottom: 22px;
+}
+
+.docs-block--2__stage {
+   position: relative;
+   height: 390px;
+}
+
+.docs-block--2__stage .docs-photo-collage--2 {
+   position: absolute;
+   inset: 0;
+   width: 430px;
+   max-width: 100%;
+   height: 390px;
+   z-index: 1;
+}
+
+.docs-block--2 .docs-block__p7 {
+   position: absolute;
+   left: calc(168px + 28px);
+   top: 0;
+   z-index: 3;
+   max-width: 30ch;
+   margin: 0;
 }
 
 .docs-block--3 {
-   max-width: 420px;
-   margin-left: clamp(40px, 12vw, 180px);
+   position: relative;
+   z-index: 2;
+   width: 100%;
+   max-width: none;
+   margin: 28px 0 0;
 }
 
-.docs-spacer--photos-1 {
-   height: 420px;
+.docs-block--3__layout {
+   display: grid;
+   grid-template-columns: 22ch minmax(170px, 230px);
+   column-gap: 24px;
+   align-items: start;
+   padding-left: calc(255px - 22ch - 12px);
 }
 
-.docs-spacer--photos-2 {
-   height: 520px;
+.docs-block--3__copy {
+   grid-column: 1;
+   max-width: 22ch;
 }
 
-.docs-spacer--photos-3 {
-   height: 460px;
+.docs-block__title--mirada {
+   font-style: italic;
+   padding-left: 2.4em;
+   text-align: left;
+   margin-bottom: 16px;
+}
+
+.docs-block--3 .docs-block__text {
+   max-width: 22ch;
+   text-align: left;
+}
+
+.docs-block--3 .docs-block__p4 {
+   margin-bottom: 14px;
+}
+
+.docs-block--3 .docs-photo--d18 {
+   grid-column: 2;
+   grid-row: 1 / -1;
+   display: block;
+   width: 100%;
+   max-width: 230px;
+   height: auto;
+   object-fit: contain;
+}
+
+.docs-photo-collage {
+   position: absolute;
+   inset: 0;
+   pointer-events: none;
+}
+
+.docs-photo-collage .docs-photo {
+   position: absolute;
+   display: block;
+   width: auto;
+   height: auto;
+   max-width: none;
+   object-fit: contain;
+   box-shadow: none;
+}
+
+/* Bloque 1 — referencia: escalera sin recorte */
+.docs-photo--d12 {
+   grid-column: 1;
+   grid-row: 2;
+   max-width: 200px;
+}
+
+.docs-photo--d13 {
+   grid-column: 3;
+   grid-row: 1 / 3;
+   max-width: 138px;
+   justify-self: center;
+}
+
+.docs-photo--d17 {
+   grid-column: 4;
+   grid-row: 3;
+   max-width: 230px;
+   justify-self: end;
+}
+
+/* Bloque 2 — docuu */
+.docs-photo-collage--2 .docs-photo--d1 {
+   left: 0;
+   top: 0;
+   width: 168px;
+   height: 272px;
+   object-position: 72% 18%;
+}
+
+.docs-photo-collage--2 .docs-photo--d15 {
+   left: 0;
+   bottom: 0;
+   width: 248px;
+   height: 200px;
+   object-position: center 58%;
+}
+
+.docs-photo-collage--2 .docs-photo--d9 {
+   left: 268px;
+   top: 0;
+   width: 162px;
+   height: 390px;
+   object-position: 18% center;
+}
+
+.docs-photo-collage--2 .docs-photo--d7 {
+   right: 0;
+   bottom: 0;
+   width: 152px;
+   height: 228px;
+   object-position: center 32%;
 }
 
 .docs-spacer--before-sticky {
