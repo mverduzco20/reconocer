@@ -619,10 +619,6 @@ html.map-embed .site-footer {
    z-index: 30;
 }
 
-.page-docs #docs-sticky-wrap {
-   height: calc(100vh - 55px);
-}
-
 .docs-map-collage {
    position: absolute;
    left: 0;

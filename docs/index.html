@@ -61,7 +61,7 @@
                     <span class="docs-map-thanks__line">de pelo.tqm</span>
                 </p>
             </div>
-            <div id="docs-sticky-wrap" style="position:sticky; top:0; overflow:hidden;">
+            <div id="docs-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
                 <iframe
                     src="../map.html?v=pages-deploy-2&embed=1"
                     style="width:100%; height:100%; border:none;"
@@ -94,7 +94,6 @@
     <script src="../js/audio.js?v=11"></script>
     <script>
     const DOCS_STICKY_GAP_CM = 0;
-    const DOCS_FOOTER_HEIGHT = 55;
 
     function docsStickyGapPx() {
         return DOCS_STICKY_GAP_CM * 96 / 2.54;
@@ -125,7 +124,7 @@
 
         stickyBlock.style.marginTop = marginTop + 'px';
         stickyWrap.style.marginTop = '';
-        docsPreview.style.height = (marginTop + window.innerHeight - DOCS_FOOTER_HEIGHT) + 'px';
+        docsPreview.style.height = (marginTop + window.innerHeight) + 'px';
     }
 
     window.addEventListener('load', positionDocsPreview);
