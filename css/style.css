@@ -505,11 +505,25 @@ html, body {
 
 .page-docs,
 .page-docs main {
-   background-color: #fff;
+   background-color: #f1f1f1;
    min-height: 100vh;
    padding-bottom: 55px;
    box-sizing: border-box;
    position: relative;
+}
+
+/* Mapa embebido en home/docs: sin splash, logo ni footer duplicados */
+html.map-embed #map-splash,
+html.map-embed .corner-logo,
+html.map-embed .site-footer,
+html.map-embed #categories-nav {
+   display: none !important;
+}
+
+html.map-embed body,
+html.map-embed #map-container,
+html.map-embed #map-container #mapa {
+   background: #f1f1f1 !important;
 }
 
 .docs-page-title {
@@ -728,6 +742,15 @@ html, body {
    height: 290px;
    z-index: 8;
    object-position: center 14%;
+}
+
+.page-docs .docs-map-collage {
+   bottom: calc(100% - 40px);
+   z-index: 35;
+}
+
+.page-docs .docs-map-thanks {
+   bottom: calc(100% - 40px);
 }
 
 .docs-epilogue-panel {
