@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remote Page Control</title>
+</head>
+<body>
+  <main class="panel">
+    <p class="eyebrow">Demos Remote Control</p>
+    <h1>Page Control</h1>
+    <p class="intro">
+      Control para enviar cambios de p&aacute;gina por el mismo WebSocket de las otras demos.
+    </p>
+
+    <div class="status-bar">
+      <div id="connectionStatus" class="status-pill" data-state="connecting">Conectando...</div>
+      <div class="socket-pill">wss://td-tests-b8ab469bdcc6.herokuapp.com</div>
+    </div>
+
+    <section class="actions" aria-label="Acciones remotas">
+      <article class="action-card">
+        <h2>Inicio</h2>
+        <button id="homeButton" type="button">Homepage</button>
+      </article>
+
+      <article class="action-card">
+        <h2>Hito</h2>
+        <label for="hitoSelect">Selecciona un ID de 1 a 120</label>
+        <select id="hitoSelect" aria-label="Seleccionar hito"></select>
+        <button id="hitoButton" class="secondary" type="button">Hito</button>
+      </article>
+
+      <article class="action-card">
+        <h2>Recompensa</h2>
+        <label for="recompensaSelect">Selecciona un ID de 1 a 12</label>
+        <select id="recompensaSelect" aria-label="Seleccionar recompensa"></select>
+        <button id="recompensaButton" class="tertiary" type="button">Recompensa</button>
+      </article>
+
+      <article class="action-card">
+        <h2>Mapa</h2>
+        <label for="mapaSelect">Selecciona una vista del mapa</label>
+        <select id="mapaSelect" aria-label="Seleccionar mapa"></select>
+        <button id="mapaButton" class="secondary" type="button">Mapa</button>
+      </article>
+
+      <article class="action-card">
+        <h2>Archivo</h2>
+        <button id="documentacionButton" type="button">Documentaci&oacute;n</button>
+      </article>
+    </section>
+
+    <section class="payload-panel" aria-live="polite">
+      <h2>Ultimo payload</h2>
+      <pre id="lastPayload">Todavia no se ha enviado ningun mensaje.</pre>
+    </section>
+  </main>
+
+  <script>
+    const wsUrl = "wss://td-tests-b8ab469bdcc6.herokuapp.com";
+    const pageValues = {
+      home: "Home",
+      hito: "Hito",
+      recompensa: "Recompensa",
+      mapa: "Mapa",
+      documentacion: "Documentación"
+    };
+
+    const mapaOptions = [
+      "Completo",
+      "Oficio",
+      "Encuentro",
+      "Memoria",
+      "Refugio"
+    ];
+
+    let ws;
+
+    const connectionStatusElem = document.getElementById("connectionStatus");
+    const lastPayloadElem = document.getElementById("lastPayload");
+    const hitoSelect = document.getElementById("hitoSelect");
+    const recompensaSelect = document.getElementById("recompensaSelect");
+    const mapaSelect = document.getElementById("mapaSelect");
+
+    function fillSelect(selectElem, total) {
+      for (let index = 1; index <= total; index += 1) {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = String(index);
+        selectElem.appendChild(option);
+      }
+    }
+
+    function fillSelectFromValues(selectElem, values) {
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        selectElem.appendChild(option);
+      });
+    }
+
+    function updateStatus(text, state) {
+      connectionStatusElem.textContent = text;
+      connectionStatusElem.dataset.state = state;
+    }
+
+    function connectWebSocket() {
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        updateStatus("Conectado", "connected");
+      };
+
+      ws.onclose = () => {
+        updateStatus("Desconectado", "error");
+        updateStatus("Reconectando...", "connecting");
+        setTimeout(connectWebSocket, 3000);
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        updateStatus("Error de conexion", "error");
+        ws.close();
+      };
+
+      ws.onmessage = (message) => {
+        console.log("Received message:", message.data);
+      };
+    }
+
+    function sendPayload(payload) {
+      const serialized = JSON.stringify(payload, null, 2);
+      lastPayloadElem.textContent = serialized;
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(payload));
+      } else {
+        updateStatus("Socket no disponible", "error");
+      }
+    }
+
+    fillSelect(hitoSelect, 120);
+    fillSelect(recompensaSelect, 12);
+    fillSelectFromValues(mapaSelect, mapaOptions);
+    connectWebSocket();
+
+    document.getElementById("homeButton").addEventListener("click", () => {
+      sendPayload({ Pagina: pageValues.home });
+    });
+
+    document.getElementById("hitoButton").addEventListener("click", () => {
+      sendPayload({
+        Pagina: pageValues.hito,
+        ID: Number(hitoSelect.value)
+      });
+    });
+
+    document.getElementById("recompensaButton").addEventListener("click", () => {
+      sendPayload({
+        Pagina: pageValues.recompensa,
+        ID: Number(recompensaSelect.value)
+      });
+    });
+
+    document.getElementById("mapaButton").addEventListener("click", () => {
+      sendPayload({
+        Pagina: pageValues.mapa,
+        ID: mapaSelect.value
+      });
+    });
+
+    document.getElementById("documentacionButton").addEventListener("click", () => {
+      sendPayload({ Pagina: pageValues.documentacion });
+    });
+  </script>
+</body>
+</html>
