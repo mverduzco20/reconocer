@@ -551,7 +551,24 @@ function isWsEcho(rawMessage) {
     return Date.now() - lastWsSentAt < 150 && rawMessage === lastWsSent;
 }
 
+function isEmbedMode() {
+    return document.documentElement.classList.contains('map-embed')
+        || window.self !== window.top;
+}
+
+function initEmbedMessageBridge() {
+    window.addEventListener('message', function (event) {
+        if (!event.data || event.data.type !== 'reconocer-ws') return;
+        handleRemotePayload(event.data.payload);
+    });
+}
+
 function connectWebSocket() {
+    if (isEmbedMode()) {
+        initEmbedMessageBridge();
+        return;
+    }
+
     ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
@@ -609,12 +626,16 @@ function handleRemotePayload(payload) {
     const pagina = payload.Pagina;
 
     if (pagina === 'Home') {
-        window.location.href = './index.html';
+        if (!isEmbedMode()) {
+            window.location.href = './index.html';
+        }
         return;
     }
 
     if (pagina === 'Documentación') {
-        window.location.href = './docs/index.html';
+        if (!isEmbedMode()) {
+            window.location.href = './docs/index.html';
+        }
         return;
     }
 
@@ -649,6 +670,22 @@ function openRemoteMarker(id, wantsRecompensa) {
     suppressWsSend = true;
     handleMarkerPopupClick(mapInstance, marker, marker._popup);
     suppressWsSend = false;
+}
+
+function wireMapNavigationLinks() {
+    if (isEmbedMode()) return;
+    document.querySelectorAll('.footer-link[href], .corner-logo[href]').forEach(function (link) {
+        link.addEventListener('click', function () {
+            const href = (link.getAttribute('href') || '').toLowerCase();
+            if (href.includes('docs')) {
+                sendWsPayload({ Pagina: 'Documentación' });
+            } else if (href.includes('index.html')) {
+                sendWsPayload({ Pagina: 'Home' });
+            } else if (href.includes('map.html')) {
+                sendWsPayload({ Pagina: 'Mapa', ID: 'Completo' });
+            }
+        });
+    });
 }
 
 function applyRemoteMapaView(mapaId) {
