@@ -530,8 +530,9 @@ function initMapBackgroundUI(map) {
 
 // ─────────────────────────────────────────────
 // WEBSOCKETS (TOUCHDESIGNER CONTROL)
+// Panel remoto: RECONOCER_WS.remoteControlUrl (js/ws-config.js)
 // ─────────────────────────────────────────────
-const wsUrl = "wss://td-tests-b8ab469bdcc6.herokuapp.com";
+const wsUrl = (window.RECONOCER_WS && window.RECONOCER_WS.url) || "wss://td-tests-b8ab469bdcc6.herokuapp.com";
 let ws;
 
 function connectWebSocket() {
