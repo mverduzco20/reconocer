@@ -91,6 +91,10 @@ let mapBluePreviewLoopTimer = null;
 let mapBluePreviewLoopIndex = 0;
 let mapBluePreviewActive = false;
 let hitosMarkers = [];
+let mapInstance = null;
+let suppressWsSend = false;
+let lastWsSent = '';
+let lastWsSentAt = 0;
 let filterCColorLoopTimer = null;
 let filterCColorLoopIndex = 0;
 
@@ -535,13 +539,24 @@ function initMapBackgroundUI(map) {
 const wsUrl = (window.RECONOCER_WS && window.RECONOCER_WS.url) || "wss://td-tests-b8ab469bdcc6.herokuapp.com";
 let ws;
 
+const MAPA_VIEW_TO_CATEGORY = {
+    Completo: null,
+    Memoria: 'm',
+    Oficio: 'o',
+    Encuentro: 'e',
+    Refugio: 'r'
+};
+
+function isWsEcho(rawMessage) {
+    return Date.now() - lastWsSentAt < 150 && rawMessage === lastWsSent;
+}
+
 function connectWebSocket() {
     ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
         console.log("[reconocer] WebSocket conectado");
-        // Al cargar la página tiene que mandar el evento de Home
-        sendWsPayload({ Pagina: "Home" });
+        sendWsPayload({ Pagina: "Mapa", ID: "Completo" });
     };
 
     ws.onclose = () => {
@@ -553,13 +568,127 @@ function connectWebSocket() {
         console.error("[reconocer] WebSocket error:", error);
         ws.close();
     };
+
+    ws.onmessage = (event) => {
+        if (isWsEcho(event.data)) return;
+        let payload;
+        try {
+            payload = JSON.parse(event.data);
+        } catch (e) {
+            return;
+        }
+        handleRemotePayload(payload);
+    };
 }
 
 function sendWsPayload(payload) {
+    if (suppressWsSend) return;
     if (ws && ws.readyState === WebSocket.OPEN) {
+        const body = JSON.stringify(payload);
+        lastWsSent = body;
+        lastWsSentAt = Date.now();
         console.log("[reconocer] Enviando payload:", payload);
-        ws.send(JSON.stringify(payload));
+        ws.send(body);
     }
+}
+
+function consumePendingRemoteCommand() {
+    let raw = '';
+    try {
+        raw = sessionStorage.getItem('reconocerWsPending') || '';
+        if (raw) sessionStorage.removeItem('reconocerWsPending');
+    } catch (e) { /* ignore */ }
+    if (!raw) return;
+    try {
+        handleRemotePayload(JSON.parse(raw));
+    } catch (e) { /* ignore */ }
+}
+
+function handleRemotePayload(payload) {
+    if (!payload || !payload.Pagina) return;
+    const pagina = payload.Pagina;
+
+    if (pagina === 'Home') {
+        window.location.href = './index.html';
+        return;
+    }
+
+    if (pagina === 'Documentación') {
+        window.location.href = './docs/index.html';
+        return;
+    }
+
+    if (pagina === 'Hito') {
+        openRemoteMarker(payload.ID, false);
+        return;
+    }
+
+    if (pagina === 'Recompensa') {
+        openRemoteMarker(payload.ID, true);
+        return;
+    }
+
+    if (pagina === 'Mapa') {
+        applyRemoteMapaView(payload.ID || 'Completo');
+    }
+}
+
+function openRemoteMarker(id, wantsRecompensa) {
+    if (!mapInstance || !hitosMarkers.length) return;
+    const targetId = Number(id);
+    if (!targetId) return;
+
+    const marker = hitosMarkers.find(function (m) {
+        return m._hitoId === targetId && Boolean(m._tienePremio) === Boolean(wantsRecompensa);
+    }) || hitosMarkers.find(function (m) {
+        return m._hitoId === targetId;
+    });
+
+    if (!marker || !marker._popup) return;
+
+    suppressWsSend = true;
+    handleMarkerPopupClick(mapInstance, marker, marker._popup);
+    suppressWsSend = false;
+}
+
+function applyRemoteMapaView(mapaId) {
+    if (!mapInstance) return;
+    const categoriesNav = document.getElementById('categories-nav');
+    if (!categoriesNav) return;
+
+    const catButtons = categoriesNav.querySelectorAll('.category-button');
+    const targetCat = Object.prototype.hasOwnProperty.call(MAPA_VIEW_TO_CATEGORY, mapaId)
+        ? MAPA_VIEW_TO_CATEGORY[mapaId]
+        : null;
+
+    catButtons.forEach(function (btn) {
+        const cat = (btn.dataset.category || '').toLowerCase();
+        if (targetCat === null) {
+            btn.classList.remove('active');
+        } else {
+            btn.classList.toggle('active', cat === targetCat);
+        }
+    });
+
+    const act = getActiveCategorySet(catButtons);
+
+    if (getCurrentMapBgMode() === 'blue') {
+        if (act.size === 0) {
+            startMapBluePreviewLoop(mapInstance, { fitOverview: true });
+            return;
+        }
+
+        stopMapBluePreviewLoop();
+        const activeCat = act.values().next().value;
+        const variant = MAP_BLUE_VARIANT_BY_CATEGORY[activeCat];
+        if (variant) {
+            mapBlueVariant = variant;
+            scheduleBlueMapVariantApply(mapInstance, true);
+        }
+    }
+
+    updateMarkersFilter(mapInstance, hitosMarkers, act);
+    scheduleMapFitToFilteredMarkers(mapInstance, hitosMarkers, act);
 }
 
 // ─────────────────────────────────────────────
@@ -570,13 +699,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mapboxgl.accessToken = window.MAPBOX_TOKEN;
 
-    const map = new mapboxgl.Map({
+    mapInstance = new mapboxgl.Map({
         container: 'mapa',
         style: MAP_STYLE,
         center: MAP_CENTER,
         zoom: MAP_ZOOM,
         antialias: true
     });
+    const map = mapInstance;
 
     // Marcadores creados a partir del CSV
     const markers = [];
@@ -609,6 +739,14 @@ document.addEventListener('DOMContentLoaded', () => {
         scheduleMapBackgroundReapply(map);
     });
 
+    map.on('click', function (e) {
+        const target = e.originalEvent && e.originalEvent.target;
+        if (target && target.closest('.mapboxgl-marker, .map-marker-hit, .marker, .mapboxgl-popup, .category-popup')) {
+            return;
+        }
+        closeAllOpenPopups();
+    });
+
     // Controles de navegación (zoom + rotación)
     map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
@@ -638,6 +776,7 @@ function loadHitosMarkers(map, markers) {
             rows.slice(1).forEach(row => agregarMarcador(map, row, markers, indices));
             hitosMarkers = markers;
             initCategoryUI(map, markers);
+            consumePendingRemoteCommand();
         })
         .catch(err => console.error('[reconocer]', err));
 }
