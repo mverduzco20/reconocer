@@ -1241,11 +1241,14 @@ html.map-embed .site-footer {
 #memoria-button  { background-color: #e9c47e; }
 #oficio-button   { background-color: #0000ff; }
 #refugio-button {
-    background-color: #94d48c;
+    --refugio-btn-r: 148;
+    --refugio-btn-g: 212;
+    --refugio-btn-b: 140;
+    background-color: rgb(var(--refugio-btn-r), var(--refugio-btn-g), var(--refugio-btn-b));
 }
 
 #refugio-button.active {
-    background-color: rgba(148, 212, 140, 0.7);
+    background-color: rgba(var(--refugio-btn-r), var(--refugio-btn-g), var(--refugio-btn-b), 0.75);
     filter: none;
 }
 
