@@ -1473,8 +1473,9 @@ a.footer-link {
     overflow: hidden;
 }
 
-/* Prueba solo r9 (collar): relato con transparencia 75% */
-.category-popup .popup-text-panel-r9 {
+/* Refugio: relato + DESBLOQUEAR con verde sage al 75% */
+.category-popup--refugio .popup-text-panel,
+.category-popup--refugio .popup-unlock {
     background-color: rgba(138, 159, 130, 0.75) !important;
 }
 
