@@ -1604,6 +1604,11 @@ a.footer-link {
    z-index: 1;
 }
 
+#mapa .mapboxgl-marker.marker-refugio,
+#mapa .mapboxgl-marker.marker-refugio .marker {
+   opacity: 0.9 !important;
+}
+
 /* Popups al click: siempre encima y sin filtro del mapa */
 #mapa .mapboxgl-popup {
    z-index: 20 !important;

@@ -1202,6 +1202,10 @@ function agregarMarcador(map, row, markers, indices = {}) {
 
     const markerEl = marker.getElement();
     markerEl.classList.add('map-marker-hit');
+    if (categoria === 'r') {
+        markerEl.classList.add('marker-refugio');
+        el.classList.add('marker-refugio');
+    }
     markerEl.style.pointerEvents = 'auto';
     markerEl.style.opacity = String(markerOpacity);
     el.style.pointerEvents = 'auto';
