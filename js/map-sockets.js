@@ -564,7 +564,7 @@ function isEmbedMode() {
 }
 
 let initialMapViewResizeTimer = null;
-const STANDALONE_MAP_VIEW_RETRY_MS = [100, 350, 800, 1600, 2600];
+let cartographyViewLocked = false;
 
 function applyInitialMapView(map) {
     if (!map) return;
@@ -575,6 +575,9 @@ function applyInitialMapView(map) {
         bearing: 0,
         pitch: 0
     });
+    if (typeof map.triggerRepaint === 'function') {
+        map.triggerRepaint();
+    }
 }
 
 function scheduleInitialMapView(map, withRetries) {
@@ -592,22 +595,42 @@ function scheduleInitialMapView(map, withRetries) {
     }
 }
 
-function scheduleStandaloneMapView(map) {
+function removeCartographySplash() {
+    const splash = document.getElementById('map-splash');
+    if (!splash) return;
+    splash.classList.add('hidden');
+    splash.style.display = 'none';
+}
+
+function applyCartographyMapViewAfterSplash(map) {
     if (!map || isEmbedMode()) return;
-    const run = function () {
-        applyInitialMapView(map);
-    };
+    removeCartographySplash();
     window.requestAnimationFrame(function () {
-        window.requestAnimationFrame(run);
+        window.requestAnimationFrame(function () {
+            applyInitialMapView(map);
+            cartographyViewLocked = true;
+        });
     });
-    STANDALONE_MAP_VIEW_RETRY_MS.forEach(function (ms) {
-        window.setTimeout(run, ms);
-    });
-    map.once('idle', function () {
-        run();
-        window.setTimeout(run, 200);
-        window.setTimeout(run, 700);
-    });
+}
+
+function lockCartographyMapView(map) {
+    if (!map || isEmbedMode() || cartographyViewLocked) return;
+
+    const finish = function () {
+        if (cartographyViewLocked) return;
+        removeCartographySplash();
+        window.setTimeout(function () {
+            applyCartographyMapViewAfterSplash(map);
+        }, 650);
+    };
+
+    if (map.loaded()) {
+        map.once('idle', finish);
+    } else {
+        map.once('load', function () {
+            map.once('idle', finish);
+        });
+    }
 }
 
 function initMapViewport(map) {
@@ -631,15 +654,6 @@ function initMapViewport(map) {
                 }, { threshold: 0.08 }).observe(container);
             }
         }
-    } else {
-        scheduleStandaloneMapView(map);
-        if (splash) {
-            splash.addEventListener('transitionend', function (event) {
-                if (event.propertyName === 'opacity' && splash.classList.contains('hidden')) {
-                    scheduleStandaloneMapView(map);
-                }
-            });
-        }
     }
 
     window.addEventListener('resize', function () {
@@ -647,8 +661,8 @@ function initMapViewport(map) {
         initialMapViewResizeTimer = window.setTimeout(function () {
             if (isEmbedMode()) {
                 applyInitialMapView(map);
-            } else {
-                scheduleStandaloneMapView(map);
+            } else if (cartographyViewLocked) {
+                applyInitialMapView(map);
             }
         }, 120);
     });
@@ -657,7 +671,7 @@ function initMapViewport(map) {
         if (isEmbedMode()) {
             scheduleInitialMapView(map, false);
         } else {
-            scheduleStandaloneMapView(map);
+            applyCartographyMapViewAfterSplash(map);
         }
     };
 }
@@ -926,12 +940,9 @@ function loadHitosMarkers(map, markers) {
             if (isEmbedMode()) {
                 scheduleInitialMapView(map, true);
             } else {
-                scheduleStandaloneMapView(map);
+                lockCartographyMapView(map);
             }
             consumePendingRemoteCommand();
-            if (!isEmbedMode()) {
-                scheduleStandaloneMapView(map);
-            }
         })
         .catch(err => console.error('[reconocer]', err));
 }
