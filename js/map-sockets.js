@@ -10,7 +10,7 @@ const CARTOGRAPHY_MAP_CENTER = [-99.2010, 19.3445];
 const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260610-popup-restore';
+const RECONOCER_MAP_BUILD = '20260610-relato-white';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -1164,7 +1164,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
         : `<img src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`;
 
     const popupText = relato
-        ? `<p class="popup-relato" style="grid-column:2;grid-row:2;align-self:center;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;">${relato}</p>`
+        ? `<p class="popup-relato" style="grid-column:2;grid-row:2;align-self:center;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;color:#ffffff;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
