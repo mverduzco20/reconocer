@@ -117,6 +117,14 @@ function getCategoryColor(categoria) {
     return CATEGORY_COLOR_MAP[String(categoria || '').toLowerCase()] || MAP_BLUE;
 }
 
+function getCategoryBackgroundAlpha(categoria) {
+    return String(categoria || '').toLowerCase() === 'r' ? 0.92 : 0.7;
+}
+
+function getMarkerOpacity(categoria) {
+    return String(categoria || '').toLowerCase() === 'r' ? 0.9 : MARKER_OPACITY;
+}
+
 function getCategoryUnlockTextColor(categoria) {
     const cat = String(categoria || '').toLowerCase();
     if (cat === 'o' || cat === 'e') return '#ffffff';
@@ -1147,6 +1155,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'];
     const isImage = imageExtensions.includes(extension);
     const previewUrl = isImage ? imageUrl : 'https://placehold.co/120x120?text=NO+IMG';
+    const markerOpacity = getMarkerOpacity(categoria);
 
     const el = document.createElement('img');
     el.src = previewUrl;
@@ -1156,7 +1165,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.className = 'marker';
     el.title = archivo;
     el.style.cursor = 'pointer';
-    el.style.opacity = String(MARKER_OPACITY);
+    el.style.opacity = String(markerOpacity);
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
@@ -1168,7 +1177,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
         : '';
 
     const categoryColor = getCategoryColor(categoria);
-    const categoryBackground = hexToRgba(categoryColor, 0.7);
+    const categoryBackground = hexToRgba(categoryColor, getCategoryBackgroundAlpha(categoria));
     const popupUnlock = `<div class="popup-unlock" style="grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:${POPUP_UNLOCK_TEXT_COLOR};font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;">DESBLOQUEAR</div>`;
     const popupContent = `<div class="popup-inner" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupUnlock}${popupImage}${popupText}</div>`;
 
@@ -1194,7 +1203,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const markerEl = marker.getElement();
     markerEl.classList.add('map-marker-hit');
     markerEl.style.pointerEvents = 'auto';
-    markerEl.style.opacity = String(MARKER_OPACITY);
+    markerEl.style.opacity = String(markerOpacity);
     el.style.pointerEvents = 'auto';
 
     el.addEventListener('click', (event) => {
