@@ -15,6 +15,16 @@ window.HITO_VIDEO_BY_IMAGE = {
     'r7.jpg': 'casaroja.mp4'
 };
 
+// Orden fijo de las 12 recompensas (ID 1–12 en TouchDesigner / panel remoto).
+window.HITO_RECOMPENSA_ORDER = Object.keys(window.HITO_VIDEO_BY_IMAGE);
+
+function getRecompensaIdForImage(archivo) {
+    const key = String(archivo || '').trim().toLowerCase();
+    if (!key || !window.HITO_RECOMPENSA_ORDER) return 0;
+    const idx = window.HITO_RECOMPENSA_ORDER.indexOf(key);
+    return idx >= 0 ? idx + 1 : 0;
+}
+
 function hitoHasUnlockVideo(archivo) {
     return !!getHitoVideoSrcForImage(archivo);
 }

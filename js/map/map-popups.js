@@ -32,7 +32,8 @@ function wirePopupUnlockVideo(map, popup, marker) {
         inner.style.height = (POPUP_HEIGHT + POPUP_VIDEO_HEIGHT) + 'px';
         panel.removeAttribute('hidden');
 
-        sendWsPayload(buildMarkerWsPayload(marker, { unlock: true }));
+        const recompensaPayload = buildRecompensaWsPayload(marker);
+        if (recompensaPayload) sendWsPayload(recompensaPayload);
 
         const playPromise = video.play();
         if (playPromise && typeof playPromise.catch === 'function') {
@@ -159,8 +160,8 @@ function handleMarkerPopupClick(map, marker, popup) {
         return;
     }
 
-    // WebSockets: ID único por archivo (ej. m45, e21) — evita colisiones numéricas en TD
-    sendWsPayload(buildMarkerWsPayload(marker));
+    // WebSockets: Hito = misma imagen que el popup (fila CSV 1–94)
+    sendWsPayload(buildHitoWsPayload(marker));
 
     if (openPopupEntries.length >= MAX_OPEN_POPUPS) {
         closeAllOpenPopups();

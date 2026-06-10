@@ -2,6 +2,7 @@
 // ─────────────────────────────────────────────
 // WEBSOCKETS (TOUCHDESIGNER CONTROL)
 // Panel remoto: RECONOCER_WS.remoteControlUrl (js/ws-config.js)
+// TD espera: Hito ID = fila CSV (1–94), Recompensa ID = video (1–12)
 // ─────────────────────────────────────────────
 const wsUrl = (window.RECONOCER_WS && window.RECONOCER_WS.url) || "wss://td-tests-b8ab469bdcc6.herokuapp.com";
 
@@ -11,65 +12,75 @@ function getMarkerWsId(marker) {
     return archivo.replace(/\.[^.]+$/i, '').toLowerCase();
 }
 
-function markerHasRewardProjection(marker) {
-    if (!marker) return false;
-    const archivo = marker._archivo || '';
-    return Boolean(marker._tienePremio) || isRewardVideoHito(archivo);
+/** Imagen del hito — misma que abre el popup en la web (fila del CSV). */
+function buildHitoWsPayload(marker) {
+    const archivo = marker && marker._archivo ? String(marker._archivo).trim() : '';
+    return {
+        Pagina: 'Hito',
+        ID: marker && marker._hitoRowId ? marker._hitoRowId : 0,
+        Archivo: archivo
+    };
 }
 
-function buildMarkerWsPayload(marker, options) {
+/** Video de recompensa — ID 1–12 según hito-videos.js (solo al desbloquear). */
+function buildRecompensaWsPayload(marker) {
     const archivo = marker && marker._archivo ? String(marker._archivo).trim() : '';
-    const wsId = getMarkerWsId(marker);
-    const isReward = markerHasRewardProjection(marker);
+    const rewardId = typeof getRecompensaIdForImage === 'function'
+        ? getRecompensaIdForImage(archivo)
+        : 0;
+    if (!rewardId) return null;
+
     const payload = {
-        Pagina: isReward ? 'Recompensa' : 'Hito',
-        ID: wsId || marker._hitoId,
+        Pagina: 'Recompensa',
+        ID: rewardId,
         Archivo: archivo
     };
 
-    if (isReward && typeof getHitoVideoSrcForImage === 'function') {
+    if (typeof getHitoVideoSrcForImage === 'function') {
         const videoSrc = getHitoVideoSrcForImage(archivo);
         if (videoSrc) {
-            const videoName = decodeURIComponent(String(videoSrc).split('/').pop().split('?')[0]);
-            payload.Video = videoName;
+            payload.Video = decodeURIComponent(String(videoSrc).split('/').pop().split('?')[0]);
         }
-    }
-
-    if (options && options.unlock) {
-        payload.Accion = 'Desbloquear';
     }
 
     return payload;
 }
 
-function findMarkerFromWsPayload(id, wantsRecompensa) {
+function findMarkerFromWsPayload(id, pagina) {
     if (!hitosMarkers.length) return null;
     const raw = String(id == null ? '' : id).trim();
     if (!raw) return null;
 
+    const num = Number(raw);
+    if (Number.isFinite(num) && num > 0) {
+        if (pagina === 'Recompensa' && num <= 12) {
+            const byReward = hitosMarkers.find(function (m) {
+                return typeof getRecompensaIdForImage === 'function'
+                    && getRecompensaIdForImage(m._archivo) === num;
+            });
+            if (byReward) return byReward;
+        }
+
+        const byRow = hitosMarkers.find(function (m) {
+            return m._hitoRowId === num;
+        });
+        if (byRow) return byRow;
+    }
+
     const stem = raw.toLowerCase();
     if (/^[meroe]\d+$/i.test(stem)) {
-        const byStem = hitosMarkers.find(function (m) {
+        return hitosMarkers.find(function (m) {
             return getMarkerWsId(m) === stem;
-        });
-        if (byStem) return byStem;
+        }) || null;
     }
 
     if (/\.(jpe?g|png|gif|webp|avif|svg)$/i.test(stem)) {
-        const byFile = hitosMarkers.find(function (m) {
+        return hitosMarkers.find(function (m) {
             return String(m._archivo || '').toLowerCase() === stem;
-        });
-        if (byFile) return byFile;
+        }) || null;
     }
 
-    const targetId = Number(raw);
-    if (!Number.isFinite(targetId) || targetId <= 0) return null;
-
-    return hitosMarkers.find(function (m) {
-        return m._hitoId === targetId && Boolean(m._tienePremio) === Boolean(wantsRecompensa);
-    }) || hitosMarkers.find(function (m) {
-        return m._hitoId === targetId;
-    }) || null;
+    return null;
 }
 
 function isWsEcho(rawMessage) {
@@ -113,12 +124,22 @@ function connectWebSocket() {
 
 function sendWsPayload(payload) {
     if (suppressWsSend) return;
+    if (!payload || !payload.Pagina) return;
+
+    if (isEmbedMode()) {
+        console.log("[reconocer] Enviando payload (embed→parent):", payload);
+        window.parent.postMessage({ type: 'reconocer-ws-send', payload: payload }, '*');
+        return;
+    }
+
     if (ws && ws.readyState === WebSocket.OPEN) {
         const body = JSON.stringify(payload);
         lastWsSent = body;
         lastWsSentAt = Date.now();
         console.log("[reconocer] Enviando payload:", payload);
         ws.send(body);
+    } else {
+        console.warn("[reconocer] WebSocket no conectado, no se envió:", payload);
     }
 }
 
@@ -152,13 +173,8 @@ function handleRemotePayload(payload) {
         return;
     }
 
-    if (pagina === 'Hito') {
-        openRemoteMarker(payload.ID, false);
-        return;
-    }
-
-    if (pagina === 'Recompensa') {
-        openRemoteMarker(payload.ID, true);
+    if (pagina === 'Hito' || pagina === 'Recompensa') {
+        openRemoteMarker(payload.ID, pagina);
         return;
     }
 
@@ -167,10 +183,10 @@ function handleRemotePayload(payload) {
     }
 }
 
-function openRemoteMarker(id, wantsRecompensa) {
+function openRemoteMarker(id, pagina) {
     if (!mapInstance) return;
 
-    const marker = findMarkerFromWsPayload(id, wantsRecompensa);
+    const marker = findMarkerFromWsPayload(id, pagina);
     if (!marker || !marker._popup) return;
 
     suppressWsSend = true;
@@ -235,4 +251,3 @@ function applyRemoteMapaView(mapaId) {
         scheduleMapFitToFilteredMarkers(mapInstance, hitosMarkers, act);
     }
 }
-

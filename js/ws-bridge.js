@@ -132,8 +132,16 @@
         };
     }
 
+    function wireEmbedSendBridge() {
+        window.addEventListener('message', function (event) {
+            if (!event.data || event.data.type !== 'reconocer-ws-send') return;
+            sendPayload(event.data.payload);
+        });
+    }
+
     function init() {
         wireNavigationLinks();
+        wireEmbedSendBridge();
         connect();
     }
 

@@ -1,5 +1,5 @@
 // Markers, filters, and category UI
-function agregarMarcador(map, row, markers, indices = {}) {
+function agregarMarcador(map, row, markers, indices = {}, hitoRowId = 0) {
     const archivo = String(indices.archivo >= 0 ? row[indices.archivo] : row[0] || '').trim();
     const lat = parseFloat(indices.lat >= 0 ? row[indices.lat] : row[1]);
     const lng = parseFloat(indices.lng >= 0 ? row[indices.lng] : row[2]);
@@ -87,6 +87,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
     marker._popup = popup;
     marker._hitoId = isNaN(hitoId) ? 0 : hitoId;
     marker._hitoWsId = archivo.replace(/\.[^.]+$/i, '').toLowerCase();
+    marker._hitoRowId = hitoRowId;
     marker._tienePremio = tienePremio;
     marker.addTo(map);
 

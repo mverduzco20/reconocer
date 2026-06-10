@@ -14,7 +14,9 @@ function processHitosCsvText(map, markers, text) {
         premio: header.findIndex(h => h.includes('premio') || h.includes('recompensa'))
     };
 
-    rows.slice(1).forEach(row => agregarMarcador(map, row, markers, indices));
+    rows.slice(1).forEach(function (row, index) {
+        agregarMarcador(map, row, markers, indices, index + 1);
+    });
     hitosMarkers = markers;
     prefetchedHitosBounds = markersToBounds(markers);
     initCategoryUI(map, markers);
