@@ -10,7 +10,7 @@ const CARTOGRAPHY_MAP_CENTER = [-99.2010, 19.3445];
 const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260610-refugio-v2';
+const RECONOCER_MAP_BUILD = '20260610-refugio-thumbs';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -1171,9 +1171,6 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.width = 66;
     el.height = 66;
     el.className = 'marker';
-    if (categoria === 'r') {
-        el.classList.add('marker-refugio-thumb');
-    }
     el.title = archivo;
     el.style.cursor = 'pointer';
     el.style.opacity = String(MARKER_OPACITY);
@@ -1217,9 +1214,6 @@ function agregarMarcador(map, row, markers, indices = {}) {
 
     const markerEl = marker.getElement();
     markerEl.classList.add('map-marker-hit');
-    if (categoria === 'r') {
-        markerEl.classList.add('marker-refugio-thumb-wrap');
-    }
     markerEl.style.pointerEvents = 'auto';
     markerEl.style.opacity = String(MARKER_OPACITY);
     el.style.pointerEvents = 'auto';
