@@ -113,12 +113,24 @@ const CATEGORY_COLOR_MAP = {
     e: '#ec00ea'  // encuentro — rosa
 };
 
-function getCategoryColor(categoria) {
-    return CATEGORY_COLOR_MAP[String(categoria || '').toLowerCase()] || MAP_BLUE;
+const REFUGIO_COLOR_DARK = '#2f6f2c';
+const REFUGIO_DARK_PREVIEW_ARCHIVO = 'r9.jpg';
+
+function isRefugioDarkPreview(archivo) {
+    return String(archivo || '').trim().toLowerCase() === REFUGIO_DARK_PREVIEW_ARCHIVO;
 }
 
-function getCategoryBackgroundAlpha(categoria) {
-    return String(categoria || '').toLowerCase() === 'r' ? 0.92 : 0.7;
+function getCategoryColor(categoria, archivo) {
+    const cat = String(categoria || '').toLowerCase();
+    if (cat === 'r' && isRefugioDarkPreview(archivo)) return REFUGIO_COLOR_DARK;
+    return CATEGORY_COLOR_MAP[cat] || MAP_BLUE;
+}
+
+function getCategoryBackgroundAlpha(categoria, archivo) {
+    const cat = String(categoria || '').toLowerCase();
+    if (cat === 'r' && isRefugioDarkPreview(archivo)) return 0.96;
+    if (cat === 'r') return 0.92;
+    return 0.7;
 }
 
 function getMarkerOpacity(categoria) {
@@ -1176,8 +1188,8 @@ function agregarMarcador(map, row, markers, indices = {}) {
         ? `<p class="popup-relato" style="grid-column:2;grid-row:2;align-self:center;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;color:#ffffff;">${relato}</p>`
         : '';
 
-    const categoryColor = getCategoryColor(categoria);
-    const categoryBackground = hexToRgba(categoryColor, getCategoryBackgroundAlpha(categoria));
+    const categoryColor = getCategoryColor(categoria, archivo);
+    const categoryBackground = hexToRgba(categoryColor, getCategoryBackgroundAlpha(categoria, archivo));
     const popupUnlock = `<div class="popup-unlock" style="grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:${POPUP_UNLOCK_TEXT_COLOR};font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;">DESBLOQUEAR</div>`;
     const popupContent = `<div class="popup-inner" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupUnlock}${popupImage}${popupText}</div>`;
 
@@ -1205,6 +1217,10 @@ function agregarMarcador(map, row, markers, indices = {}) {
     if (categoria === 'r') {
         markerEl.classList.add('marker-refugio');
         el.classList.add('marker-refugio');
+        if (isRefugioDarkPreview(archivo)) {
+            markerEl.classList.add('marker-refugio-dark');
+            el.classList.add('marker-refugio-dark');
+        }
     }
     markerEl.style.pointerEvents = 'auto';
     markerEl.style.opacity = String(markerOpacity);

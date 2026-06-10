@@ -1609,6 +1609,11 @@ a.footer-link {
    opacity: 0.9 !important;
 }
 
+#mapa .mapboxgl-marker.marker-refugio-dark .marker {
+   filter: brightness(0.72) saturate(1.15) contrast(1.08) !important;
+   opacity: 0.95 !important;
+}
+
 /* Popups al click: siempre encima y sin filtro del mapa */
 #mapa .mapboxgl-popup {
    z-index: 20 !important;
