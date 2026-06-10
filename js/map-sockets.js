@@ -563,6 +563,67 @@ function isEmbedMode() {
         || window.self !== window.top;
 }
 
+let initialMapViewResizeTimer = null;
+
+function applyInitialMapView(map) {
+    if (!map) return;
+    map.resize();
+    map.jumpTo({
+        center: MAP_CENTER,
+        zoom: MAP_ZOOM,
+        bearing: 0,
+        pitch: 0
+    });
+}
+
+function scheduleInitialMapView(map, withRetries) {
+    if (!map) return;
+    const run = function () {
+        applyInitialMapView(map);
+    };
+    window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(run);
+    });
+    if (withRetries) {
+        [120, 400, 900].forEach(function (ms) {
+            window.setTimeout(run, ms);
+        });
+    }
+}
+
+function initMapViewport(map) {
+    if (!map) return;
+
+    const splash = document.getElementById('map-splash');
+    if (splash && isEmbedMode()) {
+        splash.style.display = 'none';
+    }
+
+    scheduleInitialMapView(map, true);
+
+    window.addEventListener('resize', function () {
+        if (initialMapViewResizeTimer) clearTimeout(initialMapViewResizeTimer);
+        initialMapViewResizeTimer = window.setTimeout(function () {
+            applyInitialMapView(map);
+        }, 120);
+    });
+
+    if (isEmbedMode() && 'IntersectionObserver' in window) {
+        const container = document.getElementById('mapa');
+        if (container) {
+            new IntersectionObserver(function (entries) {
+                if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                    scheduleInitialMapView(map, false);
+                }
+            }, { threshold: 0.08 }).observe(container);
+        }
+    }
+
+    window.reconocerApplyInitialMapView = function () {
+        scheduleInitialMapView(map, false);
+    };
+}
+
 function initEmbedMessageBridge() {
     window.addEventListener('message', function (event) {
         if (!event.data || event.data.type !== 'reconocer-ws') return;
@@ -772,6 +833,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[reconocer] Style version:', style.version);
         console.log('[reconocer] Style sprite:', style.sprite);
         console.log('[reconocer] Style glyphs:', style.glyphs);
+        initMapViewport(map);
         loadHitosMarkers(map, markers);
     });
 
@@ -823,6 +885,7 @@ function loadHitosMarkers(map, markers) {
             rows.slice(1).forEach(row => agregarMarcador(map, row, markers, indices));
             hitosMarkers = markers;
             initCategoryUI(map, markers);
+            scheduleInitialMapView(map, true);
             consumePendingRemoteCommand();
         })
         .catch(err => console.error('[reconocer]', err));
