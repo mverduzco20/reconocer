@@ -11,7 +11,7 @@ const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const INITIAL_MAP_ALL_MARKERS_PADDING = { top: 55, bottom: 65, left: 210, right: 75 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260610-trans70-v3';
+const RECONOCER_MAP_BUILD = '20260610-thumb-trans40';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -29,7 +29,7 @@ const POPUP_PADDING = Math.round(11 * POPUP_SCALE);
 const POPUP_MAX_WIDTH = Math.round(476 * POPUP_SCALE);
 const POPUP_OFFSET = Math.round(14 * POPUP_SCALE) + POPUP_UNLOCK_HEIGHT;
 const MAX_OPEN_POPUPS = 3;
-const MARKER_TRANSPARENCY = 0.7; // 70% transparente → alpha 0.3
+const MARKER_TRANSPARENCY = 0.4; // 40% transparente (bajó 30 pts desde 70%)
 const MARKER_THUMB_ALPHA = 1 - MARKER_TRANSPARENCY;
 const openPopupEntries = [];
 
