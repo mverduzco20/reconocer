@@ -1241,11 +1241,11 @@ html.map-embed .site-footer {
 #memoria-button  { background-color: #e9c47e; }
 #oficio-button   { background-color: #0000ff; }
 #refugio-button {
-    background-color: #8a9f82;
+    background-color: #94d48c;
 }
 
 #refugio-button.active {
-    background-color: rgba(138, 159, 130, 0.7);
+    background-color: rgba(148, 212, 140, 0.7);
     filter: none;
 }
 
