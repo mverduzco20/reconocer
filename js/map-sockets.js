@@ -11,7 +11,7 @@ const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const INITIAL_MAP_ALL_MARKERS_PADDING = { top: 55, bottom: 65, left: 210, right: 75 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260610-trans70-live';
+const RECONOCER_MAP_BUILD = '20260610-trans70-v3';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -1215,7 +1215,6 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.className = 'marker';
     el.title = archivo;
     el.style.cursor = 'pointer';
-    el.style.setProperty('opacity', String(MARKER_THUMB_ALPHA), 'important');
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
@@ -1257,7 +1256,6 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const markerEl = marker.getElement();
     markerEl.classList.add('map-marker-hit');
     markerEl.style.pointerEvents = 'auto';
-    markerEl.style.opacity = '1';
     el.style.pointerEvents = 'auto';
 
     el.addEventListener('click', (event) => {
