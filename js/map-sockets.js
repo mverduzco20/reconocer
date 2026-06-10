@@ -115,7 +115,7 @@ const CATEGORY_COLOR_MAP = {
 
 // Prueba solo en r9 (collar): rectángulo del relato, foto sin tocar
 const REFUGIO_R9_TEST_ARCHIVO = 'r9.jpg';
-const REFUGIO_R9_TEST_PANEL_COLOR = '#7a916f'; // verde fondo r9.jpg, un poco más claro
+const REFUGIO_R9_TEST_PANEL_COLOR = '#8a9f82'; // verde fondo r9.jpg, más claro
 const REFUGIO_R9_TEST_PANEL_ALPHA = 0.98;
 
 function isRefugioR9TestHito(categoria, archivo, hitoId) {
