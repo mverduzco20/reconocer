@@ -35,8 +35,12 @@ function wirePopupUnlockVideo(map, popup, marker) {
         const recompensaPayload = buildRecompensaWsPayload(marker);
         if (recompensaPayload) sendWsPayload(recompensaPayload);
 
-        video.muted = false;
-        video.volume = 1;
+        if (typeof window.reconocerApplyRewardVideoVolume === 'function') {
+            window.reconocerApplyRewardVideoVolume(video);
+        } else {
+            video.muted = false;
+            video.volume = 1;
+        }
         const playPromise = video.play();
         if (playPromise && typeof playPromise.catch === 'function') {
             playPromise.catch(function () {});

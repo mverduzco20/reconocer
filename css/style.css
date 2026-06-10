@@ -1357,6 +1357,10 @@ html.map-embed .site-footer {
     overflow: hidden;
 }
 
+#map-container .sound-btn {
+    display: flex !important;
+}
+
 .volume-slider {
     width: 70px;
     accent-color: #fff;
