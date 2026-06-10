@@ -15,13 +15,13 @@ const POPUP_SCALE = 0.7;
 const POPUP_IMG_SIZE = Math.round(252 * POPUP_SCALE);
 const POPUP_WIDTH = Math.round(504 * POPUP_SCALE);
 const POPUP_UNLOCK_HEIGHT = 22;
-const POPUP_HEIGHT = POPUP_IMG_SIZE + POPUP_UNLOCK_HEIGHT;
+const POPUP_HEIGHT = POPUP_IMG_SIZE;
 const POPUP_TEXT_WIDTH = POPUP_WIDTH - POPUP_IMG_SIZE;
 const POPUP_TEXT_HEIGHT = Math.round(POPUP_IMG_SIZE * 0.74);
 const POPUP_FONT_SIZE = Math.round(15 * POPUP_SCALE);
 const POPUP_PADDING = Math.round(11 * POPUP_SCALE);
 const POPUP_MAX_WIDTH = Math.round(476 * POPUP_SCALE);
-const POPUP_OFFSET = Math.round(14 * POPUP_SCALE);
+const POPUP_OFFSET = Math.round(14 * POPUP_SCALE) + POPUP_UNLOCK_HEIGHT;
 const MAX_OPEN_POPUPS = 3;
 const MARKER_OPACITY = 0.7;
 const openPopupEntries = [];
@@ -1056,8 +1056,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = hexToRgba(categoryColor, 0.7);
     const popupUnlock = `<div class="popup-unlock" style="display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:#000000;font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;flex-shrink:0;">DESBLOQUEAR</div>`;
-    const popupMedia = `<div class="popup-media" style="display:flex;flex-direction:column;width:${POPUP_IMG_SIZE}px;flex-shrink:0;">${popupUnlock}${popupImage}</div>`;
-    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupMedia}${popupText}</div>`;
+    const popupContent = `<div class="popup-stack" style="display:flex;flex-direction:column;align-items:flex-start;width:${POPUP_WIDTH}px;">${popupUnlock}<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupImage}${popupText}</div></div>`;
 
     const popup = new mapboxgl.Popup({
         offset: POPUP_OFFSET,
