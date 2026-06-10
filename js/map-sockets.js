@@ -116,7 +116,7 @@ const CATEGORY_COLOR_MAP = {
 // Prueba solo en r9 (collar): rectángulo del relato, foto sin tocar
 const REFUGIO_R9_TEST_ARCHIVO = 'r9.jpg';
 const REFUGIO_R9_TEST_PANEL_COLOR = '#8a9f82'; // verde fondo r9.jpg, más claro
-const REFUGIO_R9_TEST_PANEL_ALPHA = 0.77;
+const REFUGIO_R9_TEST_PANEL_ALPHA = 0.75;
 
 function isRefugioR9TestHito(categoria, archivo, hitoId) {
     if (String(categoria || '').toLowerCase() !== 'r') return false;
@@ -1206,8 +1206,12 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = getCategoryTextPanelBackground(categoria, archivo, hitoId);
     const popupUnlock = `<div class="popup-unlock" style="grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:${POPUP_UNLOCK_TEXT_COLOR};font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;">DESBLOQUEAR</div>`;
-    const r9TextPanelClass = isRefugioR9TestHito(categoria, archivo, hitoId) ? ' popup-text-panel-r9' : '';
-    const popupTextPanel = `<div class="popup-text-panel${r9TextPanelClass}" style="grid-column:2;grid-row:2;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_IMG_SIZE}px;background-color:${categoryBackground};display:flex;align-items:center;box-sizing:border-box;">${popupText}</div>`;
+    const isR9TestPanel = isRefugioR9TestHito(categoria, archivo, hitoId);
+    const r9TextPanelClass = isR9TestPanel ? ' popup-text-panel-r9' : '';
+    const textPanelBgStyle = isR9TestPanel
+        ? ''
+        : `background-color:${categoryBackground};`;
+    const popupTextPanel = `<div class="popup-text-panel${r9TextPanelClass}" style="grid-column:2;grid-row:2;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_IMG_SIZE}px;${textPanelBgStyle}display:flex;align-items:center;box-sizing:border-box;">${popupText}</div>`;
     const popupContent = `<div class="popup-inner" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupUnlock}${popupImage}${popupTextPanel}</div>`;
 
     const popup = new mapboxgl.Popup({

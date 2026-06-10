@@ -1473,9 +1473,9 @@ a.footer-link {
     overflow: hidden;
 }
 
-/* Prueba solo r9 (collar): relato más claro que el resto de refugio */
+/* Prueba solo r9 (collar): relato con transparencia 75% */
 .category-popup .popup-text-panel-r9 {
-    background-color: rgba(138, 159, 130, 0.77) !important;
+    background-color: rgba(138, 159, 130, 0.75) !important;
 }
 
 .category-popup .popup-unlock {
