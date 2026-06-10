@@ -732,7 +732,9 @@ function applyRemoteMapaView(mapaId) {
     }
 
     updateMarkersFilter(mapInstance, hitosMarkers, act);
-    scheduleMapFitToFilteredMarkers(mapInstance, hitosMarkers, act);
+    if (act.size > 0) {
+        scheduleMapFitToFilteredMarkers(mapInstance, hitosMarkers, act);
+    }
 }
 
 // ─────────────────────────────────────────────
