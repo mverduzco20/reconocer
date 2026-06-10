@@ -15,6 +15,10 @@
         return Array.from(document.querySelectorAll('.popup-video'));
     }
 
+    function isSliderActive() {
+        return volumeSlider.classList.contains('active');
+    }
+
     function applyVolumeToVideos(volume) {
         const audible = volume > 0;
         getRewardVideos().forEach(function (video) {
@@ -40,12 +44,10 @@
     }
 
     function applyMuteUI(persist) {
-        const last = getLastAudibleVolume();
         volumeSlider.value = '0.5';
         volumeSlider.classList.remove('active');
         getRewardVideos().forEach(function (video) {
             video.muted = true;
-            video.volume = last;
         });
         if (persist !== false) {
             localStorage.setItem(STORAGE_VOLUME, '0');
@@ -53,24 +55,28 @@
     }
 
     function restoreSavedVolume() {
-        const saved = parseFloat(localStorage.getItem(STORAGE_VOLUME) || '1');
+        const saved = parseFloat(localStorage.getItem(STORAGE_VOLUME) || '0');
         if (!Number.isNaN(saved) && saved > 0) {
-            applyVolume(saved, false);
+            volumeSlider.value = String(saved);
+            volumeSlider.classList.add('active');
         } else {
-            applyMuteUI(false);
+            volumeSlider.value = '0';
+            volumeSlider.classList.remove('active');
         }
     }
 
     window.reconocerApplyRewardVideoVolume = function (video) {
         if (!video) return;
-        const saved = parseFloat(localStorage.getItem(STORAGE_VOLUME) || '1');
-        const volume = !Number.isNaN(saved) && saved > 0 ? saved : getLastAudibleVolume();
-        video.muted = volume <= 0;
-        video.volume = volume > 0 ? volume : getLastAudibleVolume();
-        if (volume > 0) {
-            volumeSlider.value = String(volume);
-            volumeSlider.classList.add('active');
+        let volume = parseFloat(localStorage.getItem(STORAGE_VOLUME) || '0');
+        if (Number.isNaN(volume) || volume <= 0) {
+            volume = getLastAudibleVolume();
         }
+        volumeSlider.value = String(volume);
+        volumeSlider.classList.add('active');
+        localStorage.setItem(STORAGE_VOLUME, String(volume));
+        localStorage.setItem(STORAGE_LAST_VOLUME, String(volume));
+        video.muted = false;
+        video.volume = volume;
     };
 
     window.reconocerMutePageAudio = function () {
@@ -85,7 +91,7 @@
     let mutedAtPointerDown = false;
 
     volumeSlider.addEventListener('pointerdown', function (e) {
-        mutedAtPointerDown = !volumeSlider.classList.contains('active');
+        mutedAtPointerDown = !isSliderActive();
         if (!mutedAtPointerDown) {
             lastVolumeBeforeMute = parseFloat(volumeSlider.value);
         }

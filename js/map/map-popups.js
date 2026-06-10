@@ -9,7 +9,7 @@ function wirePopupUnlockVideo(map, popup, marker) {
     const root = popup.getElement && popup.getElement();
     if (!root) return;
 
-    const unlockBtn = root.querySelector('.popup-unlock');
+    const unlockBtn = root.querySelector('.popup-unlock:not(.popup-unlock--retry)');
     const inner = root.querySelector('.popup-inner');
     const panel = root.querySelector('.popup-video-panel');
     const video = root.querySelector('.popup-video');
@@ -69,7 +69,7 @@ function wirePopupRetryImage(popup, marker) {
     const root = popup.getElement && popup.getElement();
     if (!root) return;
 
-    const unlockBtn = root.querySelector('.popup-unlock');
+    const unlockBtn = root.querySelector('.popup-unlock:not(.popup-unlock--retry)');
     const inner = root.querySelector('.popup-inner');
     const retryBtn = root.querySelector('.popup-unlock--retry');
     if (!unlockBtn || !inner || !retryBtn) return;
@@ -177,6 +177,7 @@ function handleMarkerPopupClick(map, marker, popup) {
         popup.remove();
     }
 
+    refreshMarkerPopupHtml(marker);
     popup.setLngLat(marker.getLngLat()).addTo(map);
     const entry = { marker, popup };
     openPopupEntries.push(entry);
