@@ -1,4 +1,4 @@
-/** Sin audio ambiente (home/docs); el mapa usa audio.js completo. */
+/** Sin audio ambiente; solo suena el video al desbloquear recompensas en el mapa. */
 (function () {
    window.reconocerMutePageAudio = function () {};
 })();

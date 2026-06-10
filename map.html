@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css?v=20260611-ws-hito-row">
+    <link rel="stylesheet" href="./css/style.css?v=20260611-no-ambient">
     <script>
     (function () {
         if (window.self !== window.top || /[?&]embed=1/.test(location.search)) {
@@ -21,7 +21,6 @@
     </script>
 </head>
 <body>
-<audio id="global-audio" preload="auto" data-audio-base="./audio/"></audio>
     <div id="map-container">
         <a href="./index.html" class="corner-logo" aria-label="Inicio REconocer">(<span class="reconocer-alt-r">R</span>e)</a>
         <div id="mapa"></div>
@@ -44,11 +43,6 @@
         </nav>
 
         <footer class="site-footer">
-           <button class="sound-btn" id="sound-btn" aria-label="sonido">
-               <input type="range" class="volume-slider" id="volume-slider" 
-                      min="0" max="1" step="0.05" value="0" 
-                      onclick="event.stopPropagation()">
-           </button>
            <div class="footer-left" style="margin-left: 20px; margin-right: 20px; flex: 1;">
                <a href="./docs/index.html" class="footer-link footer-link-lg">(SOBRE EL PROYECTO)</a>
            </div>
@@ -111,17 +105,17 @@
     <script src="./js/ws-config.js"></script>
     <script src="./js/ws-routes.js"></script>
     <script src="./js/reconocer-build.js"></script>
-    <script src="./js/hito-videos.js?v=20260611-ws-hito-row2"></script>
-    <script src="./js/map/map-config.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-state.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-layers.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-viewport.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-ws.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-csv.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-rewards.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-popups.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-markers.js?v=20260611-ws-hito-row"></script>
-    <script src="./js/map/map-init.js?v=20260611-ws-hito-row"></script>
+    <script src="./js/hito-videos.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-config.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-state.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-layers.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-viewport.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-ws.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-csv.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-rewards.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-popups.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-markers.js?v=20260612-e8-casaroja"></script>
+    <script src="./js/map/map-init.js?v=20260612-e8-casaroja"></script>
     <script>
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -133,7 +127,7 @@
         });
     });
     </script>
-    <script src="./js/audio.js?v=11"></script>
+    <script src="./js/audio-page-stub.js?v=no-ambient"></script>
 <script>
 const splash = document.getElementById('map-splash');
 const splashBtn = document.getElementById('splash-btn');

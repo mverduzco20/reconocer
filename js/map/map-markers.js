@@ -57,7 +57,8 @@ function agregarMarcador(map, row, markers, indices = {}, hitoRowId = 0) {
     const categoryBackground = getCategoryTextPanelBackground(categoria);
     const unlockBgStyle = isRefugioPopup ? '' : `background-color:${categoryColor};`;
     const popupBarStyle = `display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;${unlockBgStyle}color:${POPUP_UNLOCK_TEXT_COLOR};font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;`;
-    const popupUnlock = `<div class="popup-unlock popup-unlock--has-video" style="grid-column:1;grid-row:1;${popupBarStyle}">DESBLOQUEAR</div>`;
+    const unlockClass = videoSrc ? 'popup-unlock popup-unlock--has-video' : 'popup-unlock';
+    const popupUnlock = `<div class="${unlockClass}" style="grid-column:1;grid-row:1;${popupBarStyle}">DESBLOQUEAR</div>`;
     const popupRetry = !videoSrc
         ? `<div class="popup-unlock popup-unlock--retry" style="grid-column:1;grid-row:3;${popupBarStyle}" hidden>INTENTE DE NUEVO</div>`
         : '';

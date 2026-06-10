@@ -12,12 +12,20 @@ function getMarkerWsId(marker) {
     return archivo.replace(/\.[^.]+$/i, '').toLowerCase();
 }
 
+function getMarkerHitoRowId(marker) {
+    if (!marker) return 0;
+    const rowId = Number(marker._hitoRowId);
+    if (Number.isFinite(rowId) && rowId > 0) return rowId;
+    const idx = hitosMarkers.indexOf(marker);
+    return idx >= 0 ? idx + 1 : 0;
+}
+
 /** Imagen del hito — misma que abre el popup en la web (fila del CSV). */
 function buildHitoWsPayload(marker) {
     const archivo = marker && marker._archivo ? String(marker._archivo).trim() : '';
     return {
         Pagina: 'Hito',
-        ID: marker && marker._hitoRowId ? marker._hitoRowId : 0,
+        ID: getMarkerHitoRowId(marker),
         Archivo: archivo
     };
 }
@@ -88,8 +96,9 @@ function isWsEcho(rawMessage) {
 }
 
 function connectWebSocket() {
-    if (isEmbedMode()) {
-        initEmbedMessageBridge();
+    initEmbedMessageBridge();
+
+    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
         return;
     }
 
@@ -97,7 +106,9 @@ function connectWebSocket() {
 
     ws.onopen = () => {
         console.log("[reconocer] WebSocket conectado");
-        sendWsPayload({ Pagina: "Mapa", ID: "Completo" });
+        if (!isEmbedMode()) {
+            sendWsPayload({ Pagina: "Mapa", ID: "Completo" });
+        }
     };
 
     ws.onclose = () => {
@@ -129,7 +140,6 @@ function sendWsPayload(payload) {
     if (isEmbedMode()) {
         console.log("[reconocer] Enviando payload (embed→parent):", payload);
         window.parent.postMessage({ type: 'reconocer-ws-send', payload: payload }, '*');
-        return;
     }
 
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -138,7 +148,7 @@ function sendWsPayload(payload) {
         lastWsSentAt = Date.now();
         console.log("[reconocer] Enviando payload:", payload);
         ws.send(body);
-    } else {
+    } else if (!isEmbedMode()) {
         console.warn("[reconocer] WebSocket no conectado, no se envió:", payload);
     }
 }

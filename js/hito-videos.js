@@ -12,7 +12,7 @@ window.HITO_VIDEO_BY_IMAGE = {
     'e14.jpg': 'melchor.mp4',
     'r36.jpg': 'convento.mp4',
     'e2.jpg': 'jacinto.mp4',
-    'r7.jpg': 'casaroja.mp4'
+    'e8.jpg': 'casaroja.mp4'
 };
 
 // Orden fijo de las 12 recompensas (ID 1–12 en TouchDesigner / panel remoto).

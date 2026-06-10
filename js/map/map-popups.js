@@ -35,6 +35,8 @@ function wirePopupUnlockVideo(map, popup, marker) {
         const recompensaPayload = buildRecompensaWsPayload(marker);
         if (recompensaPayload) sendWsPayload(recompensaPayload);
 
+        video.muted = false;
+        video.volume = 1;
         const playPromise = video.play();
         if (playPromise && typeof playPromise.catch === 'function') {
             playPromise.catch(function () {});
@@ -169,10 +171,6 @@ function handleMarkerPopupClick(map, marker, popup) {
 
     if (popup.isOpen && popup.isOpen()) {
         popup.remove();
-    }
-
-    if (isRewardVideoHito(marker._archivo)) {
-        mutePageAudioForRewardPopup();
     }
 
     popup.setLngLat(marker.getLngLat()).addTo(map);

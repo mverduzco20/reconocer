@@ -396,12 +396,6 @@ function activateRewardVideoView(map, marker, popup) {
     });
 }
 
-function mutePageAudioForRewardPopup() {
-    if (typeof window.reconocerMutePageAudio === 'function') {
-        window.reconocerMutePageAudio();
-    }
-}
-
 function pausePopupVideos(popup) {
     const root = popup && popup.getElement && popup.getElement();
     if (!root) return;
