@@ -6,9 +6,9 @@
 const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
 const MAP_ZOOM = 15.5;
-const CARTOGRAPHY_MAP_CENTER = [-99.1972, 19.3445];
+const CARTOGRAPHY_MAP_CENTER = [-99.1980, 19.3445];
 const CARTOGRAPHY_MAP_ZOOM = 15.5;
-const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 140, right: 65 };
+const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 155, right: 65 };
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -1157,17 +1157,19 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
-        ? `<img src="${imageUrl}" alt="${archivo}" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`
-        : `<img src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`;
+        ? `<img src="${imageUrl}" alt="${archivo}" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`
+        : `<img src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`;
 
     const popupText = relato
-        ? `<p class="popup-relato" style="grid-column:2;grid-row:2;align-self:center;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;">${relato}</p>`
+        ? `<p class="popup-relato" style="width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = hexToRgba(categoryColor, 0.7);
-    const popupUnlock = `<div class="popup-unlock" style="grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:#000000;font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;">DESBLOQUEAR</div>`;
-    const popupContent = `<div class="popup-inner" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupUnlock}${popupImage}${popupText}</div>`;
+    const unlockTextColor = getCategoryUnlockTextColor(categoria);
+    const popupUnlock = `<div class="popup-unlock" style="display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:${unlockTextColor};font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;flex-shrink:0;">DESBLOQUEAR</div>`;
+    const popupMedia = `<div class="popup-media" style="width:${POPUP_IMG_SIZE}px;flex-shrink:0;">${popupUnlock}${popupImage}</div>`;
+    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;min-height:${POPUP_HEIGHT}px;">${popupMedia}${popupText}</div>`;
 
     const popup = new mapboxgl.Popup({
         offset: POPUP_OFFSET,
