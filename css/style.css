@@ -1266,15 +1266,12 @@ html.map-embed .site-footer {
     background-color: rgb(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b));
 }
 
+/* Activo: mismo color, 70% transparencia (= 30% opacidad) */
 #memoria-button.active,
 #oficio-button.active,
+#refugio-button.active,
 #encuentro-button.active {
-    background-color: rgba(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b), 0.7);
-    filter: none;
-}
-
-#refugio-button.active {
-    background-color: rgba(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b), 0.75);
+    background-color: rgba(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b), 0.3);
     filter: none;
 }
 
