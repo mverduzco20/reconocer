@@ -1458,39 +1458,40 @@ a.footer-link {
     border-radius: 0;
     overflow: hidden;
     display: grid !important;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-}
-
-.category-popup .popup-media {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    flex-shrink: 0;
+    align-items: start;
+    align-content: start;
 }
 
 .category-popup .popup-unlock {
     box-sizing: border-box;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    grid-column: 1;
+    grid-row: 1;
+    position: static !important;
+    margin: 0;
     font-family: 'Courier New', Courier, monospace;
     font-size: 11px;
     font-weight: normal;
     line-height: 1;
     letter-spacing: 0.04em;
-    flex-shrink: 0;
+    color: #ffffff !important;
 }
 
-.category-popup .popup-media img {
+.category-popup .popup-photo {
     display: block;
-    flex-shrink: 0;
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
 }
 
 /* Texto del relato: banda horizontal más baja que la imagen */
 .category-popup .popup-inner .popup-relato {
     margin: 0;
+    grid-column: 2;
+    grid-row: 2;
+    align-self: center;
     line-height: 1.4;
     color: #000;
     opacity: 1;
