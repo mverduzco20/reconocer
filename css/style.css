@@ -1616,6 +1616,16 @@ a.footer-link {
    z-index: 1;
 }
 
+/* Refugio: solo miniaturas en el mapa, misma iluminación que el resto */
+#mapa .mapboxgl-marker.marker-refugio-thumb-wrap {
+   opacity: 1 !important;
+}
+
+#mapa .mapboxgl-marker .marker.marker-refugio-thumb {
+   opacity: 0.7 !important;
+   filter: brightness(0.78) saturate(0.92) !important;
+}
+
 /* Popups al click: siempre encima y sin filtro del mapa */
 #mapa .mapboxgl-popup {
    z-index: 20 !important;

@@ -1157,9 +1157,12 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.width = 66;
     el.height = 66;
     el.className = 'marker';
+    if (categoria === 'r') {
+        el.classList.add('marker-refugio-thumb');
+    }
     el.title = archivo;
     el.style.cursor = 'pointer';
-    el.style.opacity = String(markerOpacity);
+    el.style.opacity = String(MARKER_OPACITY);
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
@@ -1198,11 +1201,10 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const markerEl = marker.getElement();
     markerEl.classList.add('map-marker-hit');
     if (categoria === 'r') {
-        markerEl.classList.add('marker-refugio');
-        el.classList.add('marker-refugio');
+        markerEl.classList.add('marker-refugio-thumb-wrap');
     }
     markerEl.style.pointerEvents = 'auto';
-    markerEl.style.opacity = String(markerOpacity);
+    markerEl.style.opacity = String(MARKER_OPACITY);
     el.style.pointerEvents = 'auto';
 
     el.addEventListener('click', (event) => {
