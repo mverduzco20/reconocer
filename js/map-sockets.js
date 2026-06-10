@@ -564,6 +564,7 @@ function isEmbedMode() {
 }
 
 let initialMapViewResizeTimer = null;
+const STANDALONE_MAP_VIEW_RETRY_MS = [100, 350, 800, 1600, 2600];
 
 function applyInitialMapView(map) {
     if (!map) return;
@@ -591,6 +592,24 @@ function scheduleInitialMapView(map, withRetries) {
     }
 }
 
+function scheduleStandaloneMapView(map) {
+    if (!map || isEmbedMode()) return;
+    const run = function () {
+        applyInitialMapView(map);
+    };
+    window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(run);
+    });
+    STANDALONE_MAP_VIEW_RETRY_MS.forEach(function (ms) {
+        window.setTimeout(run, ms);
+    });
+    map.once('idle', function () {
+        run();
+        window.setTimeout(run, 200);
+        window.setTimeout(run, 700);
+    });
+}
+
 function initMapViewport(map) {
     if (!map) return;
 
@@ -599,28 +618,47 @@ function initMapViewport(map) {
         splash.style.display = 'none';
     }
 
-    scheduleInitialMapView(map, true);
+    if (isEmbedMode()) {
+        scheduleInitialMapView(map, true);
+
+        if ('IntersectionObserver' in window) {
+            const container = document.getElementById('mapa');
+            if (container) {
+                new IntersectionObserver(function (entries) {
+                    if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                        scheduleInitialMapView(map, false);
+                    }
+                }, { threshold: 0.08 }).observe(container);
+            }
+        }
+    } else {
+        scheduleStandaloneMapView(map);
+        if (splash) {
+            splash.addEventListener('transitionend', function (event) {
+                if (event.propertyName === 'opacity' && splash.classList.contains('hidden')) {
+                    scheduleStandaloneMapView(map);
+                }
+            });
+        }
+    }
 
     window.addEventListener('resize', function () {
         if (initialMapViewResizeTimer) clearTimeout(initialMapViewResizeTimer);
         initialMapViewResizeTimer = window.setTimeout(function () {
-            applyInitialMapView(map);
+            if (isEmbedMode()) {
+                applyInitialMapView(map);
+            } else {
+                scheduleStandaloneMapView(map);
+            }
         }, 120);
     });
 
-    if (isEmbedMode() && 'IntersectionObserver' in window) {
-        const container = document.getElementById('mapa');
-        if (container) {
-            new IntersectionObserver(function (entries) {
-                if (entries.some(function (entry) { return entry.isIntersecting; })) {
-                    scheduleInitialMapView(map, false);
-                }
-            }, { threshold: 0.08 }).observe(container);
-        }
-    }
-
     window.reconocerApplyInitialMapView = function () {
-        scheduleInitialMapView(map, false);
+        if (isEmbedMode()) {
+            scheduleInitialMapView(map, false);
+        } else {
+            scheduleStandaloneMapView(map);
+        }
     };
 }
 
@@ -885,8 +923,15 @@ function loadHitosMarkers(map, markers) {
             rows.slice(1).forEach(row => agregarMarcador(map, row, markers, indices));
             hitosMarkers = markers;
             initCategoryUI(map, markers);
-            scheduleInitialMapView(map, true);
+            if (isEmbedMode()) {
+                scheduleInitialMapView(map, true);
+            } else {
+                scheduleStandaloneMapView(map);
+            }
             consumePendingRemoteCommand();
+            if (!isEmbedMode()) {
+                scheduleStandaloneMapView(map);
+            }
         })
         .catch(err => console.error('[reconocer]', err));
 }
