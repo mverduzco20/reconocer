@@ -11,7 +11,7 @@ const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const INITIAL_MAP_ALL_MARKERS_PADDING = { top: 55, bottom: 65, left: 210, right: 75 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260611-reward-v12';
+const RECONOCER_MAP_BUILD = '20260611-reward-v13';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const REWARD_POPUP_SCALE_MIN = 1;
@@ -781,11 +781,6 @@ function scheduleInitialMapView(map, withRetries) {
 
 function initMapViewport(map) {
     if (!map) return;
-
-    const splash = document.getElementById('map-splash');
-    if (splash && isEmbedMode()) {
-        splash.style.display = 'none';
-    }
 
     if (isEmbedMode()) {
         scheduleInitialMapView(map, true);
@@ -1734,6 +1729,27 @@ function panPopupIntoView(map, popup) {
     }
 }
 
+function stylePopupCloseButton(popup, categoria) {
+    const root = popup.getElement && popup.getElement();
+    if (!root) return;
+
+    const closeBtn = root.querySelector('.mapboxgl-popup-close-button');
+    if (!closeBtn) return;
+
+    const content = root.querySelector('.mapboxgl-popup-content');
+    const bg = isRefugioCategory(categoria)
+        ? hexToRgba(REFUGIO_PANEL_COLOR, REFUGIO_PANEL_ALPHA)
+        : getCategoryColor(categoria);
+
+    closeBtn.style.backgroundColor = bg;
+    closeBtn.style.color = '#ffffff';
+
+    if (content) {
+        content.style.setProperty('--popup-text-width', POPUP_TEXT_WIDTH + 'px');
+        content.style.setProperty('--popup-close-bg', bg);
+    }
+}
+
 function trackPopupClose(popup, entry) {
     const onClose = () => {
         popup.off('close', onClose);
@@ -1786,6 +1802,7 @@ function handleMarkerPopupClick(map, marker, popup) {
     trackPopupClose(popup, entry);
 
     window.setTimeout(function () {
+        stylePopupCloseButton(popup, marker._categoria);
         wirePopupUnlockVideo(map, popup, marker);
         panPopupIntoView(map, popup);
     }, 50);
