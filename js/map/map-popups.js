@@ -32,6 +32,8 @@ function wirePopupUnlockVideo(map, popup, marker) {
         inner.style.height = (POPUP_HEIGHT + POPUP_VIDEO_HEIGHT) + 'px';
         panel.removeAttribute('hidden');
 
+        sendWsPayload(buildMarkerWsPayload(marker, { unlock: true }));
+
         const playPromise = video.play();
         if (playPromise && typeof playPromise.catch === 'function') {
             playPromise.catch(function () {});
@@ -157,18 +159,8 @@ function handleMarkerPopupClick(map, marker, popup) {
         return;
     }
 
-    // WebSockets event: Abrir detalle de marcador/hito
-    if (marker._tienePremio) {
-        sendWsPayload({
-            Pagina: "Recompensa",
-            ID: marker._hitoId
-        });
-    } else {
-        sendWsPayload({
-            Pagina: "Hito",
-            ID: marker._hitoId
-        });
-    }
+    // WebSockets: ID único por archivo (ej. m45, e21) — evita colisiones numéricas en TD
+    sendWsPayload(buildMarkerWsPayload(marker));
 
     if (openPopupEntries.length >= MAX_OPEN_POPUPS) {
         closeAllOpenPopups();

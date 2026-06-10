@@ -5,6 +5,73 @@
 // ─────────────────────────────────────────────
 const wsUrl = (window.RECONOCER_WS && window.RECONOCER_WS.url) || "wss://td-tests-b8ab469bdcc6.herokuapp.com";
 
+function getMarkerWsId(marker) {
+    const archivo = marker && marker._archivo ? String(marker._archivo).trim() : '';
+    if (!archivo) return '';
+    return archivo.replace(/\.[^.]+$/i, '').toLowerCase();
+}
+
+function markerHasRewardProjection(marker) {
+    if (!marker) return false;
+    const archivo = marker._archivo || '';
+    return Boolean(marker._tienePremio) || isRewardVideoHito(archivo);
+}
+
+function buildMarkerWsPayload(marker, options) {
+    const archivo = marker && marker._archivo ? String(marker._archivo).trim() : '';
+    const wsId = getMarkerWsId(marker);
+    const isReward = markerHasRewardProjection(marker);
+    const payload = {
+        Pagina: isReward ? 'Recompensa' : 'Hito',
+        ID: wsId || marker._hitoId,
+        Archivo: archivo
+    };
+
+    if (isReward && typeof getHitoVideoSrcForImage === 'function') {
+        const videoSrc = getHitoVideoSrcForImage(archivo);
+        if (videoSrc) {
+            const videoName = decodeURIComponent(String(videoSrc).split('/').pop().split('?')[0]);
+            payload.Video = videoName;
+        }
+    }
+
+    if (options && options.unlock) {
+        payload.Accion = 'Desbloquear';
+    }
+
+    return payload;
+}
+
+function findMarkerFromWsPayload(id, wantsRecompensa) {
+    if (!hitosMarkers.length) return null;
+    const raw = String(id == null ? '' : id).trim();
+    if (!raw) return null;
+
+    const stem = raw.toLowerCase();
+    if (/^[meroe]\d+$/i.test(stem)) {
+        const byStem = hitosMarkers.find(function (m) {
+            return getMarkerWsId(m) === stem;
+        });
+        if (byStem) return byStem;
+    }
+
+    if (/\.(jpe?g|png|gif|webp|avif|svg)$/i.test(stem)) {
+        const byFile = hitosMarkers.find(function (m) {
+            return String(m._archivo || '').toLowerCase() === stem;
+        });
+        if (byFile) return byFile;
+    }
+
+    const targetId = Number(raw);
+    if (!Number.isFinite(targetId) || targetId <= 0) return null;
+
+    return hitosMarkers.find(function (m) {
+        return m._hitoId === targetId && Boolean(m._tienePremio) === Boolean(wantsRecompensa);
+    }) || hitosMarkers.find(function (m) {
+        return m._hitoId === targetId;
+    }) || null;
+}
+
 function isWsEcho(rawMessage) {
     return Date.now() - lastWsSentAt < 150 && rawMessage === lastWsSent;
 }
@@ -101,16 +168,9 @@ function handleRemotePayload(payload) {
 }
 
 function openRemoteMarker(id, wantsRecompensa) {
-    if (!mapInstance || !hitosMarkers.length) return;
-    const targetId = Number(id);
-    if (!targetId) return;
+    if (!mapInstance) return;
 
-    const marker = hitosMarkers.find(function (m) {
-        return m._hitoId === targetId && Boolean(m._tienePremio) === Boolean(wantsRecompensa);
-    }) || hitosMarkers.find(function (m) {
-        return m._hitoId === targetId;
-    });
-
+    const marker = findMarkerFromWsPayload(id, wantsRecompensa);
     if (!marker || !marker._popup) return;
 
     suppressWsSend = true;

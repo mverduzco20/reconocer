@@ -86,6 +86,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
     marker._archivo = archivo;
     marker._popup = popup;
     marker._hitoId = isNaN(hitoId) ? 0 : hitoId;
+    marker._hitoWsId = archivo.replace(/\.[^.]+$/i, '').toLowerCase();
     marker._tienePremio = tienePremio;
     marker.addTo(map);
 
