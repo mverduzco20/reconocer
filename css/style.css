@@ -1238,24 +1238,45 @@ html.map-embed .site-footer {
    display: none;
 }
 
-#memoria-button  { background-color: #e9c47e; }
-#oficio-button   { background-color: #0000ff; }
-#refugio-button {
-    --refugio-btn-r: 148;
-    --refugio-btn-g: 212;
-    --refugio-btn-b: 140;
-    background-color: rgb(var(--refugio-btn-r), var(--refugio-btn-g), var(--refugio-btn-b));
+#memoria-button {
+    --cat-btn-r: 233;
+    --cat-btn-g: 196;
+    --cat-btn-b: 126;
+    background-color: rgb(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b));
 }
 
-#refugio-button.active {
-    background-color: rgba(var(--refugio-btn-r), var(--refugio-btn-g), var(--refugio-btn-b), 0.75);
+#oficio-button {
+    --cat-btn-r: 0;
+    --cat-btn-g: 0;
+    --cat-btn-b: 255;
+    background-color: rgb(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b));
+}
+
+#refugio-button {
+    --cat-btn-r: 148;
+    --cat-btn-g: 212;
+    --cat-btn-b: 140;
+    background-color: rgb(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b));
+}
+
+#encuentro-button {
+    --cat-btn-r: 236;
+    --cat-btn-g: 0;
+    --cat-btn-b: 234;
+    background-color: rgb(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b));
+}
+
+#memoria-button.active,
+#oficio-button.active,
+#encuentro-button.active {
+    background-color: rgba(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b), 0.7);
     filter: none;
 }
 
-#encuentro-button{ background-color: #ec00ea; }
-
-/* Active state visual cue */
-.category-button.active { filter: brightness(1.15); }
+#refugio-button.active {
+    background-color: rgba(var(--cat-btn-r), var(--cat-btn-g), var(--cat-btn-b), 0.75);
+    filter: none;
+}
 
 /* Ensure content doesn't hide behind fixed footer on Home/docs */
 main, section, #hero {
