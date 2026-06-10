@@ -1641,6 +1641,18 @@ a.footer-link {
    filter: none !important;
    opacity: 0.35 !important;
    mix-blend-mode: normal;
+   transition: opacity 480ms ease;
+}
+
+#mapa .mapboxgl-marker.marker-filter-hidden {
+   opacity: 0 !important;
+   pointer-events: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+   #mapa .mapboxgl-marker {
+      transition: none;
+   }
 }
 
 #mapa .mapboxgl-marker .marker {

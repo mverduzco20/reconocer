@@ -11,7 +11,7 @@ const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const INITIAL_MAP_ALL_MARKERS_PADDING = { top: 55, bottom: 65, left: 210, right: 75 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260610-thumb-trans65';
+const RECONOCER_MAP_BUILD = '20260610-filter-fade';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -1314,20 +1314,33 @@ function scheduleMapFitToFilteredMarkers(map, markers, activeSet) {
     });
 }
 
+function setMarkerFilterVisible(marker, map, visible) {
+    const markerEl = marker.getElement();
+    if (!markerEl) return;
+
+    if (visible) {
+        if (!marker._map) marker.addTo(map);
+        markerEl.classList.remove('marker-filter-hidden');
+        return;
+    }
+
+    markerEl.classList.add('marker-filter-hidden');
+}
+
 /* UI helpers: mostrar/ocultar marcadores según categorías activas */
 function updateMarkersFilter(map, markers, activeSet) {
-    markers.forEach(m => {
+    markers.forEach(function (m) {
         const cat = (m._categoria || '').toLowerCase();
-        if (activeSet.size === 0) {
-            // mostrar todo
-            m.addTo(map);
-        } else if (activeSet.has(cat)) {
-            m.addTo(map);
-        } else {
-            const openIndex = openPopupEntries.findIndex(entry => entry.marker === m);
+        const shouldShow = activeSet.size === 0 || activeSet.has(cat);
+
+        if (!shouldShow) {
+            const openIndex = openPopupEntries.findIndex(function (entry) {
+                return entry.marker === m;
+            });
             if (openIndex >= 0) removePopupEntry(openPopupEntries[openIndex].popup);
-            try { m.remove(); } catch (e) { /* no importa */ }
         }
+
+        setMarkerFilterVisible(m, map, shouldShow);
     });
 }
 
