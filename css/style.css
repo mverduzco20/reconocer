@@ -1642,6 +1642,7 @@ a.footer-link {
    mix-blend-mode: normal;
 }
 
+/* Miniaturas del mapa: 70% opacidad — no cambiar */
 #mapa .mapboxgl-marker .marker {
    pointer-events: auto;
    cursor: pointer;

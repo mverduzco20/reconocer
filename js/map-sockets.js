@@ -9,9 +9,9 @@ const MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_CENTER = [-99.2010, 19.3445];
 const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
-const INITIAL_MAP_FOCUS_CATEGORY = 'e'; // encuentro: encuadre inicial con todas las fotos visibles
+const INITIAL_MAP_ALL_MARKERS_PADDING = { top: 55, bottom: 65, left: 210, right: 75 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260610-encuentro-view';
+const RECONOCER_MAP_BUILD = '20260610-map-all-view';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -601,6 +601,34 @@ function applyCartographyFallbackMapView(map) {
     });
 }
 
+function fitMapToAllMarkersInitialView(map, markers) {
+    if (!map || !markers.length) return;
+
+    const bounds = new mapboxgl.LngLatBounds();
+    markers.forEach(function (m) {
+        const ll = m.getLngLat();
+        bounds.extend([ll.lng, ll.lat]);
+    });
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    map.fitBounds(bounds, {
+        padding: INITIAL_MAP_ALL_MARKERS_PADDING,
+        maxZoom: CARTOGRAPHY_MAP_ZOOM,
+        duration: reducedMotion ? 0 : MAP_FIT_DURATION_MS,
+        essential: true
+    });
+
+    if (map.getZoom() < CARTOGRAPHY_MAP_ZOOM - 0.25) {
+        const center = bounds.getCenter();
+        map.jumpTo({
+            center: [center.lng + 0.0028, center.lat + 0.0008],
+            zoom: CARTOGRAPHY_MAP_ZOOM,
+            bearing: 0,
+            pitch: 0
+        });
+    }
+}
+
 function applyInitialMapView(map) {
     if (!map) return;
     if (isEmbedMode()) {
@@ -616,11 +644,8 @@ function applyInitialMapView(map) {
     }
     map.setPadding(CARTOGRAPHY_MAP_PADDING);
     map.resize();
-    const focusMarkers = hitosMarkers.filter(function (m) {
-        return (m._categoria || '').toLowerCase() === INITIAL_MAP_FOCUS_CATEGORY;
-    });
-    if (focusMarkers.length > 0) {
-        fitMapToFilteredMarkers(map, hitosMarkers, new Set([INITIAL_MAP_FOCUS_CATEGORY]));
+    if (hitosMarkers.length > 0) {
+        fitMapToAllMarkersInitialView(map, hitosMarkers);
         return;
     }
     applyCartographyFallbackMapView(map);
@@ -1188,6 +1213,7 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.className = 'marker';
     el.title = archivo;
     el.style.cursor = 'pointer';
+    el.style.opacity = String(MARKER_OPACITY);
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
