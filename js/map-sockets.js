@@ -11,7 +11,7 @@ const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const INITIAL_MAP_ALL_MARKERS_PADDING = { top: 55, bottom: 65, left: 210, right: 75 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260610-filter-fade';
+const RECONOCER_MAP_BUILD = '20260610-fade-trans70';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -29,7 +29,7 @@ const POPUP_PADDING = Math.round(11 * POPUP_SCALE);
 const POPUP_MAX_WIDTH = Math.round(476 * POPUP_SCALE);
 const POPUP_OFFSET = Math.round(14 * POPUP_SCALE) + POPUP_UNLOCK_HEIGHT;
 const MAX_OPEN_POPUPS = 3;
-const MARKER_TRANSPARENCY = 0.65; // 65% transparente (final)
+const MARKER_TRANSPARENCY = 0.7; // 70% transparente (final)
 const MARKER_THUMB_ALPHA = 1 - MARKER_TRANSPARENCY;
 const openPopupEntries = [];
 
