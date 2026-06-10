@@ -14,7 +14,8 @@ const MAP_STYLE = 'mapbox://styles/valentina-nacif/cmpdcwwba00fc01scddw0cd2w';
 const POPUP_SCALE = 0.7;
 const POPUP_IMG_SIZE = Math.round(252 * POPUP_SCALE);
 const POPUP_WIDTH = Math.round(504 * POPUP_SCALE);
-const POPUP_HEIGHT = POPUP_IMG_SIZE;
+const POPUP_UNLOCK_HEIGHT = 22;
+const POPUP_HEIGHT = POPUP_IMG_SIZE + POPUP_UNLOCK_HEIGHT;
 const POPUP_TEXT_WIDTH = POPUP_WIDTH - POPUP_IMG_SIZE;
 const POPUP_TEXT_HEIGHT = Math.round(POPUP_IMG_SIZE * 0.74);
 const POPUP_FONT_SIZE = Math.round(15 * POPUP_SCALE);
@@ -109,6 +110,12 @@ const CATEGORY_COLOR_MAP = {
 
 function getCategoryColor(categoria) {
     return CATEGORY_COLOR_MAP[String(categoria || '').toLowerCase()] || MAP_BLUE;
+}
+
+function getCategoryUnlockTextColor(categoria) {
+    const cat = String(categoria || '').toLowerCase();
+    if (cat === 'o' || cat === 'e') return '#ffffff';
+    return '#000000';
 }
 
 function isRoadLayer(id) {
@@ -733,6 +740,7 @@ function applyRemoteMapaView(mapaId) {
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     connectWebSocket();
+    wireMapNavigationLinks();
 
     mapboxgl.accessToken = window.MAPBOX_TOKEN;
 
@@ -1047,7 +1055,10 @@ function agregarMarcador(map, row, markers, indices = {}) {
 
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = hexToRgba(categoryColor, 0.7);
-    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupImage}${popupText}</div>`;
+    const unlockTextColor = getCategoryUnlockTextColor(categoria);
+    const popupUnlock = `<div class="popup-unlock" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:${unlockTextColor};">DESBLOQUEAR</div>`;
+    const popupMedia = `<div class="popup-media">${popupUnlock}${popupImage}</div>`;
+    const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupMedia}${popupText}</div>`;
 
     const popup = new mapboxgl.Popup({
         offset: POPUP_OFFSET,
