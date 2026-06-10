@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reconocer — Documentación</title>
-    <link rel="stylesheet" href="../css/style.css?v=20260610-rects-scroll">
+    <link rel="stylesheet" href="../css/style.css?v=20260611-docs-collage-left">
 </head>
 <body class="page-docs">
     <a href="../index.html" class="corner-logo" aria-label="Inicio REconocer">(<span class="reconocer-alt-r">R</span>e)</a>
@@ -15,14 +15,23 @@
 
         <div class="docs-flow">
             <section class="docs-block docs-block--1">
-                <h2 class="docs-block__title">El Proceso y el Descubrimiento de Capas</h2>
-                <div class="docs-block--1__grid">
-                    <p class="docs-block__text docs-block__p1">Iniciar las salidas de campo en San Ángel fue un reto metodológico.</p>
-                    <img class="docs-photo docs-photo--d12" src="../img/docs/d12.jpg" alt="">
-                    <p class="docs-block__text docs-block__p2">Sin embargo, caminar el lugar muchas veces nos permitió reconocer esquinas y rostros habituales.</p>
-                    <img class="docs-photo docs-photo--d13" src="../img/docs/d13.jpg" alt="">
-                    <p class="docs-block__text docs-block__p3">Entre más explorábamos, más capas de la historia y el espacio de San Ángel se iban revelando ante nosotras.</p>
-                    <img class="docs-photo docs-photo--d17" src="../img/docs/d17.jpg" alt="">
+                <div class="docs-block--1__layout">
+                    <h2 class="docs-block__title docs-block--1__title">El Proceso y el Descubrimiento de Capas</h2>
+
+                    <p class="docs-block__text docs-block--1__p docs-block--1__p1">Iniciar las salidas de campo en San Ángel fue un reto metodológico.</p>
+                    <span class="docs-block--1__connector docs-block--1__connector--1" aria-hidden="true"></span>
+
+                    <p class="docs-block__text docs-block--1__p docs-block--1__p2">Sin embargo, caminar el lugar muchas veces nos permitió reconocer esquinas y rostros habituales.</p>
+                    <span class="docs-block--1__connector docs-block--1__connector--2" aria-hidden="true"></span>
+
+                    <p class="docs-block__text docs-block--1__p docs-block--1__p3">Entre más explorábamos, más capas de la historia y el espacio de San Ángel se iban revelando ante nosotras.</p>
+                    <span class="docs-block--1__connector docs-block--1__connector--3" aria-hidden="true"></span>
+
+                    <div class="docs-block--1__collage" aria-hidden="true">
+                        <img class="docs-photo docs-photo--d12" src="../img/docs/d12.jpg" alt="">
+                        <img class="docs-photo docs-photo--d13" src="../img/docs/d13.jpg" alt="">
+                        <img class="docs-photo docs-photo--d17" src="../img/docs/d17.jpg" alt="">
+                    </div>
                 </div>
             </section>
 
@@ -79,7 +88,7 @@
             </div>
             <div id="docs-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
                 <iframe
-                    src="../map.html?v=20260610-rects-scroll&embed=1"
+                    src="../map.html?v=20260611-reward-v12&embed=1"
                     style="width:100%; height:100%; border:none;"
                     scrolling="no"
                     id="docs-map-iframe"
@@ -154,9 +163,8 @@
             const href = this.getAttribute('href');
             if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
             e.preventDefault();
-            document.body.style.transition = 'opacity 600ms ease';
-            document.body.style.opacity = '0';
-            setTimeout(() => { window.location.href = href; }, 360);
+            document.body.classList.add('page-exit');
+            setTimeout(() => { window.location.href = href; }, 750);
         });
     });
     </script>

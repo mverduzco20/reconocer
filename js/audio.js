@@ -126,17 +126,26 @@
       audio.addEventListener('ended', playNextTrack);
    }
 
+   function restoreSavedPlayback() {
+      const saved = parseFloat(localStorage.getItem(STORAGE_VOLUME) || '0');
+      if (!Number.isNaN(saved) && saved > 0) {
+         applyVolume(saved, false);
+      } else {
+         applyMuteUI();
+      }
+      restoreTime();
+      ensurePlaying();
+   }
+
    function startAfterReady(files) {
       playlist = normalizePlaylist(files);
       trackIndex = Math.min(Math.max(getSavedTrack(), 0), playlist.length - 1);
       ready = true;
       bindPlaybackEvents();
       loadTrack(trackIndex);
-      applyMuteUI();
 
       audio.addEventListener('loadedmetadata', function () {
-         restoreTime();
-         ensurePlaying();
+         restoreSavedPlayback();
       }, { once: true });
    }
 
@@ -154,10 +163,17 @@
 
    window.addEventListener('pageshow', function () {
       if (!ready) return;
-      applyMuteUI();
-      restoreTime();
-      ensurePlaying();
+      restoreSavedPlayback();
    });
+
+   window.reconocerMutePageAudio = function () {
+      if (!ready) return;
+      const audible = !audio.muted && audio.volume > 0;
+      if (!audible) return;
+      saveState();
+      applyMuteUI();
+      saveState();
+   };
 
    if (volumeSlider) {
       let lastVolumeBeforeMute = getLastAudibleVolume();

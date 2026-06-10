@@ -9,7 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <title>Reconocer</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css?v=20260610-rects-scroll">
+    <link rel="stylesheet" href="./css/style.css?v=20260610-instant-view">
 </head>
 
 <body>
@@ -95,7 +95,7 @@
         <section id="map-preview" style="position:relative; background-color:#f1f1f1; overflow:hidden;">
             <div id="map-sticky-wrap" style="position:sticky; top:0; height:100vh; overflow:hidden;">
                 <iframe 
-                    src="./map.html?v=20260610-rects-scroll&embed=1" 
+                    src="./map.html?v=20260611-reward-v12&embed=1" 
                     style="width:100%; height:100%; border:none;"
                     scrolling="no"
                     id="map-iframe">
@@ -136,9 +136,8 @@
                 const href = this.getAttribute('href');
                 if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
                 e.preventDefault();
-                document.body.style.transition = 'opacity 600ms ease';
-                document.body.style.opacity = '0';
-                setTimeout(() => { window.location.href = href; }, 360);
+                document.body.classList.add('page-exit');
+                setTimeout(() => { window.location.href = href; }, 750);
             });
         });
     </script>

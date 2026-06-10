@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0">
     <title>Reconocer — Mapa</title>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css?v=20260610-rects-scroll">
+    <link rel="stylesheet" href="./css/style.css?v=20260611-reward-v12">
     <script>
     (function () {
         if (window.self !== window.top || /[?&]embed=1/.test(location.search)) {
@@ -74,7 +74,7 @@
                </div>
                <div class="footer-cat-actions">
                    <button type="button" class="footer-cat-block" id="footer-cat-companion" aria-label="Cambiar fondo del mapa">
-                       <span class="footer-map-filter-c" aria-hidden="true">C</span>
+                       <span class="footer-map-filter-c" aria-hidden="true">M</span>
                    </button>
                    <button type="button" class="footer-cat-block" id="cat-arrow-btn" aria-label="Abrir categorías">
                        <span id="cat-arrow">→</span>
@@ -91,21 +91,32 @@
         </div>
     </div>
 
+    <div id="map-zoom-fade" aria-hidden="true"></div>
+    <div id="map-zoom-hint" class="map-zoom-hint" aria-hidden="true">
+        <div class="map-zoom-hint__frame">
+            <span class="map-zoom-hint__corner map-zoom-hint__corner--tl"></span>
+            <span class="map-zoom-hint__corner map-zoom-hint__corner--tr"></span>
+            <span class="map-zoom-hint__corner map-zoom-hint__corner--bl"></span>
+            <span class="map-zoom-hint__corner map-zoom-hint__corner--br"></span>
+            <span class="map-zoom-hint__label">acerca para ver recompensa</span>
+        </div>
+    </div>
+
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
     <script src="./js/map-token.js"></script>
     <script src="./js/secrets.js" onerror="void 0"></script>
     <script src="./js/ws-config.js"></script>
     <script src="./js/ws-routes.js"></script>
-    <script src="./js/map-sockets.js?v=20260610-rects-scroll"></script>
+    <script src="./js/hito-videos.js?v=20260611-reward-v12"></script>
+    <script src="./js/map-sockets.js?v=20260611-reward-v12"></script>
     <script>
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
             if (!href || href.startsWith('#') || href.startsWith('javascript')) return;
             e.preventDefault();
-            document.body.style.transition = 'opacity 600ms ease';
-            document.body.style.opacity = '0';
-            setTimeout(() => { window.location.href = href; }, 360);
+            document.body.classList.add('page-exit');
+            setTimeout(() => { window.location.href = href; }, 750);
         });
     });
     </script>
@@ -115,7 +126,14 @@ const splash = document.getElementById('map-splash');
 const splashBtn = document.getElementById('splash-btn');
 
 if (splashBtn) {
+   splashBtn.addEventListener('mousedown', () => splashBtn.classList.add('is-pressed'));
+   splashBtn.addEventListener('mouseup', () => splashBtn.classList.remove('is-pressed'));
+   splashBtn.addEventListener('mouseleave', () => splashBtn.classList.remove('is-pressed'));
+   splashBtn.addEventListener('touchstart', () => splashBtn.classList.add('is-pressed'), { passive: true });
+   splashBtn.addEventListener('touchend', () => splashBtn.classList.remove('is-pressed'));
+
    splashBtn.addEventListener('click', () => {
+       splashBtn.classList.remove('is-pressed');
        splash.classList.add('hidden');
        if (typeof window.reconocerApplyInitialMapView === 'function') {
            window.reconocerApplyInitialMapView();
