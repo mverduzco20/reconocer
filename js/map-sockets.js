@@ -15,7 +15,7 @@ const POPUP_SCALE = 0.7;
 const POPUP_IMG_SIZE = Math.round(252 * POPUP_SCALE);
 const POPUP_WIDTH = Math.round(504 * POPUP_SCALE);
 const POPUP_UNLOCK_HEIGHT = 22;
-const POPUP_HEIGHT = POPUP_IMG_SIZE;
+const POPUP_HEIGHT = POPUP_IMG_SIZE + POPUP_UNLOCK_HEIGHT;
 const POPUP_TEXT_WIDTH = POPUP_WIDTH - POPUP_IMG_SIZE;
 const POPUP_TEXT_HEIGHT = Math.round(POPUP_IMG_SIZE * 0.74);
 const POPUP_FONT_SIZE = Math.round(15 * POPUP_SCALE);
@@ -1046,17 +1046,17 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
-        ? `<img src="${imageUrl}" alt="${archivo}" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`
-        : `<img src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;flex-shrink:0;">`;
+        ? `<img src="${imageUrl}" alt="${archivo}" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`
+        : `<img src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`;
 
     const popupText = relato
-        ? `<p class="popup-relato" style="width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;">${relato}</p>`
+        ? `<p class="popup-relato" style="grid-column:2;grid-row:2;align-self:center;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = hexToRgba(categoryColor, 0.7);
-    const popupUnlock = `<div class="popup-unlock" style="display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:#000000;font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;flex-shrink:0;">DESBLOQUEAR</div>`;
-    const popupContent = `<div class="popup-stack" style="display:flex;flex-direction:column;align-items:flex-start;width:${POPUP_WIDTH}px;">${popupUnlock}<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupImage}${popupText}</div></div>`;
+    const popupUnlock = `<div class="popup-unlock" style="grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:#000000;font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;">DESBLOQUEAR</div>`;
+    const popupContent = `<div class="popup-inner" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupUnlock}${popupImage}${popupText}</div>`;
 
     const popup = new mapboxgl.Popup({
         offset: POPUP_OFFSET,

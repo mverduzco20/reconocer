@@ -1457,9 +1457,6 @@ a.footer-link {
     padding: 0;
     border-radius: 0;
     overflow: hidden;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
 }
 
 .category-popup .popup-media {
