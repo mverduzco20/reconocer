@@ -1444,6 +1444,8 @@ a.footer-link {
     padding: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+    max-height: none !important;
+    overflow: visible !important;
 }
 
 /* Ocultar la punta del popup (se puede mostrar coloreada más tarde) */
@@ -1451,25 +1453,18 @@ a.footer-link {
     display: none !important;
 }
 
-/* Contenedor interno del popup (creado en JS) — su background será inline rgba para cada categoría */
-.category-popup .popup-inner {
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    overflow: hidden;
-    display: grid !important;
-    align-items: start;
-    align-content: start;
+.category-popup .popup-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .category-popup .popup-unlock {
     box-sizing: border-box;
-    display: flex !important;
+    display: flex;
     align-items: center;
     justify-content: center;
-    grid-column: 1;
-    grid-row: 1;
-    position: static !important;
+    flex-shrink: 0;
     margin: 0;
     font-family: 'Courier New', Courier, monospace;
     font-size: 11px;
@@ -1479,19 +1474,26 @@ a.footer-link {
     color: #ffffff !important;
 }
 
+/* Contenedor interno del popup (creado en JS) — su background será inline rgba para cada categoría */
+.category-popup .popup-inner {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    overflow: hidden;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+}
+
 .category-popup .popup-photo {
     display: block;
-    grid-column: 1;
-    grid-row: 2;
+    flex-shrink: 0;
     margin: 0;
 }
 
 /* Texto del relato: banda horizontal más baja que la imagen */
 .category-popup .popup-inner .popup-relato {
     margin: 0;
-    grid-column: 2;
-    grid-row: 2;
-    align-self: center;
     line-height: 1.4;
     color: #000;
     opacity: 1;

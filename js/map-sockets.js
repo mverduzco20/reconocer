@@ -6,9 +6,11 @@
 const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
 const MAP_ZOOM = 15.5;
-const CARTOGRAPHY_MAP_CENTER = [-99.1980, 19.3445];
+const CARTOGRAPHY_MAP_CENTER = [-99.2010, 19.3445];
 const CARTOGRAPHY_MAP_ZOOM = 15.5;
-const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 155, right: 65 };
+const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
+const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
+const RECONOCER_MAP_BUILD = '20260610-fix1';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -869,6 +871,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mapBgModeIndex = 0;
         applyMapBackgroundByMode(map, MAP_BG_MODES[mapBgModeIndex]);
         updateFilterButtonAppearance();
+        console.log('[reconocer] build:', RECONOCER_MAP_BUILD);
         console.log('[reconocer] Map loaded con estilo:', MAP_STYLE);
         const style = map.getStyle();
         console.log('[reconocer] Style name:', style.name);
@@ -1157,17 +1160,18 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
-        ? `<img class="popup-photo" src="${imageUrl}" alt="${archivo}" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`
-        : `<img class="popup-photo" src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`;
+        ? `<img class="popup-photo" src="${imageUrl}" alt="${archivo}" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;flex-shrink:0;">`
+        : `<img class="popup-photo" src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;flex-shrink:0;">`;
 
     const popupText = relato
-        ? `<p class="popup-relato" style="grid-column:2;grid-row:2;align-self:center;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;">${relato}</p>`
+        ? `<p class="popup-relato" style="width:${POPUP_TEXT_WIDTH}px;height:${POPUP_TEXT_HEIGHT}px;font-size:${POPUP_FONT_SIZE}px;padding:${POPUP_PADDING}px;">${relato}</p>`
         : '';
 
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = hexToRgba(categoryColor, 0.7);
-    const popupUnlock = `<div class="popup-unlock" style="grid-column:1;grid-row:1;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:#ffffff;">DESBLOQUEAR</div>`;
-    const popupContent = `<div class="popup-inner" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;background-color:${categoryBackground};">${popupUnlock}${popupImage}${popupText}</div>`;
+    const popupUnlock = `<div class="popup-unlock" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:${POPUP_UNLOCK_TEXT_COLOR};">DESBLOQUEAR</div>`;
+    const popupInner = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_IMG_SIZE}px;">${popupImage}${popupText}</div>`;
+    const popupContent = `<div class="popup-stack">${popupUnlock}${popupInner}</div>`;
 
     const popup = new mapboxgl.Popup({
         offset: POPUP_OFFSET,
