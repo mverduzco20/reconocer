@@ -10,7 +10,7 @@ const CARTOGRAPHY_MAP_CENTER = [-99.2010, 19.3445];
 const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260610-relato-white';
+const RECONOCER_MAP_BUILD = '20260610-refugio-r9-live';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -109,16 +109,46 @@ const FILTER_C_CATEGORY_COLORS = ['#e9c47e', '#0000ff', '#92f47b', '#ec00ea'];
 const CATEGORY_COLOR_MAP = {
     m: '#e9c47e', // memoria — dorado
     o: '#0000ff', // oficio — azul
-    r: '#0f3d18', // refugio — verde oscuro
+    r: '#0f3d18', // refugio — verde oscuro (barra DESBLOQUEAR)
     e: '#ec00ea'  // encuentro — rosa
 };
+
+// Prueba solo en r9 (collar): rectángulo del relato, foto sin tocar
+const REFUGIO_R9_TEST_ARCHIVO = 'r9.jpg';
+const REFUGIO_R9_TEST_PANEL_COLOR = '#d0e2cf'; // +50% iluminación sobre #a2c69e
+const REFUGIO_R9_TEST_PANEL_ALPHA = 0.7;
+
+function isRefugioR9TestHito(categoria, archivo, hitoId) {
+    if (String(categoria || '').toLowerCase() !== 'r') return false;
+    const file = String(archivo || '').trim().toLowerCase();
+    return file === REFUGIO_R9_TEST_ARCHIVO || hitoId === 9;
+}
 
 function getCategoryColor(categoria) {
     return CATEGORY_COLOR_MAP[String(categoria || '').toLowerCase()] || MAP_BLUE;
 }
 
-function getCategoryBackgroundAlpha(categoria) {
-    return String(categoria || '').toLowerCase() === 'r' ? 0.92 : 0.7;
+function getCategoryTextPanelColor(categoria, archivo, hitoId) {
+    if (isRefugioR9TestHito(categoria, archivo, hitoId)) {
+        return REFUGIO_R9_TEST_PANEL_COLOR;
+    }
+    return getCategoryColor(categoria);
+}
+
+function getCategoryBackgroundAlpha(categoria, archivo, hitoId) {
+    if (isRefugioR9TestHito(categoria, archivo, hitoId)) return REFUGIO_R9_TEST_PANEL_ALPHA;
+    const cat = String(categoria || '').toLowerCase();
+    return cat === 'r' ? 0.8 : 0.7;
+}
+
+function getCategoryTextPanelBackground(categoria, archivo, hitoId) {
+    if (isRefugioR9TestHito(categoria, archivo, hitoId)) {
+        return hexToRgba(REFUGIO_R9_TEST_PANEL_COLOR, REFUGIO_R9_TEST_PANEL_ALPHA);
+    }
+    return hexToRgba(
+        getCategoryTextPanelColor(categoria, archivo, hitoId),
+        getCategoryBackgroundAlpha(categoria, archivo, hitoId)
+    );
 }
 
 function getCategoryUnlockTextColor(categoria) {
@@ -1174,9 +1204,10 @@ function agregarMarcador(map, row, markers, indices = {}) {
         : '';
 
     const categoryColor = getCategoryColor(categoria);
-    const categoryBackground = hexToRgba(categoryColor, getCategoryBackgroundAlpha(categoria));
+    const categoryBackground = getCategoryTextPanelBackground(categoria, archivo, hitoId);
     const popupUnlock = `<div class="popup-unlock" style="grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:${POPUP_UNLOCK_TEXT_COLOR};font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;">DESBLOQUEAR</div>`;
-    const popupTextPanel = `<div class="popup-text-panel" style="grid-column:2;grid-row:2;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_IMG_SIZE}px;background-color:${categoryBackground};display:flex;align-items:center;box-sizing:border-box;">${popupText}</div>`;
+    const r9TextPanelClass = isRefugioR9TestHito(categoria, archivo, hitoId) ? ' popup-text-panel-r9' : '';
+    const popupTextPanel = `<div class="popup-text-panel${r9TextPanelClass}" style="grid-column:2;grid-row:2;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_IMG_SIZE}px;background-color:${categoryBackground};display:flex;align-items:center;box-sizing:border-box;">${popupText}</div>`;
     const popupContent = `<div class="popup-inner" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupUnlock}${popupImage}${popupTextPanel}</div>`;
 
     const popup = new mapboxgl.Popup({
