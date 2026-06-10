@@ -604,13 +604,14 @@ function removeCartographySplash() {
 
 function applyCartographyMapViewAfterSplash(map) {
     if (!map || isEmbedMode()) return;
-    removeCartographySplash();
-    window.requestAnimationFrame(function () {
-        window.requestAnimationFrame(function () {
-            applyInitialMapView(map);
-            cartographyViewLocked = true;
-        });
-    });
+    const splash = document.getElementById('map-splash');
+    if (splash) splash.classList.add('hidden');
+    applyInitialMapView(map);
+    window.setTimeout(function () {
+        removeCartographySplash();
+        applyInitialMapView(map);
+        cartographyViewLocked = true;
+    }, 650);
 }
 
 function lockCartographyMapView(map) {
@@ -618,10 +619,7 @@ function lockCartographyMapView(map) {
 
     const finish = function () {
         if (cartographyViewLocked) return;
-        removeCartographySplash();
-        window.setTimeout(function () {
-            applyCartographyMapViewAfterSplash(map);
-        }, 650);
+        applyCartographyMapViewAfterSplash(map);
     };
 
     if (map.loaded()) {

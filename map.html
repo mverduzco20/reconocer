@@ -93,7 +93,7 @@
     <script src="./js/secrets.js" onerror="void 0"></script>
     <script src="./js/ws-config.js"></script>
     <script src="./js/ws-routes.js"></script>
-    <script src="./js/map-sockets.js?v=map-view-cart-2"></script>
+    <script src="./js/map-sockets.js?v=map-view-cart-3"></script>
     <script>
     document.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -113,16 +113,9 @@ const splashBtn = document.getElementById('splash-btn');
 
 if (splashBtn) {
    splashBtn.addEventListener('click', () => {
-       splash.classList.add('hidden');
        if (typeof window.reconocerApplyInitialMapView === 'function') {
            window.reconocerApplyInitialMapView();
        }
-       setTimeout(() => {
-           splash.style.display = 'none';
-           if (typeof window.reconocerApplyInitialMapView === 'function') {
-               window.reconocerApplyInitialMapView();
-           }
-       }, 600);
    });
 }
 </script>
