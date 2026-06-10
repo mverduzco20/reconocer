@@ -6,6 +6,9 @@
 const CSV_URL = './csv/hitos.csv';
 const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
 const MAP_ZOOM = 15.5;
+const CARTOGRAPHY_MAP_CENTER = [-99.1972, 19.3445];
+const CARTOGRAPHY_MAP_ZOOM = 15.5;
+const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 140, right: 65 };
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -564,20 +567,28 @@ function isEmbedMode() {
 }
 
 let initialMapViewResizeTimer = null;
-let cartographyViewLocked = false;
 
 function applyInitialMapView(map) {
     if (!map) return;
+    if (isEmbedMode()) {
+        map.setPadding({ top: 0, bottom: 0, left: 0, right: 0 });
+        map.resize();
+        map.jumpTo({
+            center: MAP_CENTER,
+            zoom: MAP_ZOOM,
+            bearing: 0,
+            pitch: 0
+        });
+        return;
+    }
+    map.setPadding(CARTOGRAPHY_MAP_PADDING);
     map.resize();
     map.jumpTo({
-        center: MAP_CENTER,
-        zoom: MAP_ZOOM,
+        center: CARTOGRAPHY_MAP_CENTER,
+        zoom: CARTOGRAPHY_MAP_ZOOM,
         bearing: 0,
         pitch: 0
     });
-    if (typeof map.triggerRepaint === 'function') {
-        map.triggerRepaint();
-    }
 }
 
 function scheduleInitialMapView(map, withRetries) {
@@ -595,38 +606,22 @@ function scheduleInitialMapView(map, withRetries) {
     }
 }
 
-function removeCartographySplash() {
-    const splash = document.getElementById('map-splash');
-    if (!splash) return;
-    splash.classList.add('hidden');
-    splash.style.display = 'none';
-}
-
-function applyCartographyMapViewAfterSplash(map) {
+function scheduleCartographyInitialMapView(map) {
     if (!map || isEmbedMode()) return;
-    const splash = document.getElementById('map-splash');
-    if (splash) splash.classList.add('hidden');
-    applyInitialMapView(map);
-    window.setTimeout(function () {
-        removeCartographySplash();
+    const run = function () {
         applyInitialMapView(map);
-        cartographyViewLocked = true;
-    }, 650);
-}
-
-function lockCartographyMapView(map) {
-    if (!map || isEmbedMode() || cartographyViewLocked) return;
-
-    const finish = function () {
-        if (cartographyViewLocked) return;
-        applyCartographyMapViewAfterSplash(map);
     };
-
+    const start = function () {
+        run();
+        [150, 500, 1500, 3000].forEach(function (ms) {
+            window.setTimeout(run, ms);
+        });
+    };
     if (map.loaded()) {
-        map.once('idle', finish);
+        map.once('idle', start);
     } else {
         map.once('load', function () {
-            map.once('idle', finish);
+            map.once('idle', start);
         });
     }
 }
@@ -652,25 +647,22 @@ function initMapViewport(map) {
                 }, { threshold: 0.08 }).observe(container);
             }
         }
+    } else {
+        scheduleCartographyInitialMapView(map);
+        window.addEventListener('load', function () {
+            scheduleCartographyInitialMapView(map);
+        });
     }
 
     window.addEventListener('resize', function () {
         if (initialMapViewResizeTimer) clearTimeout(initialMapViewResizeTimer);
         initialMapViewResizeTimer = window.setTimeout(function () {
-            if (isEmbedMode()) {
-                applyInitialMapView(map);
-            } else if (cartographyViewLocked) {
-                applyInitialMapView(map);
-            }
+            applyInitialMapView(map);
         }, 120);
     });
 
     window.reconocerApplyInitialMapView = function () {
-        if (isEmbedMode()) {
-            scheduleInitialMapView(map, false);
-        } else {
-            applyCartographyMapViewAfterSplash(map);
-        }
+        applyInitialMapView(map);
     };
 }
 
@@ -860,8 +852,8 @@ document.addEventListener('DOMContentLoaded', () => {
     mapInstance = new mapboxgl.Map({
         container: 'mapa',
         style: MAP_STYLE,
-        center: MAP_CENTER,
-        zoom: MAP_ZOOM,
+        center: isEmbedMode() ? MAP_CENTER : CARTOGRAPHY_MAP_CENTER,
+        zoom: isEmbedMode() ? MAP_ZOOM : CARTOGRAPHY_MAP_ZOOM,
         antialias: true
     });
     const map = mapInstance;
@@ -938,7 +930,7 @@ function loadHitosMarkers(map, markers) {
             if (isEmbedMode()) {
                 scheduleInitialMapView(map, true);
             } else {
-                lockCartographyMapView(map);
+                scheduleCartographyInitialMapView(map);
             }
             consumePendingRemoteCommand();
         })
