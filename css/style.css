@@ -1638,7 +1638,7 @@ a.footer-link {
    position: absolute;
    z-index: 12 !important;
    filter: none !important;
-   opacity: 0.7 !important;
+   opacity: 1 !important;
    mix-blend-mode: normal;
 }
 

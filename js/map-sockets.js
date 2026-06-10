@@ -1173,7 +1173,6 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.className = 'marker';
     el.title = archivo;
     el.style.cursor = 'pointer';
-    el.style.opacity = String(MARKER_OPACITY);
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupImage = isImage
