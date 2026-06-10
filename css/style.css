@@ -1453,10 +1453,12 @@ a.footer-link {
     display: none !important;
 }
 
-.category-popup .popup-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+/* Contenedor interno del popup (creado en JS) — su background será inline rgba para cada categoría */
+.category-popup .popup-inner {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    overflow: hidden;
 }
 
 .category-popup .popup-unlock {
@@ -1464,31 +1466,13 @@ a.footer-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    margin: 0;
     font-family: 'Courier New', Courier, monospace;
     font-size: 11px;
     font-weight: normal;
     line-height: 1;
     letter-spacing: 0.04em;
     color: #ffffff !important;
-}
-
-/* Contenedor interno del popup (creado en JS) — su background será inline rgba para cada categoría */
-.category-popup .popup-inner {
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    overflow: hidden;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-}
-
-.category-popup .popup-photo {
-    display: block;
     flex-shrink: 0;
-    margin: 0;
 }
 
 /* Texto del relato: banda horizontal más baja que la imagen */
