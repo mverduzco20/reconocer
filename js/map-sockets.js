@@ -1055,9 +1055,8 @@ function agregarMarcador(map, row, markers, indices = {}) {
 
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = hexToRgba(categoryColor, 0.7);
-    const unlockTextColor = getCategoryUnlockTextColor(categoria);
-    const popupUnlock = `<div class="popup-unlock" style="width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:${unlockTextColor};">DESBLOQUEAR</div>`;
-    const popupMedia = `<div class="popup-media">${popupUnlock}${popupImage}</div>`;
+    const popupUnlock = `<div class="popup-unlock" style="display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;background-color:${categoryColor};color:#000000;font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;flex-shrink:0;">DESBLOQUEAR</div>`;
+    const popupMedia = `<div class="popup-media" style="display:flex;flex-direction:column;width:${POPUP_IMG_SIZE}px;flex-shrink:0;">${popupUnlock}${popupImage}</div>`;
     const popupContent = `<div class="popup-inner" style="background-color:${categoryBackground};width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupMedia}${popupText}</div>`;
 
     const popup = new mapboxgl.Popup({
