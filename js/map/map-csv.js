@@ -15,7 +15,11 @@ function processHitosCsvText(map, markers, text) {
     };
 
     rows.slice(1).forEach(function (row, index) {
-        agregarMarcador(map, row, markers, indices, index + 1);
+        try {
+            agregarMarcador(map, row, markers, indices, index + 1);
+        } catch (err) {
+            console.error('[reconocer] No se pudo crear marcador fila', index + 1, err);
+        }
     });
     hitosMarkers = markers;
     prefetchedHitosBounds = markersToBounds(markers);

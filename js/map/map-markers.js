@@ -86,6 +86,7 @@ function agregarMarcador(map, row, markers, indices = {}, hitoRowId = 0) {
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
     const popupContent = buildMarkerPopupHtml(archivo, relato, categoria);
+    const isRefugioPopup = isRefugioCategory(categoria);
 
     const popup = new mapboxgl.Popup({
         offset: POPUP_OFFSET,

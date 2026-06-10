@@ -1,2 +1,2 @@
 /** Versión única de build — usar en ?v= de scripts y CSS del proyecto. */
-window.RECONOCER_BUILD = '20260613-public-click';
+window.RECONOCER_BUILD = '20260613-markers-fix';
