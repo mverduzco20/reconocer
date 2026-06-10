@@ -284,6 +284,12 @@ html, body {
    opacity: 1;
 }
 
+.city-collage--complete .city-piece {
+   opacity: 1;
+   animation: none;
+   transform: none;
+}
+
 .city-piece {
    position: absolute;
    overflow: hidden;
@@ -398,8 +404,8 @@ html, body {
 }
 
 .city-copy--shown .city-copy__block {
-   opacity: 0;
-   animation: cityCopyFadeIn 0.9s ease forwards;
+   opacity: 1;
+   animation: none;
 }
 
 .city-copy--shown .city-copy__block--1 { animation-delay: 0.15s; }
@@ -430,7 +436,7 @@ html, body {
    padding-right: 1cm;
    display: flex;
    flex-direction: row;
-   justify-content: space-between;
+   justify-content: space-evenly;
    align-items: center;
    z-index: 1002;
    pointer-events: none;
@@ -444,22 +450,9 @@ html, body {
    flex: 0 0 auto;
 }
 
-.home-instruction-item:nth-child(n + 2) {
-   margin-left: 0.35cm;
-}
-
-.home-instruction-item--step3 {
-   transform: translateX(-0.5cm);
-}
-
-.home-instruction-title--step3-text {
-   letter-spacing: 0.04em;
-   word-spacing: 0.05em;
-}
-
 .home-instruction-item--with-lines {
    display: inline-flex;
-   align-items: flex-start;
+   align-items: center;
    gap: 10px;
    padding-left: 28px;
    overflow: visible;
@@ -504,15 +497,6 @@ html, body {
 .home-instruction-item--with-lines .home-instruction-num {
    top: 0;
    transform: none;
-}
-
-.home-instruction-item--step3.home-instruction-item--with-lines .home-instruction-num {
-   transform: translateX(0.8cm);
-}
-
-.home-instruction-item--step3.home-instruction-item--with-lines img {
-   transform: translateX(0.3cm) scale(0.7);
-   transform-origin: left center;
 }
 
 .home-instruction-item--with-lines .home-instruction-copy {
@@ -1889,6 +1873,26 @@ a.footer-link {
 
 .category-popup .popup-unlock--interactive {
     cursor: pointer;
+}
+
+.category-popup .popup-unlock--retry[hidden] {
+    display: none !important;
+}
+
+.category-popup .popup-unlock--retry.popup-unlock--retry--shown {
+    animation: popupRetryFadeIn 1000ms ease forwards;
+}
+
+@keyframes popupRetryFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .category-popup .popup-unlock--retry.popup-unlock--retry--shown {
+        animation: none;
+        opacity: 1;
+    }
 }
 
 .category-popup .popup-inner--video-open {

@@ -8,8 +8,11 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Reconocer</title>
+    <link rel="icon" href="./favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
-    <link rel="stylesheet" href="./css/style.css?v=20260610-instant-view">
+    <link rel="stylesheet" href="./css/style.css?v=20260611-instructions-3">
 </head>
 
 <body>
@@ -70,16 +73,8 @@
                     </span>
                 </div>
             </div>
-            <div class="home-instruction-item home-instruction-item--with-lines home-instruction-item--step3">
-                <span class="home-instruction-num">3.</span>
-                <img src="./img/ins-02.png" alt="">
-                <div class="home-instruction-copy">
-                    <span class="home-instruction-title home-instruction-title--single home-instruction-title--step3-text">SUBE TU HITO</span>
-                    <span class="home-instruction-subtext">Captura el momento y sube una imagen.</span>
-                </div>
-            </div>
             <div class="home-instruction-item home-instruction-item--with-lines">
-                <span class="home-instruction-num">4.</span>
+                <span class="home-instruction-num">3.</span>
                 <img src="./img/ins-03.png" alt="">
                 <div class="home-instruction-copy">
                     <span class="home-instruction-title home-instruction-title--stacked-lines">
@@ -242,7 +237,7 @@ function positionInstructionIcons() {
    row.style.boxSizing = 'border-box';
    row.style.display = 'flex';
    row.style.flexDirection = 'row';
-   row.style.justifyContent = 'space-between';
+   row.style.justifyContent = 'space-evenly';
    row.style.alignItems = 'center';
    row.style.zIndex = '1002';
    row.style.pointerEvents = 'none';
@@ -326,79 +321,21 @@ var cityCopyRevealObserver = null;
 
 function setupCityCopyReveal() {
    const cityCopy = document.querySelector('.city-copy');
-   const cityStage = document.getElementById('city-stage');
-   if (!cityCopy || !cityStage) return;
-
-   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-   if (reducedMotion) {
-      cityCopy.classList.remove('city-copy--pending');
-      cityCopy.classList.add('city-copy--shown');
-      return;
-   }
-
-   if (cityCopy.classList.contains('city-copy--shown')) return;
+   if (!cityCopy) return;
 
    if (cityCopyRevealObserver) {
       cityCopyRevealObserver.disconnect();
       cityCopyRevealObserver = null;
    }
 
-   cityCopy.classList.add('city-copy--pending');
-
-   function showCityCopy() {
-      if (cityCopy.classList.contains('city-copy--shown')) return;
-      cityCopy.classList.remove('city-copy--pending');
-      cityCopy.classList.add('city-copy--shown');
-      if (cityCopyRevealObserver) {
-         cityCopyRevealObserver.disconnect();
-         cityCopyRevealObserver = null;
-      }
-   }
-
-   const firstTextBlock = cityCopy.querySelector('.city-copy__block--1');
-
-   function isFirstTextInView() {
-      if (!firstTextBlock) return false;
-      const rect = firstTextBlock.getBoundingClientRect();
-      const vh = window.innerHeight;
-      return rect.top < vh * 0.82 && rect.bottom > vh * 0.18;
-   }
-
-   if (isFirstTextInView()) {
-      showCityCopy();
-      return;
-   }
-
-   if ('IntersectionObserver' in window && firstTextBlock) {
-      cityCopyRevealObserver = new IntersectionObserver(function (entries) {
-         entries.forEach(function (entry) {
-            if (entry.isIntersecting) showCityCopy();
-         });
-      }, { threshold: 0.35, rootMargin: '0px 0px -8% 0px' });
-      cityCopyRevealObserver.observe(firstTextBlock);
-   }
-
-   function revealOnScroll() {
-      if (!isFirstTextInView()) return;
-      showCityCopy();
-      window.removeEventListener('scroll', revealOnScroll);
-      document.removeEventListener('scroll', revealOnScroll);
-   }
-   window.addEventListener('scroll', revealOnScroll, { passive: true });
-   document.addEventListener('scroll', revealOnScroll, { passive: true });
-   revealOnScroll();
-
-   window.setTimeout(function () {
-      if (!cityCopy.classList.contains('city-copy--shown') && isFirstTextInView()) {
-         showCityCopy();
-      }
-   }, 400);
+   cityCopy.classList.remove('city-copy--pending');
+   cityCopy.classList.add('city-copy--shown');
 }
 
 window.addEventListener('resize', positionCityImage);
 window.addEventListener('load', setupCityCopyReveal);
 </script>
-<script src="./js/city-reveal.js?v=visual5"></script>
+<script src="./js/city-reveal.js?v=20260611-city-static"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
    const contexto = document.querySelector('.contexto-img');

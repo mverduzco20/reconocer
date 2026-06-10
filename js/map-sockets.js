@@ -11,7 +11,7 @@ const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const INITIAL_MAP_ALL_MARKERS_PADDING = { top: 55, bottom: 65, left: 210, right: 75 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260611-reward-v13';
+const RECONOCER_MAP_BUILD = '20260611-retry-v15';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const REWARD_POPUP_SCALE_MIN = 1;
@@ -1711,6 +1711,53 @@ function wirePopupUnlockVideo(map, popup, marker) {
     });
 }
 
+function wirePopupRetryImage(popup, marker) {
+    const archivo = marker && marker._archivo ? marker._archivo : '';
+    const videoSrc = typeof getHitoVideoSrcForImage === 'function'
+        ? getHitoVideoSrcForImage(archivo)
+        : '';
+    if (videoSrc) return;
+
+    const root = popup.getElement && popup.getElement();
+    if (!root) return;
+
+    const unlockBtn = root.querySelector('.popup-unlock');
+    const inner = root.querySelector('.popup-inner');
+    const retryBtn = root.querySelector('.popup-unlock--retry');
+    if (!unlockBtn || !inner || !retryBtn) return;
+
+    unlockBtn.classList.add('popup-unlock--interactive');
+    unlockBtn.setAttribute('role', 'button');
+    unlockBtn.setAttribute('tabindex', '0');
+    unlockBtn.setAttribute('aria-label', 'Desbloquear');
+
+    function revealRetry(event) {
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        if (inner.classList.contains('popup-inner--retry-open')) return;
+
+        inner.classList.add('popup-inner--retry-open');
+        inner.style.gridTemplateRows = POPUP_UNLOCK_HEIGHT + 'px ' + POPUP_IMG_SIZE + 'px ' + POPUP_UNLOCK_HEIGHT + 'px';
+        inner.style.height = (POPUP_HEIGHT + POPUP_UNLOCK_HEIGHT) + 'px';
+        retryBtn.removeAttribute('hidden');
+
+        window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(function () {
+                retryBtn.classList.add('popup-unlock--retry--shown');
+            });
+        });
+    }
+
+    unlockBtn.addEventListener('click', revealRetry);
+    unlockBtn.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            revealRetry(event);
+        }
+    });
+}
+
 function panPopupIntoView(map, popup) {
     const popupEl = popup.getElement();
     if (!popupEl) return;
@@ -1804,6 +1851,7 @@ function handleMarkerPopupClick(map, marker, popup) {
     window.setTimeout(function () {
         stylePopupCloseButton(popup, marker._categoria);
         wirePopupUnlockVideo(map, popup, marker);
+        wirePopupRetryImage(popup, marker);
         panPopupIntoView(map, popup);
     }, 50);
 }
@@ -1849,6 +1897,10 @@ function agregarMarcador(map, row, markers, indices = {}) {
     el.style.cursor = 'pointer';
     el.onerror = () => el.src = 'https://placehold.co/66x66?text=no+img';
 
+    const videoSrc = typeof getHitoVideoSrcForImage === 'function'
+        ? getHitoVideoSrcForImage(archivo)
+        : '';
+
     const popupImage = isImage
         ? `<img src="${imageUrl}" alt="${archivo}" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`
         : `<img src="https://placehold.co/640x400?text=NO+IMG" alt="Archivo no disponible" style="grid-column:1;grid-row:2;width:${POPUP_IMG_SIZE}px;height:${POPUP_IMG_SIZE}px;object-fit:cover;border-radius:0;display:block;background:transparent;">`;
@@ -1861,18 +1913,18 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const categoryColor = getCategoryColor(categoria);
     const categoryBackground = getCategoryTextPanelBackground(categoria);
     const unlockBgStyle = isRefugioPopup ? '' : `background-color:${categoryColor};`;
-    const videoSrc = typeof getHitoVideoSrcForImage === 'function'
-        ? getHitoVideoSrcForImage(archivo)
+    const popupBarStyle = `display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;${unlockBgStyle}color:${POPUP_UNLOCK_TEXT_COLOR};font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;`;
+    const popupUnlock = `<div class="popup-unlock popup-unlock--has-video" style="grid-column:1;grid-row:1;${popupBarStyle}">DESBLOQUEAR</div>`;
+    const popupRetry = !videoSrc
+        ? `<div class="popup-unlock popup-unlock--retry" style="grid-column:1;grid-row:3;${popupBarStyle}" hidden>INTENTE DE NUEVO</div>`
         : '';
-    const popupUnlockClass = videoSrc ? 'popup-unlock popup-unlock--has-video' : 'popup-unlock';
-    const popupUnlock = `<div class="${popupUnlockClass}" style="grid-column:1;grid-row:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:${POPUP_IMG_SIZE}px;height:${POPUP_UNLOCK_HEIGHT}px;min-height:${POPUP_UNLOCK_HEIGHT}px;${unlockBgStyle}color:${POPUP_UNLOCK_TEXT_COLOR};font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1;letter-spacing:0.04em;">DESBLOQUEAR</div>`;
     const textPanelBgStyle = isRefugioPopup ? '' : `background-color:${categoryBackground};`;
     const popupTextPanel = `<div class="popup-text-panel" style="grid-column:2;grid-row:2;width:${POPUP_TEXT_WIDTH}px;height:${POPUP_IMG_SIZE}px;${textPanelBgStyle}display:flex;align-items:center;box-sizing:border-box;">${popupText}</div>`;
     const popupVideoPanel = videoSrc
         ? `<div class="popup-video-panel" style="grid-column:1 / -1;grid-row:3;width:${POPUP_WIDTH}px;height:${POPUP_VIDEO_HEIGHT}px;" hidden><video class="popup-video" src="${videoSrc}" playsinline controls preload="metadata"></video></div>`
         : '';
-    const popupInnerClass = videoSrc ? 'popup-inner popup-inner--has-video' : 'popup-inner';
-    const popupContent = `<div class="${popupInnerClass}" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupUnlock}${popupImage}${popupTextPanel}${popupVideoPanel}</div>`;
+    const popupInnerClass = videoSrc ? 'popup-inner popup-inner--has-video' : 'popup-inner popup-inner--no-video';
+    const popupContent = `<div class="${popupInnerClass}" style="display:grid;grid-template-columns:${POPUP_IMG_SIZE}px ${POPUP_TEXT_WIDTH}px;grid-template-rows:${POPUP_UNLOCK_HEIGHT}px ${POPUP_IMG_SIZE}px;width:${POPUP_WIDTH}px;height:${POPUP_HEIGHT}px;">${popupUnlock}${popupRetry}${popupImage}${popupTextPanel}${popupVideoPanel}</div>`;
 
     const popup = new mapboxgl.Popup({
         offset: POPUP_OFFSET,

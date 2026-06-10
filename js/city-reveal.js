@@ -84,108 +84,19 @@
    function setupCityCollageReveal() {
       if (!collage || !stage) return;
 
-      if (reducedMotion) {
-         collage.classList.remove('city-collage--pending');
-         collage.classList.add('city-collage--shown', 'city-collage--complete');
-         return;
-      }
-
-      if (collage.classList.contains('city-collage--shown')) return;
-
       if (collageObserver) {
          collageObserver.disconnect();
          collageObserver = null;
       }
 
-      collage.classList.add('city-collage--pending');
-
-      function showCollage() {
-         if (collage.classList.contains('city-collage--shown')) return;
-         collage.classList.remove('city-collage--pending', 'city-collage--complete');
-         collage.classList.add('city-collage--shown');
-         if (collageObserver) {
-            collageObserver.disconnect();
-            collageObserver = null;
-         }
-
-         const maxGroup = parseInt(collage.dataset.maxRevealGroup || '6', 10);
-         const stepSec = parseFloat(collage.dataset.revealStepSec || '0.34');
-         const lastPieces = collage.querySelectorAll('[data-reveal-group="' + maxGroup + '"]');
-         const finishReveal = function () {
-            collage.classList.add('city-collage--complete');
-         };
-
-         if (lastPieces.length) {
-            var completed = 0;
-            lastPieces.forEach(function (pieceEl) {
-               pieceEl.addEventListener('animationend', function () {
-                  completed += 1;
-                  if (completed >= lastPieces.length) finishReveal();
-               }, { once: true });
-            });
-         } else {
-            window.setTimeout(finishReveal, ((maxGroup - 1) * stepSec + 0.78) * 1000);
-         }
+      if (collageRevealTimer) {
+         window.clearTimeout(collageRevealTimer);
+         collageRevealTimer = null;
       }
 
-      function scheduleCollageAfterText() {
-         if (collage.classList.contains('city-collage--shown') || collageRevealTimer || collageRevealQueued) return;
-         collageRevealQueued = true;
-
-         function queueCollageReveal() {
-            const cityCopy = document.querySelector('.city-copy');
-            if (!cityCopy || !cityCopy.classList.contains('city-copy--shown')) return false;
-            collageRevealTimer = window.setTimeout(showCollage, COLLAGE_DELAY_AFTER_TEXT_MS);
-            return true;
-         }
-
-         if (queueCollageReveal()) return;
-
-         const cityCopy = document.querySelector('.city-copy');
-         if (!cityCopy) return;
-
-         const copyObserver = new MutationObserver(function () {
-            if (queueCollageReveal()) copyObserver.disconnect();
-         });
-         copyObserver.observe(cityCopy, { attributes: true, attributeFilter: ['class'] });
-      }
-
-      function isCityStageInView() {
-         const rect = stage.getBoundingClientRect();
-         const vh = window.innerHeight;
-         return rect.top < vh * 0.88 && rect.bottom > vh * 0.08;
-      }
-
-      if (isCityStageInView()) {
-         scheduleCollageAfterText();
-         return;
-      }
-
-      if ('IntersectionObserver' in window) {
-         collageObserver = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-               if (entry.isIntersecting) scheduleCollageAfterText();
-            });
-         }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
-         collageObserver.observe(stage);
-      }
-
-      function revealOnScroll() {
-         if (!isCityStageInView()) return;
-         scheduleCollageAfterText();
-         window.removeEventListener('scroll', revealOnScroll);
-         document.removeEventListener('scroll', revealOnScroll);
-      }
-
-      window.addEventListener('scroll', revealOnScroll, { passive: true });
-      document.addEventListener('scroll', revealOnScroll, { passive: true });
-      revealOnScroll();
-
-      window.setTimeout(function () {
-         if (!collage.classList.contains('city-collage--shown') && isCityStageInView()) {
-            scheduleCollageAfterText();
-         }
-      }, 400);
+      collageRevealQueued = false;
+      collage.classList.remove('city-collage--pending');
+      collage.classList.add('city-collage--shown', 'city-collage--complete');
    }
 
    if (document.readyState === 'loading') {
