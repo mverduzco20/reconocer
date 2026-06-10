@@ -911,18 +911,43 @@ html.map-embed .site-footer {
 
 .docs-block--2__stage {
    position: relative;
-   display: flex;
-   align-items: flex-start;
-   gap: 32px;
+   min-height: 260px;
+   margin-top: 16px;
+   margin-bottom: 3cm;
+   width: 100%;
 }
 
+.docs-block--2__collage-img {
+   display: block;
+   width: min(360px, 52vw);
+   height: auto;
+   margin-left: auto;
+   margin-right: 0;
+}
 
 .docs-block--2 .docs-block__p7 {
-   position: relative;
-   z-index: 3;
-   max-width: 30ch;
+   position: absolute;
+   right: calc(min(360px, 52vw) + 0.6cm);
+   top: 20px;
+   max-width: 26ch;
+   text-align: right;
+   z-index: 2;
    margin: 0;
-   flex: 0 1 30ch;
+}
+
+/* docuuu — arriba del collage sticky, 2cm desde la izquierda */
+.docs-footer-collage {
+   display: block;
+   position: relative;
+   z-index: 2;
+   margin: 0;
+   padding: 0;
+   margin-left: 2cm;
+   width: min(704px, 83.2vw);
+   max-width: calc(100% - 2cm);
+   height: auto;
+   line-height: 0;
+   pointer-events: none;
 }
 
 .docs-block--3 {
@@ -986,65 +1011,6 @@ html.map-embed .site-footer {
    max-width: none;
    object-fit: contain;
    box-shadow: none;
-}
-
-.docs-photo-collage.docs-photo-collage--2 {
-   position: relative;
-   inset: auto;
-   width: 100%;
-   height: 390px;
-   flex: 0 0 430px;
-   max-width: 430px;
-   z-index: 1;
-}
-
-/* Bloque 2 — docuu */
-.docs-photo-collage--2 .docs-photo--d1 {
-   position: absolute;
-   left: 0;
-   top: 0;
-   width: 168px;
-   height: 272px;
-   z-index: 2;
-   object-fit: cover;
-   object-position: 72% 18%;
-}
-
-.docs-photo-collage--2 .docs-photo--d15 {
-   position: absolute;
-   left: -6px;
-   bottom: 0;
-   width: 252px;
-   height: 204px;
-   z-index: 3;
-   object-fit: cover;
-   object-position: center 58%;
-}
-
-.docs-photo-collage--2 .docs-photo--d9 {
-   position: absolute;
-   left: 248px;
-   top: 0;
-   width: 168px;
-   height: 390px;
-   z-index: 4;
-   object-fit: cover;
-   object-position: 18% center;
-}
-
-.docs-photo-collage--2 .docs-photo--d7 {
-   position: absolute;
-   right: 0;
-   bottom: 0;
-   width: 156px;
-   height: 232px;
-   z-index: 5;
-   object-fit: cover;
-   object-position: center 32%;
-}
-
-.docs-spacer--before-sticky {
-   height: 420px;
 }
 
 #docs-sticky-block {

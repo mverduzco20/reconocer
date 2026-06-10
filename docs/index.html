@@ -4,15 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reconocer — Documentación</title>
-    <link rel="stylesheet" href="../css/style.css?v=20260611-docs-collage-left">
+    <link rel="stylesheet" href="../css/style.css?v=20260611-docs-layers-fix">
 </head>
 <body class="page-docs">
     <a href="../index.html" class="corner-logo" aria-label="Inicio REconocer">(<span class="reconocer-alt-r">R</span>e)</a>
     <h1 class="docs-page-title">Documentación</h1>
 
     <div class="docs-canvas">
-        <img src="../img/lineadocu.png" alt="" class="docs-line" aria-hidden="true">
-
         <div class="docs-flow">
             <section class="docs-block docs-block--1">
                 <div class="docs-block--1__layout">
@@ -27,11 +25,6 @@
                     <p class="docs-block__text docs-block--1__p docs-block--1__p3">Entre más explorábamos, más capas de la historia y el espacio de San Ángel se iban revelando ante nosotras.</p>
                     <span class="docs-block--1__connector docs-block--1__connector--3" aria-hidden="true"></span>
 
-                    <div class="docs-block--1__collage" aria-hidden="true">
-                        <img class="docs-photo docs-photo--d12" src="../img/docs/d12.jpg" alt="">
-                        <img class="docs-photo docs-photo--d13" src="../img/docs/d13.jpg" alt="">
-                        <img class="docs-photo docs-photo--d17" src="../img/docs/d17.jpg" alt="">
-                    </div>
                 </div>
             </section>
 
@@ -39,12 +32,11 @@
                 <h2 class="docs-block__title">El Encuentro con el Arte y la Comunidad</h2>
                 <p class="docs-block__text docs-block__p6">Las últimas visitas fueron las más enriquecedoras. Conectamos con la memoria viva del lugar a través de datos históricos, leyendas de casas embrujadas y pláticas con artistas del Bazar del Sábado.</p>
                 <div class="docs-block--2__stage">
-                    <div class="docs-photo-collage docs-photo-collage--2" aria-hidden="true">
-                        <img class="docs-photo docs-photo--d1" src="../img/docs/d1.jpg" alt="">
-                        <img class="docs-photo docs-photo--d15" src="../img/docs/d15.jpg" alt="">
-                        <img class="docs-photo docs-photo--d9" src="../img/docs/d9.jpg" alt="">
-                        <img class="docs-photo docs-photo--d7" src="../img/docs/d7.jpg" alt="">
-                    </div>
+                    <img
+                        class="docs-block--2__collage-img"
+                        src="../img/docs/docuu.png"
+                        alt="Collage de visitas a San Ángel"
+                    >
                     <p class="docs-block__text docs-block__p7">Conversar con creadores que han trabajado para instituciones como Bellas Artes fue increíble para nuestro gusto por el arte.</p>
                 </div>
             </section>
@@ -60,7 +52,12 @@
                 </div>
             </section>
 
-            <div class="docs-spacer docs-spacer--before-sticky" aria-hidden="true"></div>
+            <img
+                class="docs-footer-collage"
+                src="../img/docs/docuuu.png"
+                alt=""
+                aria-hidden="true"
+            >
         </div>
     </div>
 
@@ -121,10 +118,10 @@
     <script src="../js/ws-bridge.js?v=ws-all-pages-1"></script>
     <script src="../js/audio.js?v=11"></script>
     <script>
-    const DOCS_STICKY_GAP_CM = 0;
+    const DOCS_MAP_COLLAGE_HEIGHT_PX = 398;
 
     function docsStickyGapPx() {
-        return DOCS_STICKY_GAP_CM * 96 / 2.54;
+        return DOCS_MAP_COLLAGE_HEIGHT_PX;
     }
 
     function positionDocsPreview() {
