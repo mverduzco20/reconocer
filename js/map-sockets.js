@@ -4,9 +4,9 @@
 // ─────────────────────────────────────────────
 
 const CSV_URL = './csv/hitos.csv';
-const MAP_CENTER = [-99.1950, 19.3445]; // lng, lat — centro aproximado de los puntos
+const MAP_CENTER = [-99.1985, 19.3443]; // lng, lat — ligeramente al oeste para que los hitos queden más a la derecha
 const MAP_ZOOM = 15.5;
-const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
+const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 150, right: 110 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
 const MAP_FIT_SINGLE_ZOOM = 16.5;
