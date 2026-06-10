@@ -1313,6 +1313,7 @@ main, section, #hero {
    background-color: rgb(var(--footer-btn-r), var(--footer-btn-g), var(--footer-btn-b));
 }
 
+#footer-cat-companion.active,
 #footer-cat-companion:active {
    background-color: rgba(var(--footer-btn-r), var(--footer-btn-g), var(--footer-btn-b), 0.3);
 }
@@ -1650,14 +1651,14 @@ a.footer-link {
    visibility: hidden;
 }
 
-/* Miniaturas del mapa: 70% transparencia (alpha 0.3) — no cambiar */
+/* Miniaturas del mapa: 40% transparencia (alpha 0.6) para mejor legibilidad */
 #mapa .mapboxgl-marker {
    pointer-events: auto;
    cursor: pointer;
    position: absolute;
    z-index: 12 !important;
    filter: none !important;
-   opacity: 0.3 !important;
+   opacity: 0.6 !important;
    mix-blend-mode: normal;
    transition: opacity 800ms ease-in-out;
 }
@@ -1707,28 +1708,48 @@ a.footer-link {
    position: relative;
 }
 
+#category-rects-footer .footer-rect--memoria {
+   background-color: rgba(233, 196, 126, 0.8);
+}
+
+#category-rects-footer .footer-rect--oficio {
+   background-color: rgba(0, 0, 255, 0.8);
+}
+
+#category-rects-footer .footer-rect--refugio {
+   background-color: rgba(148, 212, 140, 0.8);
+}
+
+#category-rects-footer .footer-rect--encuentro {
+   background-color: rgba(236, 0, 234, 0.8);
+}
+
 .rect-img {
    height: 100%;
    width: 120px;
    object-fit: cover;
-   opacity: 0.35;
+   opacity: 1;
    flex-shrink: 0;
    display: block;
 }
 
-.rect-text {
+#category-rects-footer .footer-rect {
+   min-height: 0;
+}
+
+#category-rects-footer .rect-text {
    font-family: "Courier New", Courier, monospace;
    font-size: 13px;
    line-height: 1.4;
-   color: #000;
-   margin: 0;
-   padding: 8px;
+   color: #fff;
+   margin: 10px 12px;
+   padding: 0;
    flex: 1;
-   overflow: hidden;
+   min-height: 0;
+   overflow-x: hidden;
+   overflow-y: auto;
+   -webkit-overflow-scrolling: touch;
    box-sizing: border-box;
-   display: flex;
-   flex-direction: column;
-   justify-content: flex-end;
 }
 
 .category-popup .mapboxgl-popup-content {
