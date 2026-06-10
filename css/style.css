@@ -1642,11 +1642,11 @@ a.footer-link {
    mix-blend-mode: normal;
 }
 
-/* Miniaturas del mapa: 70% opacidad — no cambiar */
+/* Miniaturas del mapa: 70% transparencia (alpha 0.3) — no cambiar */
 #mapa .mapboxgl-marker .marker {
    pointer-events: auto;
    cursor: pointer;
-   opacity: 0.7 !important;
+   opacity: 0.3 !important;
    filter: none !important;
    position: relative;
    z-index: 1;
