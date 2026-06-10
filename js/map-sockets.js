@@ -118,11 +118,7 @@ function getCategoryColor(categoria) {
 }
 
 function getCategoryBackgroundAlpha(categoria) {
-    return 0.7;
-}
-
-function getMarkerOpacity(categoria) {
-    return String(categoria || '').toLowerCase() === 'r' ? 0.7 : MARKER_OPACITY;
+    return String(categoria || '').toLowerCase() === 'r' ? 0.92 : 0.7;
 }
 
 function getCategoryUnlockTextColor(categoria) {
@@ -1155,8 +1151,6 @@ function agregarMarcador(map, row, markers, indices = {}) {
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'svg'];
     const isImage = imageExtensions.includes(extension);
     const previewUrl = isImage ? imageUrl : 'https://placehold.co/120x120?text=NO+IMG';
-    const markerOpacity = getMarkerOpacity(categoria);
-
     const el = document.createElement('img');
     el.src = previewUrl;
     el.alt = archivo;
