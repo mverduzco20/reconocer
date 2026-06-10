@@ -10,7 +10,7 @@ const CARTOGRAPHY_MAP_CENTER = [-99.2010, 19.3445];
 const CARTOGRAPHY_MAP_ZOOM = 15.5;
 const CARTOGRAPHY_MAP_PADDING = { top: 20, bottom: 60, left: 180, right: 65 };
 const POPUP_UNLOCK_TEXT_COLOR = '#ffffff';
-const RECONOCER_MAP_BUILD = '20260609-r9-dark';
+const RECONOCER_MAP_BUILD = '20260609-r9-mid';
 const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 70, right: 70 };
 const MAP_FIT_DURATION_MS = 1100;
 const MAP_FIT_MAX_ZOOM = 17;
@@ -115,7 +115,7 @@ const CATEGORY_COLOR_MAP = {
 
 // Prueba solo en r9 (collar): rectángulo del relato, foto sin tocar
 const REFUGIO_R9_TEST_ARCHIVO = 'r9.jpg';
-const REFUGIO_R9_TEST_PANEL_COLOR = '#6f8569'; // verde fondo r9.jpg, más oscuro
+const REFUGIO_R9_TEST_PANEL_COLOR = '#7a916f'; // verde fondo r9.jpg, un poco más claro
 const REFUGIO_R9_TEST_PANEL_ALPHA = 0.98;
 
 function isRefugioR9TestHito(categoria, archivo, hitoId) {
