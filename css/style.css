@@ -1632,14 +1632,14 @@ a.footer-link {
    visibility: hidden;
 }
 
-/* Miniaturas del mapa: 40% transparencia (alpha 0.6) — no cambiar */
+/* Miniaturas del mapa: 65% transparencia (alpha 0.35) — no cambiar */
 #mapa .mapboxgl-marker {
    pointer-events: auto;
    cursor: pointer;
    position: absolute;
    z-index: 12 !important;
    filter: none !important;
-   opacity: 0.6 !important;
+   opacity: 0.35 !important;
    mix-blend-mode: normal;
 }
 
