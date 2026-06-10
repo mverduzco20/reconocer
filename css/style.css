@@ -1240,7 +1240,7 @@ html.map-embed .site-footer {
 
 #memoria-button  { background-color: #e9c47e; }
 #oficio-button   { background-color: #0000ff; }
-#refugio-button  { background-color: #92f47b; }
+#refugio-button  { background-color: #0f3d18; }
 #encuentro-button{ background-color: #ec00ea; }
 
 /* Active state visual cue */
@@ -1453,11 +1453,23 @@ a.footer-link {
     display: none !important;
 }
 
-/* Contenedor interno del popup (creado en JS) — su background será inline rgba para cada categoría */
+/* Contenedor interno del popup (creado en JS) */
 .category-popup .popup-inner {
     margin: 0;
     padding: 0;
     border-radius: 0;
+    overflow: hidden;
+    display: grid !important;
+    align-items: start;
+    align-content: start;
+}
+
+.category-popup .popup-text-panel {
+    grid-column: 2;
+    grid-row: 2;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
     overflow: hidden;
 }
 
