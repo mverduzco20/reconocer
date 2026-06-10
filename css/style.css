@@ -404,8 +404,8 @@ html, body {
 }
 
 .city-copy--shown .city-copy__block {
-   opacity: 1;
-   animation: none;
+   opacity: 0;
+   animation: cityCopyFadeIn 0.9s ease forwards;
 }
 
 .city-copy--shown .city-copy__block--1 { animation-delay: 0.15s; }
@@ -1342,12 +1342,12 @@ html.map-embed .site-footer {
 }
 
 .sound-btn {
+    display: none !important;
     width: 75px;
     height: 55px;
     background: rgba(236, 0, 234, 0.85);
     border: none;
     cursor: pointer;
-    display: flex;
     align-items: center;
     justify-content: center;
     padding: 0 8px;
