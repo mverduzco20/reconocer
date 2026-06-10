@@ -4,12 +4,15 @@
 // ─────────────────────────────────────────────
 
 const CSV_URL = './csv/hitos.csv';
-const MAP_CENTER = [-99.1985, 19.3443]; // lng, lat — ligeramente al oeste para que los hitos queden más a la derecha
-const MAP_ZOOM = 15.5;
-const MAP_FIT_PADDING = { top: 100, bottom: 110, left: 150, right: 110 };
+const MAP_CENTER = [-99.2010, 19.3443]; // lng, lat — centro al oeste para que los hitos queden más a la derecha
+const MAP_ZOOM = 14.6;
+const MAP_FIT_PADDING = { top: 95, bottom: 105, left: 280, right: 80 };
+const MAP_FIT_FILTER_PADDING = { top: 100, bottom: 110, left: 200, right: 100 };
 const MAP_FIT_DURATION_MS = 1100;
-const MAP_FIT_MAX_ZOOM = 17;
+const MAP_FIT_OVERVIEW_MAX_ZOOM = 14.2;
+const MAP_FIT_MAX_ZOOM = 16.5;
 const MAP_FIT_SINGLE_ZOOM = 16.5;
+const MAP_FIT_BOUNDS_BUFFER = 0.0022;
 const MAP_STYLE = 'mapbox://styles/valentina-nacif/cmpdcwwba00fc01scddw0cd2w';
 const POPUP_SCALE = 0.7;
 const POPUP_IMG_SIZE = Math.round(252 * POPUP_SCALE);
@@ -1099,6 +1102,26 @@ function getVisibleMarkers(markers, activeSet) {
     });
 }
 
+function getMapFitPadding(activeSet) {
+    if (!activeSet || activeSet.size === 0) return MAP_FIT_PADDING;
+    return MAP_FIT_FILTER_PADDING;
+}
+
+function getMapFitMaxZoom(activeSet, visibleCount) {
+    if (visibleCount === 1) return MAP_FIT_SINGLE_ZOOM;
+    if (!activeSet || activeSet.size === 0) return MAP_FIT_OVERVIEW_MAX_ZOOM;
+    return MAP_FIT_MAX_ZOOM;
+}
+
+function expandBoundsForMarkers(bounds) {
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+    return new mapboxgl.LngLatBounds(
+        [sw.lng - MAP_FIT_BOUNDS_BUFFER, sw.lat - MAP_FIT_BOUNDS_BUFFER],
+        [ne.lng + MAP_FIT_BOUNDS_BUFFER, ne.lat + MAP_FIT_BOUNDS_BUFFER]
+    );
+}
+
 function fitMapToFilteredMarkers(map, markers, activeSet) {
     if (!map) return;
     const visible = getVisibleMarkers(markers, activeSet);
@@ -1124,9 +1147,9 @@ function fitMapToFilteredMarkers(map, markers, activeSet) {
         bounds.extend([ll.lng, ll.lat]);
     });
 
-    map.fitBounds(bounds, {
-        padding: MAP_FIT_PADDING,
-        maxZoom: MAP_FIT_MAX_ZOOM,
+    map.fitBounds(expandBoundsForMarkers(bounds), {
+        padding: getMapFitPadding(activeSet),
+        maxZoom: getMapFitMaxZoom(activeSet, visible.length),
         duration: duration,
         essential: true
     });
@@ -1134,9 +1157,20 @@ function fitMapToFilteredMarkers(map, markers, activeSet) {
 
 function scheduleMapFitToFilteredMarkers(map, markers, activeSet) {
     if (!map) return;
-    window.requestAnimationFrame(function () {
+
+    const runFit = function () {
         fitMapToFilteredMarkers(map, markers, activeSet);
-    });
+    };
+
+    const runAfterIdle = function () {
+        map.once('idle', runFit);
+    };
+
+    if (map.isStyleLoaded()) {
+        runAfterIdle();
+    } else {
+        map.once('load', runAfterIdle);
+    }
 }
 
 /* UI helpers: mostrar/ocultar marcadores según categorías activas */
@@ -1227,6 +1261,7 @@ function initCategoryUI(map, markers) {
         });
     });
 
-    // Inicial: asegurar que todos los marcadores se muestren
+    // Inicial: asegurar que todos los marcadores se muestren y encuadrar la vista
     updateMarkersFilter(map, markers, new Set());
+    scheduleMapFitToFilteredMarkers(map, markers, new Set());
 }
