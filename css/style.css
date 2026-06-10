@@ -1307,7 +1307,14 @@ main, section, #hero {
 }
 
 #footer-cat-companion {
-   background: rgba(233, 196, 126, 0.85);
+   --footer-btn-r: 148;
+   --footer-btn-g: 212;
+   --footer-btn-b: 140;
+   background-color: rgb(var(--footer-btn-r), var(--footer-btn-g), var(--footer-btn-b));
+}
+
+#footer-cat-companion:active {
+   background-color: rgba(var(--footer-btn-r), var(--footer-btn-g), var(--footer-btn-b), 0.3);
 }
 
 .footer-map-filter-c {
@@ -1336,7 +1343,6 @@ main, section, #hero {
 .footer-cat-block {
     width: 55px;
     height: 55px;
-    background: rgba(146, 244, 123, 0.85);
     border: none;
     padding: 0;
     margin: 0;
@@ -1346,6 +1352,18 @@ main, section, #hero {
     justify-content: center;
     flex-shrink: 0;
     box-sizing: border-box;
+}
+
+#cat-arrow-btn {
+    --footer-btn-r: 233;
+    --footer-btn-g: 196;
+    --footer-btn-b: 126;
+    background-color: rgb(var(--footer-btn-r), var(--footer-btn-g), var(--footer-btn-b));
+}
+
+#cat-arrow-btn.active,
+#cat-arrow-btn:active {
+    background-color: rgba(var(--footer-btn-r), var(--footer-btn-g), var(--footer-btn-b), 0.3);
 }
 
 #cat-arrow {
